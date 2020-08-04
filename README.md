@@ -1,4 +1,4 @@
-# Marion, The Learning Attestation Factory
+# Marion, The Learning Certificate Factory
 
 ## License
 
