@@ -1,0 +1,45 @@
+{% load i18n %}
+
+<html>
+  <body>
+    <div class="certificate dummy">
+      <header>
+        <h1>{% trans "Dummy certificate" %}</h1>
+      </header>
+      <article class="main">
+        <section class="student">
+          <p>{% trans "Delivered to:" %}</p>
+          <div class="name">
+            {{ fullname }}
+          </div>
+        </section>
+        <section class="comment">
+          <p>
+            {% blocktrans %}
+            Asperiores sapiente sint vel suscipit quidem vitae deleniti.
+            Doloremque eveniet ipsa quaerat labore. Ea voluptatum aperiam
+            eligendi esse distinctio aut. Numquam vel magnam recusandae
+            consequuntur iste officia unde. Eum aut quasi expedita quam.
+            {% endblocktrans %}
+          </p>
+        </section>
+      </article>
+      <footer>
+        <div class="identifier">
+          <span>{% trans "Certificate ID:" %}</span>
+          <code>
+            {{ identifier }}
+          </code>
+        </div>
+        <div class="generated-at">
+          <span>
+            {% trans "Delivery stamp:" %}
+          </span>
+          <code>
+            {% now "c" %}
+          </code>
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>
