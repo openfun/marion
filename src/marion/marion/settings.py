@@ -148,3 +148,5 @@ class Development(Base):
 
 class Test(Base):
     """Test environment settings"""
+
+    MEDIA_ROOT = Path("/tmp")

@@ -138,6 +138,54 @@ jobs:
           command: |
             ~/.local/bin/pylint marion
 
+  test-back:
+    docker:
+      - image: circleci/python:3.8-buster
+        environment:
+          DJANGO_SETTINGS_MODULE: marion.settings
+          DJANGO_CONFIGURATION: Test
+          DJANGO_SECRET_KEY: ThisIsAnExampleKeyForTestPurposeOnly
+          PYTHONPATH: /home/circleci/marion/src/marion
+          DB_HOST: localhost
+          DB_NAME: marion
+          DB_USER: fun
+          DB_PASSWORD: pass
+          DB_PORT: 5432
+      # services
+      - image: circleci/postgres:12-ram
+        environment:
+          POSTGRES_DB: test_marion
+          POSTGRES_USER: fun
+          POSTGRES_PASSWORD: pass
+    working_directory: ~/marion/src/marion
+    steps:
+      - checkout:
+          path: ~/marion
+      - restore_cache:
+          keys:
+            - v1-back-dependencies-{{ .Revision }}
+      # While running tests, we need to make the /data directory writable for
+      # the circleci user
+      - run:
+          name: Create writable /data
+          command: |
+            sudo mkdir -p /data/media && \
+            sudo chown -R circleci:circleci /data
+      # Run back-end (Django) test suite
+      #
+      # Nota bene: to run the django test suite, we need to ensure that
+      # PostgreSQL service is up and ready. To achieve this, we wrap the pytest
+      # command execution with dockerize, a tiny tool installed in the CircleCI
+      # image. In our case, dockerize will wait up to one minute that both the
+      # database container opened expected tcp port (5432).
+      - run:
+          name: Run tests
+          command: |
+            dockerize \
+              -wait tcp://localhost:5432 \
+              -timeout 60s \
+              ~/.local/bin/pytest
+
   # ---- Packaging jobs ----
   package-back:
     docker:
@@ -146,10 +194,6 @@ jobs:
     steps:
       - checkout:
           path: ~/marion
-      # Ensure we restore frontend production builds in Marion's static
-      # directory
-      - attach_workspace:
-          at: ~/marion
       - run:
           name: Build python package
           command: python setup.py sdist bdist_wheel
@@ -234,6 +278,12 @@ workflows:
           filters:
             tags:
               only: /.*/
+      - test-back:
+          requires:
+            - build-back
+          filters:
+            tags:
+              only: /.*/
 
       # Packaging: python
       #
@@ -242,6 +292,7 @@ workflows:
           requires:
             - build-back
             - lint-back
+            - test-back
           filters:
             tags:
               only: /.*/
