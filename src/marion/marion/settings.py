@@ -145,6 +145,13 @@ class Development(Base):
     DEBUG = True
     ALLOWED_HOSTS = ["*"]
 
+    # Application definition
+    INSTALLED_APPS = Base.INSTALLED_APPS + [
+        "howard",
+    ]
+
+    MARION_CERTIFICATE_ISSUER_CHOICES_CLASS = "howard.defaults.CertificateIssuerChoices"
+
 
 class Test(Base):
     """Test environment settings"""

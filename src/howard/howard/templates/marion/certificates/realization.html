@@ -1,0 +1,128 @@
+{% load i18n %}
+{% load static %}
+
+<html>
+  {% if debug %}
+  <head>
+    <style>
+      {{ css }}
+    </style>
+  </head>
+  {% endif %}
+  <body>
+    <div class="certificate realization">
+      <header>
+        <div class="logos">
+          <div class="ministry">
+            <!-- FIXME -->
+            <img src="{% static "howard/logo-ministere-travail.svg" %}" />
+          </div>
+          <div class="organization">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/8/8f/EdX.svg" />
+          </div>
+        </div>
+        <div class="title">
+          <h1>CERTIFICAT DE REALISATION</h1>
+        </div>
+      </header>
+      <article class="main">
+        <section id="organization">
+          <p>
+            Je soussigné(e)
+            <span>
+              {{ course.organization.manager.first_name }}
+              {{ course.organization.manager.last_name }}
+              </span>
+          </p>
+          <p>
+            représentant légal du dispensateur de formation
+            <span>
+              {{ course.organization.name }}
+            </span>
+          </p>
+          <p>atteste que :</p>
+        </section>
+        <section id="student">
+          <div class="name">
+            <span class="gender">{{ student.gender }}</span>
+            <span class="last-name">{{ student.last_name }}</span>
+            <span class="first-name">{{ student.first_name }}</span>,
+          </div>
+          <div class="organization">
+            salarié(e) de l'entreprise <span>{{ student.organization.name }}</span>
+          </div>
+        </section>
+        <section id="course">
+          <div class="name">
+            a suivi l'action de formation <span>{{ course.name }}</span>.
+          </div>
+          <div class="scope">
+            <p>
+              Nature de l'action de formation :
+              <span>{{ course.session.scope }}</span>
+            </p>
+          </div>
+          <div class="dates">
+            qui s'est déroulée du
+            <span>{{ course.session.date.from | date:"SHORT_DATE_FORMAT" }}</span> au
+            <span>{{ course.session.date.to | date:"SHORT_DATE_FORMAT" }} </span>
+          </div>
+          <div class="duration">
+            pour une durée totale de <span>{{ course.session.duration }}</span> heures.
+          </div>
+        </section>
+        <section id="legal">
+          <p>
+            Sans préjudice des délais imposés par les règles fiscales,
+            comptables ou commerciales, je m'engage à conserver l'ensemble des
+            pièces justificatives qui ont permis d'établir le présent
+            certificat pendant une durée de 3 ans à compter de la fin de
+            l'année du dernier paiement. En cas de cofinancement des fonds
+            européens la durée de conservation est étendue conformément aux
+            obligations conventionnelles spécifiques.
+          </p>
+        </section>
+        <section id="signatures">
+          <div>
+            <div class="location">
+              Fait à : <span>{{ course.organization.location }}</span>
+            </div>
+            <div class="date">
+              Le : <span>{{ creation_date | date:"SHORT_DATE_FORMAT" }}</span>
+            </div>
+          </div>
+          <div class="seal">
+            <p>
+              Cachet et signature du responsable du dispensateur de formation
+            </p>
+            <div class="manager">
+              <span class="gender">{{ course.session.manager.gender }}</span>
+              <span class="last-name">{{ course.session.manager.last_name }}</span>
+              <span class="first-name">{{ course.session.manager.first_name }}</span>,
+              <span class="first-name">{{ course.session.manager.position }}</span>
+              <br/>
+
+              <img src="{% static "howard/test-signature.png" %}" />
+            </div>
+          </div>
+        </section>
+      </article>
+      <footer>
+        <div class="identifier">
+          <span>Identifiant du certificat :</span>
+          <code>
+            {{ identifier }}
+          </code>
+        </div>
+        <div class="generated-at">
+          <span>
+            Tampon de livraison :
+          </span>
+          <code>
+            {{ creation_date | date:"c" }}
+          </code>
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>
