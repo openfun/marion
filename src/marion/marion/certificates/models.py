@@ -192,6 +192,7 @@ class CertificateRequest(models.Model):
                 lambda issuer_module_path: issuer_module_path.endswith(
                     issuer_class_name
                 ),
+                # pylint: disable=no-member
                 (issuer for issuer, _ in cls.issuer.field.choices),
             )
         )

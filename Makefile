@@ -49,7 +49,7 @@ default: help
 
 bootstrap: ## prepare Docker images for the project
 bootstrap: \
-  	data/media \
+ 	data/media \
 	build \
 	migrate
 .PHONY: bootstrap
@@ -103,32 +103,32 @@ lint: \
 
 lint-bandit: ## lint back-end python sources with bandit
 	@echo 'lint:bandit started…'
-	@$(COMPOSE_TEST_RUN_APP) bandit -c .banditrc -r .
+	@$(COMPOSE_TEST_RUN_APP) bandit -c .banditrc -r . /usr/local/src/howard
 .PHONY: lint-bandit
 
 lint-black: ## lint back-end python sources with black
 	@echo 'lint:black started…'
-	@$(COMPOSE_TEST_RUN_APP) black .
+	@$(COMPOSE_TEST_RUN_APP) black . /usr/local/src/howard
 .PHONY: lint-black
 
 lint-flake8: ## lint back-end python sources with flake8
 	@echo 'lint:flake8 started…'
-	@$(COMPOSE_TEST_RUN_APP) flake8 .
+	@$(COMPOSE_TEST_RUN_APP) flake8 . /usr/local/src/howard
 .PHONY: lint-flake8
 
 lint-isort: ## automatically re-arrange python imports in back-end code base
 	@echo 'lint:isort started…'
-	@$(COMPOSE_TEST_RUN_APP) isort --atomic .
+	@$(COMPOSE_TEST_RUN_APP) isort --atomic . /usr/local/src/howard
 .PHONY: lint-isort
 
 lint-pylint: ## lint back-end python sources with pylint
 	@echo 'lint:pylint started…'
-	@$(COMPOSE_TEST_RUN_APP) pylint marion
+	@$(COMPOSE_TEST_RUN_APP) pylint marion /usr/local/src/howard/howard
 .PHONY: lint-pylint
 
 # -- Tests
 test: ## perform backend tests
-	bin/pytest
+	bin/pytest marion /usr/local/src/howard --cov=howard
 .PHONY: test
 
 # -- Misc

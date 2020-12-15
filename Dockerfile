@@ -68,6 +68,11 @@ COPY ./src/marion /app/
 RUN pip uninstall -y marion
 RUN pip install -e .[dev]
 
+# Copy extra packages
+COPY ./src/howard /usr/local/src/howard
+RUN cd /usr/local/src/howard && \
+      pip install -e .
+
 # Restore the un-privileged user running the application
 ARG DOCKER_USER
 USER ${DOCKER_USER}

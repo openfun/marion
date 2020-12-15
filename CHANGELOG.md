@@ -10,6 +10,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 
 ### Added
 
+- Add `howard` package that bundles fun-specific certificates
 - Add `CertificateRequest` model, serializer and API viewset
 - Add `DummyCertificate` example certificate issuer
 - Implement certificate issuer pattern
