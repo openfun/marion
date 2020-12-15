@@ -5,6 +5,7 @@ from abc import ABC, abstractmethod
 
 from django.conf import settings
 from django.template.engine import Engine
+from django.utils import timezone
 from django.utils.functional import cached_property
 from django.utils.text import re_camel_case
 from django.utils.translation import gettext_lazy as _
@@ -70,6 +71,8 @@ class PDFFileMetadataMixin:
 
     def get_created(self):
         """Get certificate PDF file 'created' metadata"""
+        if self.created is None:
+            self.created = timezone.now().isoformat()
         return self.created
 
     def get_description(self):
@@ -86,6 +89,8 @@ class PDFFileMetadataMixin:
 
     def get_modified(self):
         """Get certificate PDF file 'modified' metadata"""
+        if self.modified is None:
+            self.modified = timezone.now().isoformat()
         return self.modified
 
     def get_title(self):
@@ -303,7 +308,7 @@ class AbstractCertificate(PDFFileMetadataMixin, ABC):
         """Get the context dict from a Django Context instance"""
         return context.dicts[1]
 
-    def create(self):
+    def create(self, debug=False):
         """Create certificate.
 
         Given an HTML template, a CSS template and the required context to
@@ -319,13 +324,15 @@ class AbstractCertificate(PDFFileMetadataMixin, ABC):
             raise CertificateIssuerMissingContext("Context needs to be loaded first")
 
         certificate_path = self.get_certificate_path()
+        html_str = self.get_html().render(self.context)
+        css_str = self.get_css().render(self.context)
 
         font_config = FontConfiguration()
-        html = HTML(string=self.get_html().render(self.context))
-        css = CSS(string=self.get_css().render(self.context), font_config=font_config)
+        html = HTML(string=html_str)
+        css = CSS(string=css_str, font_config=font_config)
 
         certificate = html.render(stylesheets=[css], font_config=font_config)
         certificate.metadata = self.get_metadata()
         certificate.write_pdf(target=certificate_path, zoom=1)
 
-        return certificate_path
+        return certificate

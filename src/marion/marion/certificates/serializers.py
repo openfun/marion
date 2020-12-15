@@ -77,8 +77,9 @@ class CertificateRequestSerializer(serializers.HyperlinkedModelSerializer):
     def _get_issuer_class(self):
         """Get CertificateRequest issuer class from submitted data"""
 
-        # At this stage, data has not been validated yet, hence we use
-        # initial_data to prevent bad issuer submission.
+        # At this stage, data has not been validated yet, hence we have no
+        # choice but to use initial_data with caution to prevent bad issuer
+        # submission.
         try:
             return self.Meta.model.get_issuer_class(self.initial_data.get("issuer"))
         except InvalidCertificateIssuer as error:
