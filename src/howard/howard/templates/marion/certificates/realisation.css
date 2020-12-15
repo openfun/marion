@@ -1,0 +1,148 @@
+@import url("https://fonts.googleapis.com/css2?family=Inconsolata&family=Open+Sans&display=swap");
+
+body {
+  font-family: "Open Sans", sans-serif;
+  font-size: 11pt;
+  color: #222;
+}
+
+code {
+  font-family: "Inconsolata", monospace;
+}
+
+@media print {
+  /* ----------------------
+   * Reset margins for media
+   * ---------------------- */
+  @page {
+    size: A4 portrait;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    margin: 1cm 2cm;
+    padding: 0;
+    background: #fff;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+  }
+
+  /* ----------------------
+   * Layout
+   * ---------------------- */
+  .certificate > header,
+  .certificate > footer {
+  }
+
+  .certificate > article.main {
+  }
+
+  /* ----------------------
+   * Header
+   * ---------------------- */
+  .certificate header .logos {
+    display: flex;
+  }
+
+  .certificate header .logos > * {
+    width: 50%;
+  }
+
+  .certificate header .logos > *:nth-child(2) {
+    text-align: right;
+  }
+
+  .certificate header .title {
+    padding: 1.5cm;
+    text-align: center;
+    color: #000091;
+  }
+
+  /* ----------------------
+   * Main
+   * ---------------------- */
+  .certificate article.main > * {
+    margin-top: 0.6cm;
+  }
+
+  .certificate article.main #organization p {
+    font-weight: bold;
+    margin-bottom: 0.6rem;
+  }
+
+  .certificate article.main #organization span {
+    padding-left: 0.5rem;
+    font-size: 1.1rem;
+    font-weight: normal;
+    text-transform: uppercase;
+  }
+
+  .certificate article.main #student {
+  }
+
+  .certificate article.main #student .name {
+    font-size: 1.2rem;
+  }
+
+  .certificate article.main #student .organization span {
+    font-weight: bold;
+  }
+
+  .certificate article.main #course > * {
+    margin-bottom: 0.6rem;
+  }
+
+  .certificate article.main #course span {
+    font-weight: bold;
+  }
+
+  .certificate article.main #legal {
+    text-align: justify;
+  }
+
+  .certificate article.main #signatures {
+    display: flex;
+    margin-top: 1cm;
+  }
+
+  .certificate article.main #signatures > *:first-child {
+    width: 40%;
+  }
+
+  .certificate article.main #signatures .seal {
+    padding: 0.3rem;
+    width: 60%;
+    min-height: 3cm;
+    border: 1px solid #222;
+    text-align: center;
+  }
+
+  .certificate article.main #signatures .seal p {
+    font-size: 0.6rem;
+  }
+
+  .certificate article.main #signatures .seal .manager img {
+    max-width: 100%;
+  }
+
+  /* ----------------------
+   * Footer
+   * ---------------------- */
+  .certificate footer {
+    border-top: 1px solid #222;
+    margin-top: 1cm;
+  }
+
+  .certificate footer > * {
+  }
+
+  .certificate footer > * span {
+  }
+
+  .certificate footer code {
+  }
+}

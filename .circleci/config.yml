@@ -123,20 +123,20 @@ jobs:
             - v1-back-dependencies-{{ .Revision }}
       - run:
           name: Lint code with flake8
-          command: ~/.local/bin/flake8 .
+          command: ~/.local/bin/flake8 . ../howard
       - run:
           name: Lint code with isort
-          command: ~/.local/bin/isort --check-only .
+          command: ~/.local/bin/isort --check-only . ../howard
       - run:
           name: Lint code with black
-          command: ~/.local/bin/black --check .
+          command: ~/.local/bin/black --check . ../howard
       - run:
           name: Lint code with bandit
-          command: ~/.local/bin/bandit -c .banditrc -r .
+          command: ~/.local/bin/bandit -c .banditrc -r . ../howard
       - run:
           name: Lint code with pylint
           command: |
-            ~/.local/bin/pylint marion
+            ~/.local/bin/pylint marion ../howard/howard
 
   test-back:
     docker:
@@ -145,7 +145,7 @@ jobs:
           DJANGO_SETTINGS_MODULE: marion.settings
           DJANGO_CONFIGURATION: Test
           DJANGO_SECRET_KEY: ThisIsAnExampleKeyForTestPurposeOnly
-          PYTHONPATH: /home/circleci/marion/src/marion
+          PYTHONPATH: "/home/circleci/marion/src/marion:/home/circleci/marion/src/howard"
           DB_HOST: localhost
           DB_NAME: marion
           DB_USER: fun
@@ -184,7 +184,7 @@ jobs:
             dockerize \
               -wait tcp://localhost:5432 \
               -timeout 60s \
-              ~/.local/bin/pytest
+              ~/.local/bin/pytest marion ../howard --cov=howard
 
   # ---- Packaging jobs ----
   package-back:

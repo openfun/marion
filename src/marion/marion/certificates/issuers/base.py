@@ -5,6 +5,7 @@ from abc import ABC, abstractmethod
 
 from django.conf import settings
 from django.template.engine import Engine
+from django.utils import timezone
 from django.utils.functional import cached_property
 from django.utils.text import re_camel_case
 from django.utils.translation import gettext_lazy as _
@@ -37,29 +38,30 @@ class PDFFileMetadataMixin:
 
     def __init__(self):
 
-        self.created = None
-        self.metadata = None
-        self.modified = None
+        self._created = None
+        self._metadata = None
+        self._modified = None
 
-    def get_metadata(self):
+    @property
+    def metadata(self):
         """Get certificate PDF file metadata.
 
         Return default (or set) certificate file metadata as a
         weasyprint.document.DocumentMetadata instance.
 
         """
-        if self.metadata is None:
-            self.metadata = DocumentMetadata(
+        if self._metadata is None:
+            self._metadata = DocumentMetadata(
                 attachments=self.get_attachments(),
                 authors=self.get_authors(),
-                created=self.get_created(),
+                created=self.created,
                 description=self.get_description(),
                 generator=self.get_generator(),
                 keywords=self.get_keywords(),
-                modified=self.get_modified(),
+                modified=self.modified,
                 title=self.get_title(),
             )
-        return self.metadata
+        return self._metadata
 
     def get_attachments(self):
         """Get certificate PDF file attachments metadata"""
@@ -69,9 +71,12 @@ class PDFFileMetadataMixin:
         """Get certificate PDF file 'authors' metadata"""
         return self.authors
 
-    def get_created(self):
+    @property
+    def created(self):
         """Get certificate PDF file 'created' metadata"""
-        return self.created
+        if self._created is None:
+            self._created = timezone.now().isoformat()
+        return self._created
 
     def get_description(self):
         """Get certificate PDF file 'description' metadata"""
@@ -85,9 +90,12 @@ class PDFFileMetadataMixin:
         """Get certificate PDF file 'keywords' metadata"""
         return self.keywords
 
-    def get_modified(self):
+    @property
+    def modified(self):
         """Get certificate PDF file 'modified' metadata"""
-        return self.modified
+        if self._modified is None:
+            self._modified = timezone.now().isoformat()
+        return self._modified
 
     def get_title(self):
         """Get certificate PDF file 'title' metadata"""
@@ -322,15 +330,15 @@ class AbstractCertificate(PDFFileMetadataMixin, ABC):
             raise CertificateIssuerMissingContext("Context needs to be loaded first")
 
         certificate_path = self.get_certificate_path()
+        html_str = self.get_html().render(self.context)
+        css_str = self.get_css().render(self.context)
 
         font_config = FontConfiguration()
-        html = HTML(
-            string=self.get_html().render(self.context), url_fetcher=static_file_fetcher
-        )
-        css = CSS(string=self.get_css().render(self.context), font_config=font_config)
+        html = HTML(string=html_str, url_fetcher=static_file_fetcher)
+        css = CSS(string=css_str, font_config=font_config)
 
         certificate = html.render(stylesheets=[css], font_config=font_config)
-        certificate.metadata = self.get_metadata()
+        certificate.metadata = self.metadata
         certificate.write_pdf(target=certificate_path, zoom=1)
 
         return certificate_path

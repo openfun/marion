@@ -1,6 +1,7 @@
 """Tests for the marion.certificates.issuers.base certificate"""
 
 import uuid
+from datetime import datetime
 from pathlib import Path
 from unittest.mock import patch
 
@@ -9,6 +10,7 @@ from django.template.engine import Engine
 
 import pytest
 from pdfminer.high_level import extract_text as pdf_extract_text
+from weasyprint.document import DocumentMetadata
 
 from marion.certificates.defaults import CERTIFICATES_ROOT
 from marion.certificates.exceptions import (
@@ -48,7 +50,7 @@ def test_abstract_certificate_interface_with_implemented_abstract_method():
     GoodTestCertificate()
 
 
-def test_abstract_certificate_init():
+def test_abstract_certificate_init(monkeypatch):
     """Test AbstractCertificate init method"""
 
     # pylint: disable=missing-class-docstring
@@ -57,6 +59,9 @@ def test_abstract_certificate_init():
             pass
 
     test_certificate = TestCertificate()
+
+    freezed_now = datetime(2021, 1, 1, 0, 0, 0)
+    monkeypatch.setattr("django.utils.timezone.now", lambda: freezed_now)
 
     # Instance attributes
     assert test_certificate.identifier is not None
@@ -68,9 +73,10 @@ def test_abstract_certificate_init():
     assert test_certificate.html is None
 
     # PDFFileMetadataMixin attributes
-    assert test_certificate.created is None
-    assert test_certificate.metadata is None
-    assert test_certificate.modified is None
+    assert test_certificate.created == freezed_now.isoformat()
+    assert test_certificate.metadata is not None
+    assert isinstance(test_certificate.metadata, DocumentMetadata)
+    assert test_certificate.modified == freezed_now.isoformat()
 
 
 def test_abstract_certificate_generate_identifier():

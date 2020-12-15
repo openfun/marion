@@ -21,6 +21,7 @@ services:
       - "8000:8000"
     volumes:
       - ./src/marion:/app
+      - ./src/howard:/usr/local/src/howard
       - ./data/media:/data/media
     depends_on:
       - "postgresql"

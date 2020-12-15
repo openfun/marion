@@ -148,6 +148,13 @@ class Development(Base):
 
     ROOT_URLCONF = "marion.urls.debug"
 
+    # Application definition
+    INSTALLED_APPS = Base.INSTALLED_APPS + [
+        "howard",
+    ]
+
+    MARION_CERTIFICATE_ISSUER_CHOICES_CLASS = "howard.defaults.CertificateIssuerChoices"
+
 
 class Test(Base):
     """Test environment settings"""
