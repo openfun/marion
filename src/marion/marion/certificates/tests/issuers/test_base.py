@@ -1,9 +1,9 @@
 """Tests for the marion.certificates.issuers.base certificate"""
 
 import uuid
+from datetime import datetime
 from pathlib import Path
 from unittest.mock import patch
-from datetime import datetime
 
 from django.template import Context, Template, engines
 from django.template.engine import Engine
@@ -19,7 +19,6 @@ from marion.certificates.exceptions import (
 )
 from marion.certificates.issuers.base import AbstractCertificate
 
-from marion import __version__ as marion_version
 
 def test_abstract_certificate_interface_with_missing_abstract_methods():
     """Test interface mechanism with missing abstract methods"""
@@ -61,7 +60,7 @@ def test_abstract_certificate_init(monkeypatch):
     test_certificate = TestCertificate()
 
     freezed_now = datetime(2021, 1, 1, 0, 0, 0)
-    monkeypatch.setattr('django.utils.timezone.now', lambda: freezed_now)
+    monkeypatch.setattr("django.utils.timezone.now", lambda: freezed_now)
 
     # Instance attributes
     assert test_certificate.identifier is not None

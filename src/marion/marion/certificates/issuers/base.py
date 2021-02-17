@@ -88,7 +88,7 @@ class PDFFileMetadataMixin:
     def get_keywords(self):
         """Get certificate PDF file 'keywords' metadata"""
         return self.keywords
-    
+
     @property
     def modified(self):
         """Get certificate PDF file 'modified' metadata"""
