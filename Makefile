@@ -128,7 +128,7 @@ lint-pylint: ## lint back-end python sources with pylint
 
 # -- Tests
 test: ## perform backend tests
-	bin/pytest
+	bin/pytest marion /usr/local/src/howard --cov=howard
 .PHONY: test
 
 # -- Misc

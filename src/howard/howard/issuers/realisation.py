@@ -1,4 +1,4 @@
-"""Realization Certificate"""
+"""Realisation Certificate"""
 
 import datetime
 import random
@@ -19,30 +19,38 @@ JSON_SCHEMA_DEFINITIONS = {
                 "location": {"type": "string"},
             },
             "required": ["name"],
-            # FIXME
-            # "additionalProperties": False,
         },
         "person": {
             "type": "object",
             "properties": {
-                "properties": {
-                    "gender": {"type": "string", "enum": ["Mme", "Mr"]},
-                    "first_name": {"type": "string"},
-                    "last_name": {"type": "string"},
-                    "organization": {"$ref": "#/definitions/organization"},
-                    "position": {"type": "string"},
-                },
+                "first_name": {"type": "string"},
+                "last_name": {"type": "string"},
             },
             "required": ["first_name", "last_name"],
-            # FIXME
-            # "additionalProperties": False,
+            "oneOf": [ 
+                { # student schema
+                    "type": "object",
+                    "properties": {
+                        "gender": {"type": "string", "enum": ["Mme", "Mr"]},
+                        "organization": {"$ref": "#/definitions/organization"},
+                    },
+                    "required": ["gender", "organization"]
+                },
+                { # manager schema
+                    "type": "object",
+                    "properties": {
+                        "position": {"type": "string"},
+                    },
+                    "required": ["position"]
+                }
+            ]
         },
     }
 }
 
 
 class CertificateScope(Enum):
-    """Allowed scopes for the RealizationCertificate"""
+    """Allowed scopes for the RealisationCertificate"""
 
     FORMATION = "action de formation"
     BILAN = "bilan de compétences"
@@ -50,7 +58,7 @@ class CertificateScope(Enum):
     APPRENTISSAGE = "action de formation par apprentissage"
 
 
-class RealizationCertificate(AbstractCertificate):
+class RealisationCertificate(AbstractCertificate):
     """Official 'Certificat de réalisation des actions de formation'"""
 
     context_schema = {
@@ -81,7 +89,7 @@ class RealizationCertificate(AbstractCertificate):
                             },
                             "manager": {"$ref": "#/definitions/person"},
                         },
-                        "required": ["date", "duration", "scope", "manager"],
+                        "required": ["date", "duration", "manager", "scope"], # "scope"
                         "additionalProperties": False,
                     },
                     "organization": {"$ref": "#/definitions/organization"},
@@ -92,7 +100,7 @@ class RealizationCertificate(AbstractCertificate):
             "student": {"$ref": "#/definitions/person"},
             "creation_date": {"type": "string", "format": "date"},
         },
-        "required": ["identifier", "course", "student", "creation_date", "location"],
+        "required": ["identifier", "course", "student", "creation_date"],
         "additionalProperties": False,
     }
 
@@ -100,11 +108,11 @@ class RealizationCertificate(AbstractCertificate):
         **JSON_SCHEMA_DEFINITIONS,
         "type": "object",
         "properties": {
-            "course_id": {"type": "string"},
             "student": {"$ref": "#/definitions/person"},
             "course_organization": {"$ref": "#/definitions/organization"},
+            "scope": {"const": "action de formation par apprentissage"},
         },
-        "required": ["course_id", "student", "course_organization"],
+        "required": ["student", "course_organization", "scope"],
         # FIXME
         # "additionalProperties": False,
     }
@@ -117,13 +125,14 @@ class RealizationCertificate(AbstractCertificate):
 
         self.validate_context_query(context_query)
 
-        course_id = context_query.get("course_id", None)
+        # course_id = context_query.get("course_id", None)
         student = context_query.get("student", None)
         course_organization = context_query.get("course_organization", None)
-
+        scope = context_query.get("scope", None)
         # https://github.com/edx/edx-platform/blob/fb6786d90c2a2a6b000527d239b6cc61bf018af0/openedx/core/djangoapps/enrollments/api.py#L101
-        # course_enrollment_endpoint = f"/enrollment/v1/enrollment/{username},{course_id}"
         # TODO; Make request
+
+        # course_enrollment_endpoint = f"/enrollment/v1/enrollment/{username},{course_id}"
         enrollment = {
             "created": "2014-10-20T20:18:00Z",
             "mode": "honor",
@@ -152,7 +161,8 @@ class RealizationCertificate(AbstractCertificate):
                 "invite_only": False,
             },
         }
-        course_detail_endpoint = f"/courses/v1/courses/{course_id}/"
+
+        # course_detail_endpoint = f"/courses/v1/courses/{course_id}/"
         course = {
             "blocks_url": "/api/courses/v1/blocks/?course_id=edX%2Fexample%2F2012_Fall",
             "media": {
@@ -177,6 +187,12 @@ class RealizationCertificate(AbstractCertificate):
             "pacing": "instructor",
         }
 
+        course_manager = {
+            "position": "CHRO",
+            "last_name": "Riggs",
+            "first_name": "Martin",
+        }
+
         return Context(
             {
                 "identifier": self.identifier,
@@ -190,12 +206,12 @@ class RealizationCertificate(AbstractCertificate):
                             "to": enrollment.get("course_details").get("course_end"),
                         },
                         "duration": course.get("effort"),
-                        "scope": random.choice(list(CertificateScope)).value,
+                        "manager": course_manager,
+                        "scope": scope,
                     },
                     "organization": course_organization,
                 },
                 "student": student,
                 "creation_date": self.created,
-                "location": "FIXME",
             }
         )
