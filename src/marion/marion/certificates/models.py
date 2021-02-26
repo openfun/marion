@@ -185,6 +185,8 @@ class CertificateRequest(models.Model):
     @classmethod
     def get_issuer_class(cls, issuer_class_name):
         """Get issuer class given its class name (or its path)"""
+
+        # pylint: disable=no-member
         issuer_class_paths = list(
             filter(
                 lambda issuer_module_path: issuer_module_path.endswith(

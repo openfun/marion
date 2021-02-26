@@ -135,7 +135,8 @@ def test_certificate_request_save(monkeypatch):
         context_query={"fullname": ""},
     )
     with pytest.raises(
-        DjangoValidationError, match="context_query.*'' is too short",
+        DjangoValidationError,
+        match="context_query.*'' is too short",
     ):
         certificate_request.save()
 
@@ -159,6 +160,7 @@ def test_certificate_request_save(monkeypatch):
 def test_certificate_request_get_issuer_class(monkeypatch):
     """Test the `CertificateRequest.get_issuer_class()` method"""
 
+    # pylint: disable=no-member
     monkeypatch.setattr(
         models.CertificateRequest.issuer.field,
         "choices",
