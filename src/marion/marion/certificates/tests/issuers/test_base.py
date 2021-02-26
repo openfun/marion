@@ -10,6 +10,7 @@ from django.template.engine import Engine
 import pytest
 from pdfminer.high_level import extract_text as pdf_extract_text
 
+from marion.certificates.defaults import CERTIFICATES_ROOT
 from marion.certificates.exceptions import (
     CertificateIssuerContextQueryValidationError,
     CertificateIssuerContextValidationError,
@@ -108,11 +109,13 @@ def test_abstract_certificate_get_certificate_path():
 
     test_certificate = TestCertificate()
     assert test_certificate.get_certificate_path() == Path(
-        f"/tmp/{test_certificate.identifier}.pdf"
+        f"{CERTIFICATES_ROOT}/{test_certificate.identifier}.pdf"
     )
 
-    test_certificate.certificate_path = Path("/tmp/richie.pdf")
-    assert test_certificate.get_certificate_path() == Path("/tmp/richie.pdf")
+    test_certificate.certificate_path = Path(f"{CERTIFICATES_ROOT}/richie.pdf")
+    assert test_certificate.get_certificate_path() == Path(
+        f"{CERTIFICATES_ROOT}/richie.pdf"
+    )
 
 
 def test_abstract_certificate_get_certificate_url():

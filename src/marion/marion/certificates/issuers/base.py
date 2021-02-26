@@ -215,7 +215,9 @@ class AbstractCertificate(PDFFileMetadataMixin, ABC):
         returned, or else, an absolute URL will be generated.
 
         """
-        relative_path = self.get_certificate_path().relative_to(settings.MEDIA_ROOT)
+        relative_path = self.get_certificate_path().relative_to(
+            defaults.CERTIFICATES_ROOT
+        )
         relative_url = f"{settings.MEDIA_URL}{relative_path}"
         if host is None:
             return relative_url

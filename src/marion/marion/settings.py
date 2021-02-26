@@ -3,6 +3,7 @@ Django settings for marion project.
 """
 
 from pathlib import Path
+from tempfile import mkdtemp
 
 from configurations import Configuration, values
 
@@ -149,4 +150,4 @@ class Development(Base):
 class Test(Base):
     """Test environment settings"""
 
-    MEDIA_ROOT = Path("/tmp")
+    MEDIA_ROOT = Path(mkdtemp())
