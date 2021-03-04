@@ -8,6 +8,7 @@ from django.template import Context
 from django.urls import reverse
 
 import pytest
+from pytest_django import asserts as django_assertions
 from rest_framework import exceptions as drf_exceptions
 from rest_framework import status
 from rest_framework.test import APIClient
@@ -240,3 +241,38 @@ def test_certificate_request_viewset_post_context_json_schema_validation(monkeyp
     )
     assert models.CertificateRequest.objects.count() == 0
     assert count_certificates(defaults.CERTIFICATES_ROOT) == 0
+
+
+def test_certificate_template_debug_view_is_only_active_in_debug_mode(settings):
+    """Test if the certificate_template_debug view is active when not in debug mode"""
+
+    settings.DEBUG = False
+    url = reverse("certificates-template-debug")
+
+    response = client.get(url)
+    assert response.status_code == 403
+
+
+def test_certificate_template_debug_view(settings):
+    """Test the certificate_template_debug view"""
+
+    settings.DEBUG = True
+    settings.MARION_CERTIFICATE_ISSUER_CHOICES_CLASS = (
+        "marion.certificates.default.CertificateIssuerChoices"
+    )
+    url = reverse("certificates-template-debug")
+
+    response = client.get(url)
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert b"You should provide an issuer." in response.content
+
+    response = client.get(url, {"issuer": "foo.bar.baz"})
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert b"Unknown issuer foo.bar.baz" in response.content
+
+    response = client.get(
+        url, {"issuer": "marion.certificates.issuers.DummyCertificate"}
+    )
+    assert response.status_code == 200
+    # pylint: disable=no-member
+    django_assertions.assertContains(response, "<h1>Dummy certificate</h1>")
