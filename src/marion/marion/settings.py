@@ -146,8 +146,12 @@ class Development(Base):
     DEBUG = True
     ALLOWED_HOSTS = ["*"]
 
+    ROOT_URLCONF = "marion.urls.debug"
+
 
 class Test(Base):
     """Test environment settings"""
 
     MEDIA_ROOT = Path(mkdtemp())
+
+    ROOT_URLCONF = "marion.urls.debug"

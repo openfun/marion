@@ -1,6 +1,13 @@
 {% load i18n %}
 
 <html>
+  {% if debug %}
+  <head>
+    <style>
+      {{ css }}
+    </style>
+  </head>
+  {% endif %}
   <body>
     <div class="certificate dummy">
       <header>
