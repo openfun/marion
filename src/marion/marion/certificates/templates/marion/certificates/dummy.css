@@ -39,7 +39,7 @@ code {
   }
 
   .certificate > article.main {
-    height: 10.5cm;
+    height: 10.45cm;
   }
 
   /* ----------------------
@@ -63,6 +63,20 @@ code {
   .certificate article.main {
     background: #8338ec;
     color: #fff;
+  }
+
+  .certificate article.main .stamp {
+    display: float;
+    position: absolute;
+    margin: 0;
+    padding: 0;
+    bottom: 5cm;
+    right: 1cm;
+    width: 3cm;
+  }
+
+  .certificate article.main .stamp img {
+    filter: invert(100%);
   }
 
   .certificate article.main .student {
@@ -93,7 +107,7 @@ code {
   }
 
   .certificate footer > * {
-    width: 50%;
+    width: 33.33%;
     align-self: flex-end;
     padding: 1cm 0;
     text-align: center;
