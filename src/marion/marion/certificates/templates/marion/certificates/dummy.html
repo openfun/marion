@@ -1,4 +1,5 @@
 {% load i18n %}
+{% load static %}
 
 <html>
   {% if debug %}
@@ -14,6 +15,12 @@
         <h1>{% trans "Dummy certificate" %}</h1>
       </header>
       <article class="main">
+        <div class="stamp">
+          <img
+            src="{{ debug | yesno:",file://" }}{% static "marion/noun_Check_3612574.svg" %}"
+            alt="{% trans "icon check" %}"
+          />
+        </div>
         <section class="student">
           <p>{% trans "Delivered to:" %}</p>
           <div class="name">
@@ -45,6 +52,9 @@
           <code>
             {% now "c" %}
           </code>
+        </div>
+        <div class="credits">
+          {% trans "Check icon by shuai tawf from the Noun Project" %}
         </div>
       </footer>
     </div>

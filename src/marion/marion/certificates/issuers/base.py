@@ -22,6 +22,7 @@ from ..exceptions import (
     CertificateIssuerContextValidationError,
     CertificateIssuerMissingContext,
 )
+from ..utils import static_file_fetcher
 
 
 class PDFFileMetadataMixin:
@@ -323,7 +324,9 @@ class AbstractCertificate(PDFFileMetadataMixin, ABC):
         certificate_path = self.get_certificate_path()
 
         font_config = FontConfiguration()
-        html = HTML(string=self.get_html().render(self.context))
+        html = HTML(
+            string=self.get_html().render(self.context), url_fetcher=static_file_fetcher
+        )
         css = CSS(string=self.get_css().render(self.context), font_config=font_config)
 
         certificate = html.render(stylesheets=[css], font_config=font_config)
