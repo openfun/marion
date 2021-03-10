@@ -1,143 +1,170 @@
 """Realisation Certificate"""
 
+import datetime
 from enum import Enum
+from typing import Generic, TypeVar
+from uuid import UUID
 
 from django.template import Context
 
+import arrow
 from dateutil import parser
+from pydantic import BaseModel, ValidationError
 
 from marion.certificates.issuers.base import AbstractCertificate
 
+ArrowSupportedDateType = TypeVar("ArrowSupportedDateType", int, str, datetime.date)
 
-class CertificateScope(Enum):
-    """Allowed scopes for the RealisationCertificate"""
+
+class StrEnum(str, Enum):
+    """String Enum."""
+
+    def __str__(self):
+        return f"{self.value}"
+
+
+class Gender(StrEnum):
+    """Gender definitions."""
+
+    MALE = "Mr"
+    FEMALE = "Mme"
+
+    def __str__(self):
+        return f"{self.value}"
+
+
+class CertificateScope(StrEnum):
+    """Allowed scopes for the RealisationCertificate."""
 
     FORMATION = "action de formation"
     BILAN = "bilan de compétences"
     VAE = "action de VAE"
     APPRENTISSAGE = "action de formation par apprentissage"
 
+    def __str__(self):
+        return f"{self.value}"
 
-JSON_SCHEMA_DEFINITIONS = {
-    "definitions": {
-        "organization": {
-            "type": "object",
-            "properties": {
-                "name": {"type": "string"},
-                "manager": {"$ref": "#/definitions/person"},
-                "location": {"type": "string"},
-            },
-            "required": ["name"],
-        },
-        "person": {
-            "type": "object",
-            "properties": {
-                "first_name": {"type": "string"},
-                "last_name": {"type": "string"},
-            },
-            "required": ["first_name", "last_name"],
-            "oneOf": [
-                {  # student schema
-                    "type": "object",
-                    "properties": {
-                        "gender": {"type": "string", "enum": ["Mme", "Mr"]},
-                        "organization": {"$ref": "#/definitions/organization"},
-                    },
-                    "required": ["gender", "organization"],
-                },
-                {  # manager schema
-                    "type": "object",
-                    "properties": {
-                        "position": {"type": "string"},
-                    },
-                    "required": ["position"],
-                },
-            ],
-        },
-        "course": {
-            "type": "object",
-            "properties": {
-                "name": {"type": "string"},
-                "session": {
-                    "type": "object",
-                    "properties": {
-                        "date": {
-                            "type": "object",
-                            "properties": {
-                                "from": {"type": "string", "format": "date"},
-                                "to": {"type": "string", "format": "date"},
-                            },
-                        },
-                        "duration": {"type": "integer"},
-                        "scope": {
-                            "type": "string",
-                            "enum": [scope.value for scope in list(CertificateScope)],
-                        },
-                        "manager": {"$ref": "#/definitions/person"},
-                    },
-                    "required": ["date", "duration", "manager", "scope"],
-                    "additionalProperties": False,
-                },
-                "organization": {"$ref": "#/definitions/organization"},
-            },
-            "required": ["name", "session", "organization"],
-        },
-    }
-}
+
+class ArrowDate(Generic[ArrowSupportedDateType]):
+    """ArrowDate generic class definition.
+
+    To accept several input date types as string, integer or datetime.date,
+    it is necessary to parse them to get a datetime.date object.
+
+    The 'arrow' package is used to convert inputs in datetime.date with a
+    wide range of possible writing formats.
+
+    """
+
+    def __init__(self, date: ArrowSupportedDateType) -> None:
+        self.date = date
+
+    @classmethod
+    def __get_validators__(cls):
+        yield cls.validate
+
+    @classmethod
+    def validate(cls, value):
+        """Validates input date format with arrow library object."""
+
+        if not isinstance(value, cls):
+            raise TypeError("Invalid value")
+
+        if isinstance(value.date, (int, str)):
+            return arrow.get(value.date).date()
+
+        if isinstance(value.date, datetime.date):
+            return value.date
+
+        raise ValidationError("Date value must be of type int, str or datetime.date.")
+
+
+class DateSpan(BaseModel):
+    """DateSpan model definition."""
+
+    start: ArrowDate
+    end: ArrowDate
+
+
+class Manager(BaseModel):
+    """Manager model definition."""
+
+    first_name: str
+    last_name: str
+    position: str
+
+
+class Organization(BaseModel):
+    """Organization model definition."""
+
+    name: str
+    manager: Manager = None
+    location: str = None
+
+
+class Student(BaseModel):
+    """Student model definition."""
+
+    first_name: str
+    last_name: str
+    gender: Gender
+    organization: Organization
+
+
+class Session(BaseModel):
+    """Course session model definition."""
+
+    datespan: DateSpan
+    duration: int
+    scope: CertificateScope
+    manager: Manager
+
+
+class Course(BaseModel):
+    """Course model definition."""
+
+    name: str
+    session: Session
+    organization: Organization
+
+
+class ContextModel(BaseModel):
+    """Context model definition."""
+
+    identifier: UUID
+    course: Course
+    student: Student
+    creation_date: datetime.datetime
+    delivery_stamp: datetime.datetime
+
+
+class ContextQueryModel(BaseModel):
+    """Context query model definition."""
+
+    student: Student
+    course: Course
 
 
 class RealisationCertificate(AbstractCertificate):
-    """Official 'Certificat de réalisation des actions de formation'"""
-
-    context_schema = {
-        **JSON_SCHEMA_DEFINITIONS,
-        "type": "object",
-        "properties": {
-            "identifier": {"type": "string", "format": "uuid"},
-            "student": {"$ref": "#/definitions/person"},
-            "course": {"$ref": "#/definitions/course"},
-            "creation_date": {"type": "string", "format": "date"},
-            "delivery_stamp": {"type": "string", "format": "date"},
-        },
-        "required": [
-            "identifier",
-            "course",
-            "student",
-            "creation_date",
-            "delivery_stamp",
-        ],
-        "additionalProperties": False,
-    }
-
-    context_query_schema = {
-        **JSON_SCHEMA_DEFINITIONS,
-        "type": "object",
-        "properties": {
-            "student": {"$ref": "#/definitions/person"},
-            "course": {"$ref": "#/definitions/course"},
-        },
-        "required": ["course", "student"],
-        "additionalProperties": False,
-    }
+    """Official 'Certificat de réalisation des actions de formation'."""
 
     keywords = ["certificat", "réalisation", "formation"]
     title = "Certificat de réalisation des actions de formation"
 
+    context_model = ContextModel
+    context_query_model = ContextQueryModel
+
     def fetch_context(self, **context_query):
         """Fetch the context that will be used to compile the certificate template."""
 
-        short_date_format = "%d/%m/%Y"
-
-        self.validate_context_query(context_query)
+        validated = self.validate_context_query(context_query)
 
         return Context(
             {
                 "identifier": self.identifier,
-                "course": context_query.get("course", None),
-                "student": context_query.get("student", None),
-                "creation_date": parser.isoparse(self.created).strftime(
-                    short_date_format
-                ),
+                "course": validated.course,
+                "student": validated.student,
+                "creation_date": parser.isoparse(self.created),
                 "delivery_stamp": self.created,
             }
         )

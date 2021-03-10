@@ -63,8 +63,8 @@
           </div>
           <div class="dates">
             qui s'est déroulée du
-            <span>{{ course.session.date.from }}</span> au
-            <span>{{ course.session.date.to }} </span>
+            <span>{{ course.session.datespan.start | date:"d/m/Y" }}</span> au
+            <span>{{ course.session.datespan.end | date:"d/m/Y" }} </span>
           </div>
           <div class="duration">
             pour une durée totale de <span>{{ course.session.duration }}</span> heures.
@@ -87,7 +87,7 @@
               Fait à : <span>{{ course.organization.location }}</span>
             </div>
             <div class="date">
-              Le : <span>{{ creation_date }}</span>
+              Le : <span>{{ creation_date | date:"d/m/Y" }}</span>
             </div>
           </div>
           <div class="seal">

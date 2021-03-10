@@ -6,73 +6,76 @@ from django.db import models as django_models
 from django.template import Context
 
 import pytest
+from pydantic import BaseModel
 
 from marion.certificates import exceptions, factories, issuers, models
 
 
-def test_json_schema_field_validation():
-    """Test schema validation for the JSONSchema field"""
+def test_pydantic_model_field_validation():
+    """Test the pydanticmodel validation for a PydanticModelField"""
     # pylint: disable=missing-class-docstring
 
     # Missing schema attribute and field schema extraction method
     class TestModelA(django_models.Model):
-        data = models.JSONSchemaField()
+        data = models.PydanticModelField()
 
     instance = TestModelA(data={"fullname": "Richie"})
+
     with pytest.raises(
-        DjangoFieldError, match="A schema is missing for the 'data' field."
+        DjangoFieldError, match="A pydantic model is missing for the 'data' field."
     ):
         instance.full_clean()
 
     # With a schema attribute
+    class PydanticModelA(BaseModel):
+        fullname: str
+
     class TestModelB(django_models.Model):
-        data = models.JSONSchemaField(
-            schema={"type": "object", "properties": {"fullname": {"type": "string"}}}
-        )
+        data = models.PydanticModelField(pydantic_model=PydanticModelA)
 
     instance = TestModelB(data={"fullname": "Richie"})
     instance.full_clean()
 
-    with pytest.raises(DjangoValidationError, match="2 is not of type 'string'"):
-        instance = TestModelB(data={"fullname": 2})
+    with pytest.raises(DjangoValidationError, match="none is not an allowed value"):
+        instance = TestModelB(data={"fullname": None})
         instance.full_clean()
 
     # Missing schema attribute but with field schema extraction method
     class TestModelC(django_models.Model):
-        data = models.JSONSchemaField()
+        data = models.PydanticModelField()
 
-        def get_data_schema(self):
+        def get_data_pydantic_model(self):
             # pylint: disable=no-self-use,missing-function-docstring
-            return {"type": "object", "properties": {"fullname": {"type": "string"}}}
+            return PydanticModelA
 
     instance = TestModelC(data={"fullname": "Richie"})
     instance.full_clean()
 
-    with pytest.raises(DjangoValidationError, match="2 is not of type 'string'"):
-        instance = TestModelC(data={"fullname": 2})
+    with pytest.raises(DjangoValidationError, match="none is not an allowed value"):
+        instance = TestModelC(data={"fullname": None})
         instance.full_clean()
 
     # If both schema attribute and schema extraction method are provided, the
     # schema attribute should prevail
-    class TestModelD(django_models.Model):
-        data = models.JSONSchemaField(
-            schema={
-                "type": "object",
-                "properties": {"amount": {"type": "integer"}},
-                "additionalProperties": False,
-            }
-        )
+    class PydanticModelB(BaseModel):
+        amount: int
 
-        def get_data_schema(self):
+        class Config:
+            extra = "forbid"
+
+    class TestModelD(django_models.Model):
+        data = models.PydanticModelField(pydantic_model=PydanticModelB)
+
+        def get_data_pydantic_model(self):
             # pylint: disable=no-self-use,missing-function-docstring
-            return {"type": "object", "properties": {"fullname": {"type": "string"}}}
+            return PydanticModelB
 
     instance = TestModelD(data={"amount": 2})
     instance.full_clean()
 
     with pytest.raises(
         DjangoValidationError,
-        match=r"Additional properties are not allowed \('fullname' was unexpected\)",
+        match="extra fields not permitted",
     ):
         instance = TestModelD(data={"fullname": "Richie"})
         instance.full_clean()
@@ -136,7 +139,7 @@ def test_certificate_request_save(monkeypatch):
     )
     with pytest.raises(
         DjangoValidationError,
-        match="context_query.*'' is too short",
+        match="ensure this value has at least 2 characters",
     ):
         certificate_request.save()
 

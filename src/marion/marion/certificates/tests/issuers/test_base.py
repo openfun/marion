@@ -10,6 +10,7 @@ from django.template.engine import Engine
 
 import pytest
 from pdfminer.high_level import extract_text as pdf_extract_text
+from pydantic import BaseModel
 from weasyprint.document import DocumentMetadata
 
 from marion.certificates.defaults import CERTIFICATES_ROOT
@@ -271,43 +272,39 @@ def test_abstract_certificate_validate_context():
     """Test AbstractCertificate validate_context method"""
 
     # pylint: disable=missing-class-docstring
-    class TestCertificateWithMissingContextSchema(AbstractCertificate):
+    class TestCertificateWithMissingContextModel(AbstractCertificate):
         def fetch_context(self, **context_query):
             pass
 
     with pytest.raises(
-        CertificateIssuerContextValidationError, match="Context schema is missing"
+        CertificateIssuerContextValidationError, match="Context model is missing"
     ):
-        TestCertificateWithMissingContextSchema.validate_context({"foo": 1})
+        TestCertificateWithMissingContextModel.validate_context({"foo": 1})
+
+    class ContextModel(BaseModel):
+        fullname: str
+        friends: int
 
     # pylint: disable=missing-class-docstring
     class TestCertificate(AbstractCertificate):
 
-        context_schema = {
-            "type": "object",
-            "properties": {
-                "fullname": {"type": "string", "minLength": 2, "maxLength": 255},
-                "friends": {"type": "integer"},
-            },
-            "required": ["fullname", "friends"],
-            "additionalProperties": False,
-        }
+        context_model = ContextModel
 
         def fetch_context(self, **context_query):
             pass
 
     with pytest.raises(
-        CertificateIssuerContextValidationError, match="'None' is not of type 'integer'"
+        CertificateIssuerContextValidationError, match="value is not a valid integer"
     ):
         TestCertificate.validate_context(
             {"fullname": "Richie Cunningham", "friends": "None"}
         )
 
-    assert (
-        TestCertificate.validate_context(
-            {"fullname": "Richie Cunningham", "friends": 2}
-        )
-        is None
+    assert TestCertificate.validate_context(
+        {"fullname": "Richie Cunningham", "friends": 2}
+    ) == ContextModel(
+        fullname="Richie Cunningham",
+        friends=2,
     )
 
 
@@ -315,45 +312,42 @@ def test_abstract_certificate_validate_context_query():
     """Test AbstractCertificate validate_context_query method"""
 
     # pylint: disable=missing-class-docstring
-    class TestCertificateWithMissingContextSchema(AbstractCertificate):
+    class TestCertificateWithMissingContextModel(AbstractCertificate):
         def fetch_context(self, **context_query):
             pass
 
     with pytest.raises(
         CertificateIssuerContextQueryValidationError,
-        match="Context query schema is missing",
+        match="Context query model is missing",
     ):
-        TestCertificateWithMissingContextSchema.validate_context_query({"foo": 1})
+        TestCertificateWithMissingContextModel.validate_context_query({"foo": 1})
+
+    # pylint: disable=missing-class-docstring
+    class ContextQueryModel(BaseModel):
+        fullname: str
+        friends: int
 
     # pylint: disable=missing-class-docstring
     class TestCertificate(AbstractCertificate):
 
-        context_query_schema = {
-            "type": "object",
-            "properties": {
-                "fullname": {"type": "string", "minLength": 2, "maxLength": 255},
-                "friends": {"type": "integer"},
-            },
-            "required": ["fullname", "friends"],
-            "additionalProperties": False,
-        }
+        context_query_model = ContextQueryModel
 
         def fetch_context(self, **context_query):
             pass
 
     with pytest.raises(
         CertificateIssuerContextQueryValidationError,
-        match="'None' is not of type 'integer'",
+        match="value is not a valid integer",
     ):
         TestCertificate.validate_context_query(
             {"fullname": "Richie Cunningham", "friends": "None"}
         )
 
-    assert (
-        TestCertificate.validate_context_query(
-            {"fullname": "Richie Cunningham", "friends": 2}
-        )
-        is None
+    assert TestCertificate.validate_context_query(
+        {"fullname": "Richie Cunningham", "friends": 2}
+    ) == ContextQueryModel(
+        fullname="Richie Cunningham",
+        friends=2,
     )
 
 
@@ -361,17 +355,14 @@ def test_abstract_certificate_load_context():
     """Test AbstractCertificate load_context method"""
 
     # pylint: disable=missing-class-docstring
+    class ContextModel(BaseModel):
+        fullname: str
+        friends: int
+
+    # pylint: disable=missing-class-docstring
     class TestCertificate(AbstractCertificate):
 
-        context_schema = {
-            "type": "object",
-            "properties": {
-                "fullname": {"type": "string", "minLength": 2, "maxLength": 255},
-                "friends": {"type": "integer"},
-            },
-            "required": ["fullname", "friends"],
-            "additionalProperties": False,
-        }
+        context_model = ContextModel
 
         def fetch_context(self, **context_query):
             pass
@@ -387,10 +378,7 @@ def test_abstract_certificate_load_context():
     context = Context({"fullname": "Richie Cunningham", "friends": "None"})
     with pytest.raises(
         CertificateIssuerContextValidationError,
-        match=(
-            "Certificate issuer context is not valid: "
-            "'None' is not of type 'integer'"
-        ),
+        match="value is not a valid integer",
     ):
         test_certificate.load_context(context)
 
@@ -410,18 +398,18 @@ def test_abstract_certificate_create():
     """Test AbstractCertificate create method"""
 
     # pylint: disable=missing-class-docstring
+    class ContextModel(BaseModel):
+        user_id: str
+        fullname: str
+
+    # pylint: disable=missing-class-docstring
+    class ContextQueryModel(BaseModel):
+        user_id: str
+
+    # pylint: disable=missing-class-docstring
     class TestCertificate(AbstractCertificate):
-        context_schema = {
-            "type": "object",
-            "properties": {
-                "user_id": {"type": "string"},
-                "fullname": {"type": "string"},
-            },
-        }
-        context_query_schema = {
-            "type": "object",
-            "properties": {"user_id": {"type": "string"}},
-        }
+        context_model = ContextModel
+        context_query_model = ContextQueryModel
 
         def get_html(self):
             return Template(

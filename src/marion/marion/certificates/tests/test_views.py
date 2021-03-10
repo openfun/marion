@@ -73,10 +73,10 @@ def test_certificate_request_viewset_post(monkeypatch):
 
 
 @pytest.mark.django_db
-def test_certificate_request_viewset_post_context_query_json_schema_validation(
+def test_certificate_request_viewset_post_context_query_pydantic_model_validation(
     monkeypatch,
 ):
-    """Test the CertificateRequestViewSet create view context_query JSON schema
+    """Test the CertificateRequestViewSet create view context_query pydantic model
     validation.
 
     """
@@ -95,21 +95,19 @@ def test_certificate_request_viewset_post_context_query_json_schema_validation(
     response = client.post(url, data, format="json")
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert isinstance(response.data.get("context_query")[0], drf_exceptions.ErrorDetail)
-    assert "Additional properties are not allowed ('friends' was unexpected)" in str(
-        response.data.get("context_query")[0]
-    )
+    assert "extra fields not permitted" in str(response.data.get("context_query")[0])
     assert models.CertificateRequest.objects.count() == 0
     assert count_certificates(defaults.CERTIFICATES_ROOT) == 0
 
     # Input types checking
     data = {
         "issuer": "marion.certificates.issuers.DummyCertificate",
-        "context_query": json.dumps({"fullname": 2}),
+        "context_query": json.dumps({"fullname": None}),
     }
     response = client.post(url, data, format="json")
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert isinstance(response.data.get("context_query")[0], drf_exceptions.ErrorDetail)
-    assert "2 is not of type 'string'" in str(response.data.get("context_query")[0])
+    assert "none is not an allowed value" in str(response.data.get("context_query")[0])
     assert models.CertificateRequest.objects.count() == 0
     assert count_certificates(defaults.CERTIFICATES_ROOT) == 0
 
@@ -121,7 +119,9 @@ def test_certificate_request_viewset_post_context_query_json_schema_validation(
     response = client.post(url, data, format="json")
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert isinstance(response.data.get("context_query")[0], drf_exceptions.ErrorDetail)
-    assert "'D' is too short" in str(response.data.get("context_query")[0])
+    assert "ensure this value has at least 2 characters" in str(
+        response.data.get("context_query")[0]
+    )
     assert models.CertificateRequest.objects.count() == 0
     assert count_certificates(defaults.CERTIFICATES_ROOT) == 0
 
@@ -133,14 +133,21 @@ def test_certificate_request_viewset_post_context_query_json_schema_validation(
     response = client.post(url, data, format="json")
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert isinstance(response.data.get("context_query")[0], drf_exceptions.ErrorDetail)
-    assert f"'{'F'*256}' is too long" in str(response.data.get("context_query")[0])
+    assert "ensure this value has at most 255 characters" in str(
+        response.data.get("context_query")[0]
+    )
     assert models.CertificateRequest.objects.count() == 0
     assert count_certificates(defaults.CERTIFICATES_ROOT) == 0
 
 
 @pytest.mark.django_db
-def test_certificate_request_viewset_post_context_json_schema_validation(monkeypatch):
-    """Test the CertificateRequestViewSet create view context JSON schema validation"""
+def test_certificate_request_viewset_post_context_pydantic_model_validation(
+    monkeypatch,
+):
+    """Test the CertificateRequestViewSet create view context pydantic model
+    validation.
+
+    """
     # pylint: disable=unused-argument,function-redefined
 
     monkeypatch.setattr(defaults, "CERTIFICATES_ROOT", Path(tempfile.mkdtemp()))
@@ -166,10 +173,7 @@ def test_certificate_request_viewset_post_context_json_schema_validation(monkeyp
     monkeypatch.setattr(DummyCertificate, "fetch_context", mock_fetch_context)
     response = client.post(url, data, format="json")
     assert response.status_code == status.HTTP_400_BAD_REQUEST
-    assert (
-        "Certificate issuer context is not valid: "
-        "Additional properties are not allowed ('friends' was unexpected)"
-    ) in response.data.get("error")
+    assert "extra fields not permitted" in response.data.get("error")
     assert models.CertificateRequest.objects.count() == 0
     assert count_certificates(defaults.CERTIFICATES_ROOT) == 0
 
@@ -177,16 +181,13 @@ def test_certificate_request_viewset_post_context_json_schema_validation(monkeyp
     def mock_fetch_context(*args, **kwargs):
         """A mock that return invalid context"""
         return Context(
-            {"fullname": 2, "identifier": "0a1c3ccf-c67d-4071-ab1f-3b27628db9b1"}
+            {"fullname": None, "identifier": "0a1c3ccf-c67d-4071-ab1f-3b27628db9b1"}
         )
 
     monkeypatch.setattr(DummyCertificate, "fetch_context", mock_fetch_context)
     response = client.post(url, data, format="json")
     assert response.status_code == status.HTTP_400_BAD_REQUEST
-    assert (
-        "Certificate issuer context is not valid: 2 is not of type 'string'"
-        in response.data.get("error")
-    )
+    assert "none is not an allowed value" in response.data.get("error")
     assert models.CertificateRequest.objects.count() == 0
     assert count_certificates(defaults.CERTIFICATES_ROOT) == 0
 
@@ -198,10 +199,7 @@ def test_certificate_request_viewset_post_context_json_schema_validation(monkeyp
     monkeypatch.setattr(DummyCertificate, "fetch_context", mock_fetch_context)
     response = client.post(url, data, format="json")
     assert response.status_code == status.HTTP_400_BAD_REQUEST
-    assert (
-        "Certificate issuer context is not valid: 'identifier' is a required property"
-        in response.data.get("error")
-    )
+    assert "identifier\n  field required" in response.data.get("error")
     assert models.CertificateRequest.objects.count() == 0
     assert count_certificates(defaults.CERTIFICATES_ROOT) == 0
 
@@ -215,10 +213,7 @@ def test_certificate_request_viewset_post_context_json_schema_validation(monkeyp
     monkeypatch.setattr(DummyCertificate, "fetch_context", mock_fetch_context)
     response = client.post(url, data, format="json")
     assert response.status_code == status.HTTP_400_BAD_REQUEST
-    assert (
-        "Certificate issuer context is not valid: 'D' is too short"
-        in response.data.get("error")
-    )
+    assert "ensure this value has at least 2 characters" in response.data.get("error")
     assert models.CertificateRequest.objects.count() == 0
     assert count_certificates(defaults.CERTIFICATES_ROOT) == 0
 
@@ -235,10 +230,7 @@ def test_certificate_request_viewset_post_context_json_schema_validation(monkeyp
     monkeypatch.setattr(DummyCertificate, "fetch_context", mock_fetch_context)
     response = client.post(url, data, format="json")
     assert response.status_code == status.HTTP_400_BAD_REQUEST
-    assert (
-        f"Certificate issuer context is not valid: '{'F'*256}' is too long"
-        in response.data.get("error")
-    )
+    assert "ensure this value has at most 255 characters" in response.data.get("error")
     assert models.CertificateRequest.objects.count() == 0
     assert count_certificates(defaults.CERTIFICATES_ROOT) == 0
 

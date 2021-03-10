@@ -10,7 +10,8 @@ from django.utils.functional import cached_property
 from django.utils.text import re_camel_case
 from django.utils.translation import gettext_lazy as _
 
-from jsonschema import ValidationError, validate
+from pydantic import BaseModel
+from pydantic.error_wrappers import ValidationError
 from weasyprint import CSS, HTML
 from weasyprint.document import DocumentMetadata
 from weasyprint.fonts import FontConfiguration
@@ -102,6 +103,7 @@ class PDFFileMetadataMixin:
         return self.title
 
 
+# pylint: disable=not-callable
 class AbstractCertificate(PDFFileMetadataMixin, ABC):
     """Base certificate interface.
 
@@ -115,9 +117,9 @@ class AbstractCertificate(PDFFileMetadataMixin, ABC):
     html_template_path = None
     template_engine = None
 
-    # Schemas
-    context_schema = None
-    context_query_schema = None
+    # Models
+    context_model: BaseModel = None
+    context_query_model: BaseModel = None
 
     def __init__(self, identifier=None):
 
@@ -134,14 +136,14 @@ class AbstractCertificate(PDFFileMetadataMixin, ABC):
 
     @classmethod
     def validate_context(cls, context):
-        """Use required context JSON schema to validate input context"""
+        """Use required context pydantic model to validate input context."""
 
-        if cls.context_schema is None:
+        if cls.context_model is None:
             raise CertificateIssuerContextValidationError(
-                str(_("Context schema is missing"))
+                str(_("Context model is missing"))
             )
         try:
-            validate(context, cls.context_schema)
+            return cls.context_model(**context)
         except ValidationError as error:
             raise CertificateIssuerContextValidationError(
                 _(f"Certificate issuer context is not valid: {error}")
@@ -149,14 +151,14 @@ class AbstractCertificate(PDFFileMetadataMixin, ABC):
 
     @classmethod
     def validate_context_query(cls, context_query):
-        """Use required context query JSON schema to validate input context query"""
+        """Use required context query pydantic model to validate input context query."""
 
-        if cls.context_query_schema is None:
+        if cls.context_query_model is None:
             raise CertificateIssuerContextQueryValidationError(
-                str(_("Context query schema is missing"))
+                str(_("Context query model is missing"))
             )
         try:
-            validate(context_query, cls.context_query_schema)
+            return cls.context_query_model(**context_query)
         except ValidationError as error:
             raise CertificateIssuerContextQueryValidationError(
                 _(f"Certificate issuer context query is not valid: {error}")

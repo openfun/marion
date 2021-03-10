@@ -3,6 +3,7 @@
 from django.urls import reverse
 
 import pytest
+from pydantic import BaseModel
 from rest_framework import exceptions as drf_exceptions
 from rest_framework.serializers import Serializer
 from rest_framework.test import APIRequestFactory
@@ -10,72 +11,76 @@ from rest_framework.test import APIRequestFactory
 from marion.certificates import factories, serializers
 
 
-def test_json_schema_field_validation():
-    """Test the schema validation for a JSONSchemaField"""
+def test_pydantic_model_field_validation():
+    """Test the pydantic model validation for a PydanticModelField"""
     # pylint: disable=missing-class-docstring
 
-    # Missing schema attribute and field schema extraction method
+    # Missing pydantic model attribute and field pydantic model extraction method
     class TestSerializerA(Serializer):
         # pylint: disable=abstract-method
 
-        misc = serializers.JSONSchemaField()
+        misc = serializers.PydanticModelField()
 
     instance = TestSerializerA(data={"misc": {"fullname": "Richie"}})
     assert instance.is_valid() is False
     assert len(instance.validated_data) == 0
     assert isinstance(instance.errors.get("misc")[0], drf_exceptions.ErrorDetail)
-    assert "A schema is missing for the 'misc' field." in instance.errors.get("misc")[0]
+    assert (
+        "A pydantic model is missing for the 'misc' field."
+        in instance.errors.get("misc")[0]
+    )
 
-    # With a schema attribute
+    # With a pydantic model attribute
+    class PydanticModelA(BaseModel):
+        fullname: str
+
     class TestSerializerB(Serializer):
         # pylint: disable=abstract-method
 
-        misc = serializers.JSONSchemaField(
-            schema={"type": "object", "properties": {"fullname": {"type": "string"}}}
-        )
+        misc = serializers.PydanticModelField(pydantic_model=PydanticModelA)
 
     instance = TestSerializerB(data={"misc": {"fullname": "Richie"}})
     assert instance.is_valid()
 
-    instance = TestSerializerB(data={"misc": {"fullname": 2}})
+    instance = TestSerializerB(data={"misc": {"fullname": None}})
     assert instance.is_valid() is False
     assert isinstance(instance.errors.get("misc")[0], drf_exceptions.ErrorDetail)
-    assert "2 is not of type 'string'" in instance.errors.get("misc")[0]
+    assert "none is not an allowed value" in instance.errors.get("misc")[0]
 
-    # Missing schema attribute but with field schema extraction method
+    # Missing pydantic model attribute but with field pydantic model extraction method
     class TestSerializerC(Serializer):
         # pylint: disable=abstract-method
 
-        misc = serializers.JSONSchemaField()
+        misc = serializers.PydanticModelField()
 
-        def get_misc_schema(self):
+        def get_misc_pydantic_model(self):
             # pylint: disable=no-self-use,missing-function-docstring
-            return {"type": "object", "properties": {"fullname": {"type": "string"}}}
+            return PydanticModelA
 
     instance = TestSerializerC(data={"misc": {"fullname": "Richie"}})
     assert instance.is_valid()
 
-    instance = TestSerializerC(data={"misc": {"fullname": 2}})
+    instance = TestSerializerC(data={"misc": {"fullname": None}})
     assert instance.is_valid() is False
     assert isinstance(instance.errors.get("misc")[0], drf_exceptions.ErrorDetail)
-    assert "2 is not of type 'string'" in instance.errors.get("misc")[0]
+    assert "none is not an allowed value" in instance.errors.get("misc")[0]
 
-    # If both schema attribute and schema extraction method are provided, the
-    # schema attribute should prevail
+    # If both pydantic model attribute and pydantic mode extraction method are provided,
+    # the pydantic model attribute should prevail.
+    class PydanticModelB(BaseModel):
+        amount: int
+
+        class Config:
+            extra = "forbid"
+
     class TestSerializerD(Serializer):
         # pylint: disable=abstract-method
 
-        misc = serializers.JSONSchemaField(
-            schema={
-                "type": "object",
-                "properties": {"amount": {"type": "integer"}},
-                "additionalProperties": False,
-            }
-        )
+        misc = serializers.PydanticModelField(pydantic_model=PydanticModelB)
 
-        def get_misc_schema(self):
+        def get_misc_pydantic_model(self):
             # pylint: disable=no-self-use,missing-function-docstring
-            return {"type": "object", "properties": {"fullname": {"type": "string"}}}
+            return PydanticModelB
 
     instance = TestSerializerD(data={"misc": {"amount": 2}})
     assert instance.is_valid()
@@ -83,10 +88,7 @@ def test_json_schema_field_validation():
     instance = TestSerializerD(data={"misc": {"fullname": "Richie"}})
     assert instance.is_valid() is False
     assert isinstance(instance.errors.get("misc")[0], drf_exceptions.ErrorDetail)
-    assert (
-        "Additional properties are not allowed ('fullname' was unexpected)"
-        in instance.errors.get("misc")[0]
-    )
+    assert "extra fields not permitted" in instance.errors.get("misc")[0]
 
 
 @pytest.mark.django_db

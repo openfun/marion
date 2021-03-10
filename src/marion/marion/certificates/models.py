@@ -8,8 +8,7 @@ from django.db import models
 from django.utils.module_loading import import_string
 from django.utils.translation import gettext_lazy as _
 
-from jsonschema import validate
-from jsonschema.exceptions import ValidationError as JSONSchemaValidationError
+from pydantic.error_wrappers import ValidationError as PydanticValidationError
 
 from .defaults import CERTIFICATE_ISSUER_CHOICES_CLASS
 from .exceptions import InvalidCertificateIssuer
@@ -17,60 +16,63 @@ from .exceptions import InvalidCertificateIssuer
 CertificateIssuerChoices = import_string(CERTIFICATE_ISSUER_CHOICES_CLASS)
 
 
-class JSONSchemaField(models.JSONField):
-    """JSONSchema Field.
+class PydanticModelField(models.JSONField):
+    """Pydantic Model Field.
 
-    This field is a JSON field but with JSONSchema validation when the schema
+    This field is a pydantic model field but with model validation when the model
     is provided.
 
     """
 
     def __init__(self, *args, **kwargs):
-        self.schema = kwargs.pop("schema", None)
+        self.pydantic_model = kwargs.pop("pydantic_model", None)
         super().__init__(*args, **kwargs)
 
-    def _validate_schema(self, value, model_instance):
-        """Perform schema validation"""
+    def _validate_pydantic_model(self, value, model_instance):
+        """Perform pydantic model validation"""
 
-        schema = self._get_schema(model_instance)
+        pydantic_model = self._get_pydantic_model(model_instance)
 
         # Disable validation when migrations are faked
         if self.model.__module__ == "__fake__":
             return
         try:
-            validate(value, schema)
-        except JSONSchemaValidationError as error:
-            raise DjangoValidationError(error.message, code="invalid") from error
+            pydantic_model(**value)
+        except PydanticValidationError as error:
+            raise DjangoValidationError(error, code="invalid") from error
 
-    def _get_schema(self, model_instance):
-        """Get field schema from the expected model instance method"""
+    def _get_pydantic_model(self, model_instance):
+        """Get field pydantic model from the expected model instance method"""
 
-        if self.schema is None:
+        if self.pydantic_model is None:
             try:
-                self.schema = getattr(model_instance, f"get_{self.name}_schema")()
+                self.pydantic_model = getattr(
+                    model_instance, f"get_{self.name}_pydantic_model"
+                )()
             except AttributeError as error:
                 raise FieldError(
                     _(
-                        f"A schema is missing for the '{self.name}' field. "
-                        "It should be provided thanks to the 'schema' field argument "
-                        "or by adding a get_<FIELD_NAME>_schema method to your model."
+                        f"A pydantic model is missing for the '{self.name}' field. "
+                        "It should be provided thanks to the 'pydantic_model' "
+                        "field argument or by adding a get_<FIELD_NAME>_pydantic_model "
+                        "method to your model."
                     )
                 ) from error
-        return self.schema
+        return self.pydantic_model
 
     def validate(self, value, model_instance):
-        """Add schema validation to field validation"""
+        """Add pydantic model validation to field validation"""
 
         super().validate(value, model_instance)
 
-        self._validate_schema(value, model_instance)
+        self._validate_pydantic_model(value, model_instance)
 
     def pre_save(self, model_instance, add):
-        """Ensure schema validation occurs before saving"""
+        """Ensure pydantic model validation occurs before saving"""
 
         value = super().pre_save(model_instance, add)
         if value and not self.null:
-            self._validate_schema(value, model_instance)
+            self._validate_pydantic_model(value, model_instance)
         return value
 
 
@@ -135,8 +137,8 @@ class CertificateRequest(models.Model):
         choices=CertificateIssuerChoices.choices,
     )
 
-    context = JSONSchemaField(
-        schema=None,
+    context = PydanticModelField(
+        pydantic_model=None,
         verbose_name=_("Collected context"),
         help_text=_("Context used to render the certificate's template"),
         editable=False,
@@ -144,8 +146,8 @@ class CertificateRequest(models.Model):
         blank=True,
     )
 
-    context_query = JSONSchemaField(
-        schema=None,
+    context_query = PydanticModelField(
+        pydantic_model=None,
         verbose_name=_("Context query parameters"),
         help_text=_("Context will be fetched from those parameters"),
     )
@@ -155,13 +157,13 @@ class CertificateRequest(models.Model):
 
         ordering = ["-created_on"]
 
-    def get_context_schema(self):
-        """Get context schema from the issuer class"""
-        return self.get_issuer_class(self.issuer).context_schema
+    def get_context_pydantic_model(self):
+        """Get context pydantic model from the issuer class"""
+        return self.get_issuer_class(self.issuer).context_model
 
-    def get_context_query_schema(self):
-        """Get context_query schema from the issuer class"""
-        return self.get_issuer_class(self.issuer).context_query_schema
+    def get_context_query_pydantic_model(self):
+        """Get context_query pydantic model from the issuer class"""
+        return self.get_issuer_class(self.issuer).context_query_model
 
     # pylint: disable=signature-differs
     def save(self, *args, **kwargs):
