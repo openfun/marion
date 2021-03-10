@@ -2,55 +2,56 @@
 
 from django.utils.translation import gettext_lazy as _
 
-from jsonschema import ValidationError as JSONSchemaValidationError
-from jsonschema import validate
+from pydantic.error_wrappers import ValidationError as PydanticValidationError
 from rest_framework import serializers
 
 from .exceptions import InvalidCertificateIssuer
 from .models import CertificateRequest
 
 
-class JSONSchemaField(serializers.JSONField):
-    """JSONSchema Field."""
+class PydanticModelField(serializers.JSONField):
+    """PydanticModel Field."""
 
     def __init__(self, *args, **kwargs):
-        self.schema = kwargs.pop("schema", None)
+        self.pydantic_model = kwargs.pop("pydantic_model", None)
         super().__init__(*args, **kwargs)
 
-    def _get_schema(self):
-        """Get field schema from the serializer instance"""
+    def _get_pydantic_model(self):
+        """Get field pydantic model from the serializer instance"""
 
-        if self.schema is None:
+        if self.pydantic_model is None:
             try:
-                self.schema = getattr(self.parent, f"get_{self.field_name}_schema")()
+                self.pydantic_model = getattr(
+                    self.parent, f"get_{self.field_name}_pydantic_model"
+                )()
             except AttributeError as error:
                 raise serializers.ValidationError(
                     _(
-                        f"A schema is missing for the '{self.field_name}' field. "
-                        "It should be provided thanks to the 'schema' field argument "
-                        "or by adding a get_<FIELD_NAME>_schema method to the "
-                        "serializer."
+                        f"A pydantic model is missing for the '{self.field_name}' "
+                        "field. It should be provided thanks to the 'pydantic_model' "
+                        "field argument or by adding a get_<FIELD_NAME>_pydantic_model "
+                        "method to the serializer."
                     )
                 ) from error
 
-        return self.schema
+        return self.pydantic_model
 
-    def _validate_schema(self, value):
-        """Perform schema validation"""
+    def _validate_pydantic_model(self, value):
+        """Perform pydantic model validation"""
 
-        schema = self._get_schema()
+        pydantic_model = self._get_pydantic_model()
 
         try:
-            validate(value, schema)
-        except JSONSchemaValidationError as error:
-            raise serializers.ValidationError(error.message) from error
+            pydantic_model(**value)
+        except PydanticValidationError as error:
+            raise serializers.ValidationError(error) from error
 
     def to_internal_value(self, data):
-        """Validate data thanks to the field schema"""
+        """Validate data thanks to the field pydantic model"""
 
         internal = super().to_internal_value(data)
 
-        self._validate_schema(internal)
+        self._validate_pydantic_model(internal)
 
         return internal
 
@@ -63,8 +64,8 @@ class CertificateRequestSerializer(serializers.HyperlinkedModelSerializer):
         fields = "__all__"
 
     # Force binary representation
-    context = JSONSchemaField(schema=None, binary=True, required=False)
-    context_query = JSONSchemaField(schema=None, binary=True)
+    context = PydanticModelField(pydantic_model=None, binary=True, required=False)
+    context_query = PydanticModelField(pydantic_model=None, binary=True)
     certificate_url = serializers.SerializerMethodField()
 
     def get_certificate_url(self, instance):
@@ -85,10 +86,10 @@ class CertificateRequestSerializer(serializers.HyperlinkedModelSerializer):
         except InvalidCertificateIssuer as error:
             raise serializers.ValidationError(_("")) from error
 
-    def get_context_schema(self):
-        """Get context schema from the issuer class"""
-        return self._get_issuer_class().context_schema
+    def get_context_pydantic_model(self):
+        """Get context pydantic model from the issuer class"""
+        return self._get_issuer_class().context_model
 
-    def get_context_query_schema(self):
-        """Get context_query schema from the issuer class"""
-        return self._get_issuer_class().context_query_schema
+    def get_context_query_pydantic_model(self):
+        """Get context_query pydantic model from the issuer class"""
+        return self._get_issuer_class().context_query_model

@@ -1,31 +1,43 @@
 """Dummy Certificate"""
 
+from uuid import UUID
+
 from django.template import Context
 
+from pydantic import BaseModel, constr
+
 from .base import AbstractCertificate
+
+
+class ContextModel(BaseModel):
+    """Context model definition"""
+
+    identifier: UUID
+    fullname: constr(min_length=2, max_length=255)
+
+    class Config:
+        """Context model configuration"""
+
+        extra = "forbid"
+
+
+class ContextQueryModel(BaseModel):
+    """ContextQuery model definition"""
+
+    fullname: constr(min_length=2, max_length=255)
+
+    class Config:
+        """ContextQuery model configuration"""
+
+        extra = "forbid"
 
 
 class DummyCertificate(AbstractCertificate):
     """A test certificate for marion"""
 
-    context_schema = {
-        "type": "object",
-        "properties": {
-            "identifier": {"type": "string", "format": "uuid"},
-            "fullname": {"type": "string", "minLength": 2, "maxLength": 255},
-        },
-        "required": ["identifier", "fullname"],
-        "additionalProperties": False,
-    }
+    context_model = ContextModel
 
-    context_query_schema = {
-        "type": "object",
-        "properties": {
-            "fullname": {"type": "string", "minLength": 2, "maxLength": 255},
-        },
-        "required": ["fullname"],
-        "additionalProperties": False,
-    }
+    context_query_model = ContextQueryModel
 
     keywords = ["dummy", "test", "certificate"]
 
@@ -37,9 +49,8 @@ class DummyCertificate(AbstractCertificate):
 
         """
 
-        self.validate_context_query(context_query)
-        fullname = context_query.get("fullname", None)
-        return Context({"fullname": fullname, "identifier": self.identifier})
+        validated = self.validate_context_query(context_query)
+        return Context({"fullname": validated.fullname, "identifier": self.identifier})
 
     def get_title(self):
         """Define a custom title for the generated PDF metadata"""

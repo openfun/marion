@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="certificaterequest",
             name="context",
-            field=marion.certificates.models.JSONSchemaField(
+            field=marion.certificates.models.PydanticModelField(
                 blank=True,
                 editable=False,
                 help_text="Context used to render the certificate's template",
@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="certificaterequest",
             name="context_query",
-            field=marion.certificates.models.JSONSchemaField(
+            field=marion.certificates.models.PydanticModelField(
                 help_text="Context will be fetched from those parameters",
                 verbose_name="Context query parameters",
             ),
