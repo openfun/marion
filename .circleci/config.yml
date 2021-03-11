@@ -190,21 +190,31 @@ jobs:
   package-back:
     docker:
       - image: circleci/python:3.8-buster
-    working_directory: ~/marion/src/marion
+    working_directory: ~/marion/src
     steps:
       - checkout:
           path: ~/marion
       - run:
-          name: Build python package
-          command: python setup.py sdist bdist_wheel
+          name: Build marion python package
+          command: |
+            cd marion && \
+            python setup.py sdist bdist_wheel
+      - run:
+          name: Build marion-howard python package
+          command: |
+            cd howard && \
+            python setup.py sdist bdist_wheel
       # Persist build packages to the workspace
       - persist_to_workspace:
           root: ~/marion
           paths:
             - src/marion/dist
+            - src/howard/dist
       # Store packages as artifacts to download/test them
       - store_artifacts:
           path: ~/marion/src/marion/dist
+      - store_artifacts:
+          path: ~/marion/src/howard/dist
 
   # Publishing to PyPI requires that:
   #   * you already registered to pypi.org
@@ -213,7 +223,7 @@ jobs:
   pypi:
     docker:
       - image: circleci/python:3.8-buster
-    working_directory: ~/marion/src/marion
+    working_directory: ~/marion/src
     steps:
       - checkout:
           path: ~/marion
@@ -221,14 +231,24 @@ jobs:
       - attach_workspace:
           at: ~/marion
       - run:
-          name: List built packages
-          command: ls dist/*
+          name: List built marion package
+          command: ls marion/dist/*
+      - run:
+          name: List built marion-howard package
+          command: ls howard/dist/*
       - run:
           name: Install base requirements (twine)
-          command: pip install --user .[ci]
+          command: |
+            cd marion && \
+            pip install --user .[ci]
+      # Using the "skip existing" flag allows to only upload new marion and/or
+      # howard releases when a tag triggers this job
       - run:
-          name: Upload built packages to PyPI
-          command: ~/.local/bin/twine upload dist/*
+          name: Upload marion's package to PyPI
+          command: ~/.local/bin/twine upload --skip-existing marion/dist/*
+      - run:
+          name: Upload marion-howard's package to PyPI
+          command: ~/.local/bin/twine upload --skip-existing howard/dist/*
 
 workflows:
   version: 2
