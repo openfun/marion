@@ -39,6 +39,7 @@ COMPOSE_TEST_RUN     = $(COMPOSE) run --rm -e DJANGO_CONFIGURATION=Test -e HOME=
 COMPOSE_TEST_RUN_APP = $(COMPOSE_TEST_RUN) marion
 MANAGE               = $(COMPOSE_RUN_APP) python manage.py
 WAIT_DB              = @$(COMPOSE_RUN) dockerize -wait tcp://$(DB_HOST):$(DB_PORT) -timeout 60s
+MKDOCS               = $(COMPOSE_RUN) mkdocs
 
 # ==============================================================================
 # RULES
@@ -61,6 +62,18 @@ data/media:
 build: ## build the app container
 	@$(COMPOSE) build marion
 .PHONY: build
+
+docs-build: ## build documentation site
+	@$(MKDOCS) build
+.PHONY: docs-build
+
+docs-deploy: ## deploy documentation site
+	@$(MKDOCS) gh-deploy
+.PHONY: docs-deploy
+
+docs-serve: ## run mkdocs live server
+	@$(COMPOSE_RUN) --publish=8001:8001 mkdocs serve --dev-addr 0.0.0.0:8001
+.PHONY: docs-serve
 
 down: ## stop and remove containers, networks, images, and volumes
 	@$(COMPOSE) down

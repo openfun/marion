@@ -1,0 +1,42 @@
+site_name: Marion
+site_url: https://openfun.github.io/marion/
+site_description: The greatest PDF documents factory backend
+site_author: Open FUN (France Universite Numerique)
+
+repo_name: openfun/marion
+repo_url: https://github.com/openfun/marion/
+
+copyright: 2021-present GIP FUN MOOC
+
+theme:
+    name: material
+
+markdown_extensions:
+    - attr_list
+    - smarty
+    - toc:
+        permalink: True
+        separator: "_"
+    - pymdownx.highlight
+    - pymdownx.superfences
+
+
+nav:
+    - 'Getting started':
+        - index.md
+        - install.md
+    - 'User guide':
+        - issuer.md
+        - settings.md
+    - 'Developer guide':
+        - 'Contribute': contribute.md
+        - 'References':
+          - sources/issuer.md
+          - sources/model.md
+    - 'About the project':
+        - 'Changelog': CHANGELOG.md
+        - 'License': LICENSE.md
+
+plugins:
+    - search
+    - mkdocstrings
