@@ -53,3 +53,4 @@ db.sqlite3
 
 # Development files
 data/
+site/

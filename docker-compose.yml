@@ -27,5 +27,16 @@ services:
     depends_on:
       - "postgresql"
 
+  mkdocs:
+    image: marion:development
+    user: ${DOCKER_USER:-1000}
+    env_file:
+      - env.d/development/common
+    entrypoint: /usr/local/bin/mkdocs
+    volumes:
+      - ./src/marion:/usr/local/src/marion
+      - ./src/howard:/usr/local/src/howard
+      - .:/app
+
   dockerize:
     image: jwilder/dockerize
