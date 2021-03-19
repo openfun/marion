@@ -1,4 +1,4 @@
-# Marion, the learning certificate factory
+# Marion, the documents factory
 
 # -- Base image --
 FROM python:3.8-slim as base

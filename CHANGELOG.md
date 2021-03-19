@@ -10,9 +10,9 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 
 ### Added
 
-- Add `howard` package that bundles fun-specific certificates
-- Add `CertificateRequest` model, serializer and API viewset
-- Add `DummyCertificate` example certificate issuer
-- Implement certificate issuer pattern
+- Add `howard` package that bundles fun-specific documents
+- Add `DocumentRequest` model, serializer and API viewset
+- Add `DummyDocument` example document issuer
+- Implement document issuer pattern
 
 [unreleased]: https://github.com/openfun/marion/compare/ebaa308c65580689f816e6071bcb4d4829a15ee8...master

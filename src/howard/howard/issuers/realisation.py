@@ -11,7 +11,7 @@ import arrow
 from dateutil import parser
 from pydantic import BaseModel, ValidationError
 
-from marion.certificates.issuers.base import AbstractCertificate
+from marion.documents.issuers.base import AbstractDocument
 
 ArrowSupportedDateType = TypeVar("ArrowSupportedDateType", int, str, datetime.date)
 
@@ -145,7 +145,7 @@ class ContextQueryModel(BaseModel):
     course: Course
 
 
-class RealisationCertificate(AbstractCertificate):
+class RealisationCertificate(AbstractDocument):
     """Official 'Certificat de réalisation des actions de formation'."""
 
     keywords = ["certificat", "réalisation", "formation"]
