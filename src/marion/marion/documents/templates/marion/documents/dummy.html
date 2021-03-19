@@ -1,0 +1,62 @@
+{% load i18n %}
+{% load static %}
+
+<html>
+  {% if debug %}
+  <head>
+    <style>
+      {{ css }}
+    </style>
+  </head>
+  {% endif %}
+  <body>
+    <div class="document dummy">
+      <header>
+        <h1>{% trans "Dummy document" %}</h1>
+      </header>
+      <article class="main">
+        <div class="stamp">
+          <img
+            src="{{ debug | yesno:",file://" }}{% static "marion/noun_Check_3612574.svg" %}"
+            alt="{% trans "icon check" %}"
+          />
+        </div>
+        <section class="student">
+          <p>{% trans "Delivered to:" %}</p>
+          <div class="name">
+            {{ fullname }}
+          </div>
+        </section>
+        <section class="comment">
+          <p>
+            {% blocktrans %}
+            Asperiores sapiente sint vel suscipit quidem vitae deleniti.
+            Doloremque eveniet ipsa quaerat labore. Ea voluptatum aperiam
+            eligendi esse distinctio aut. Numquam vel magnam recusandae
+            consequuntur iste officia unde. Eum aut quasi expedita quam.
+            {% endblocktrans %}
+          </p>
+        </section>
+      </article>
+      <footer>
+        <div class="identifier">
+          <span>{% trans "Document ID:" %}</span>
+          <code>
+            {{ identifier }}
+          </code>
+        </div>
+        <div class="generated-at">
+          <span>
+            {% trans "Delivery stamp:" %}
+          </span>
+          <code>
+            {% now "c" %}
+          </code>
+        </div>
+        <div class="credits">
+          {% trans "Check icon by shuai tawf from the Noun Project" %}
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>

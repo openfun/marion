@@ -107,7 +107,7 @@ class Base(Configuration):
         "django.contrib.messages",
         "django.contrib.staticfiles",
         "rest_framework",
-        "marion.certificates",
+        "marion.documents",
     ]
 
     MIDDLEWARE = [
@@ -153,7 +153,7 @@ class Development(Base):
         "howard",
     ]
 
-    MARION_CERTIFICATE_ISSUER_CHOICES_CLASS = "howard.defaults.CertificateIssuerChoices"
+    MARION_DOCUMENT_ISSUER_CHOICES_CLASS = "howard.defaults.DocumentIssuerChoices"
 
 
 class Test(Base):

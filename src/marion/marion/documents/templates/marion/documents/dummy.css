@@ -1,0 +1,124 @@
+@import url("https://fonts.googleapis.com/css2?family=Inconsolata&family=Open+Sans&family=Raleway&display=swap");
+
+body {
+  font-family: "Open Sans", sans-serif;
+  font-size: 11pt;
+  color: #222;
+}
+
+code {
+  font-family: "Inconsolata", monospace;
+}
+
+@media print {
+  /* ----------------------
+   * Reset margins for media
+   * ---------------------- */
+  @page {
+    size: A4 landscape;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    padding: 0;
+    background: #ffbe0b;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+  }
+
+  /* ----------------------
+   * Layout
+   * ---------------------- */
+  .document > header,
+  .document > footer {
+    height: 5.25cm;
+  }
+
+  .document > article.main {
+    height: 10.45cm;
+  }
+
+  /* ----------------------
+   * Header
+   * ---------------------- */
+  .document header {
+    background: #3a86ff;
+    text-align: center;
+    text-transform: uppercase;
+    font-family: "Raleway", sans-serif;
+  }
+
+  .document header h1 {
+    padding: 2cm 0 0;
+    color: white;
+  }
+
+  /* ----------------------
+   * Main
+   * ---------------------- */
+  .document article.main {
+    background: #8338ec;
+    color: #fff;
+  }
+
+  .document article.main .stamp {
+    display: float;
+    position: absolute;
+    margin: 0;
+    padding: 0;
+    bottom: 5cm;
+    right: 1cm;
+    width: 3cm;
+  }
+
+  .document article.main .stamp img {
+    filter: invert(100%);
+  }
+
+  .document article.main .student {
+    padding: 1cm 0;
+    text-align: center;
+  }
+
+  .document article.main .student .name {
+    padding: 1cm 0;
+    font-size: 20pt;
+    font-weight: bold;
+    text-transform: capitalize;
+  }
+
+  .document article.main .comment {
+    padding: 1cm 5cm;
+    font-style: italic;
+  }
+
+  /* ----------------------
+   * Footer
+   * ---------------------- */
+  .document footer {
+    display: flex;
+    background: #ff006e;
+    color: white;
+    font-size: 9pt;
+  }
+
+  .document footer > * {
+    width: 33.33%;
+    align-self: flex-end;
+    padding: 1cm 0;
+    text-align: center;
+    background: #fb5607;
+  }
+
+  .document footer > * span {
+    font-weight: bold;
+  }
+
+  .document footer code {
+    font-size: 10pt;
+  }
+}

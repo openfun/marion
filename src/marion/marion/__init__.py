@@ -1,4 +1,4 @@
-"""Marion, the learning certificate factory"""
+"""Marion, the documents factory"""
 
 import importlib.metadata
 from pathlib import Path

@@ -4,4 +4,4 @@ from django.urls import include, path
 
 from . import urlpatterns
 
-urlpatterns += [path("__debug__/", include("marion.certificates.urls.debug"))]
+urlpatterns += [path("__debug__/", include("marion.documents.urls.debug"))]

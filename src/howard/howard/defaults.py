@@ -4,10 +4,10 @@ from django.db.models import TextChoices
 from django.utils.translation import gettext_lazy as _
 
 
-class CertificateIssuerChoices(TextChoices):
-    """Active certificate issuers.
+class DocumentIssuerChoices(TextChoices):
+    """Active document issuers.
 
-    Note that changing the default choices for the list of allowed certificate
+    Note that changing the default choices for the list of allowed document
     issuers may require to create and apply a database migration.
 
     """
