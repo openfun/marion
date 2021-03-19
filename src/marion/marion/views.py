@@ -1,4 +1,4 @@
-"""Views for the marion.documents application"""
+"""Views for the marion application"""
 
 import json
 

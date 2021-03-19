@@ -1,7 +1,13 @@
-"""Debug Urls for the marion project."""
+"""Debug Urls for the marion application"""
 
-from django.urls import include, path
+from django.urls import path
 
-from . import urlpatterns
+from .. import views
 
-urlpatterns += [path("__debug__/", include("marion.documents.urls.debug"))]
+urlpatterns = [
+    path(
+        "templates/",
+        views.document_template_debug,
+        name="documents-template-debug",
+    )
+]

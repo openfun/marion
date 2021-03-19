@@ -1,4 +1,4 @@
-"""Exceptions for the marion.documents application"""
+"""Exceptions for the marion application"""
 
 
 class InvalidDocumentIssuer(Exception):

@@ -38,7 +38,7 @@ RUN apt-get update && \
 COPY --from=builder /install /usr/local
 
 # Copy runtime-required files
-COPY ./src/marion /app/
+COPY ./sandbox /app/
 COPY ./docker/files/usr/local/bin/entrypoint /usr/local/bin/entrypoint
 
 # Gunicorn
@@ -61,12 +61,13 @@ FROM core as development
 ENV PYTHONUNBUFFERED=1
 
 # Copy all sources, not only runtime-required files
-COPY ./src/marion /app/
 
 # Uninstall marion and re-install it in editable mode along with development
 # dependencies
 RUN pip uninstall -y marion
-RUN pip install -e .[dev]
+COPY ./src/marion /usr/local/src/marion
+RUN cd /usr/local/src/marion && \
+      pip install -e .[dev,sandbox]
 
 # Copy extra packages
 COPY ./src/howard /usr/local/src/howard

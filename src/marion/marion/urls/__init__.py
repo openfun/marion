@@ -1,15 +1,14 @@
-"""Urls for the marion project."""
+"""Urls for the marion application"""
 
-from django.conf import settings
-from django.conf.urls.static import static
-from django.contrib import admin
 from django.urls import include, path
 
-urlpatterns = (
-    [
-        path("admin/", admin.site.urls),
-        path("api/documents/", include("marion.documents.urls")),
-    ]
-    + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-    + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-)
+from rest_framework import routers
+
+from .. import views
+
+router = routers.DefaultRouter()
+router.register(r"requests", views.DocumentRequestViewSet)
+
+urlpatterns = [
+    path("", include(router.urls)),
+]

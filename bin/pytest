@@ -3,4 +3,8 @@
 # Fix docker vs local path when project sources are mounted as a volume
 params=$(echo $@ | sed "s|src/marion/||g")
 
-docker-compose run --rm -e DJANGO_CONFIGURATION=Test marion pytest ${params}
+docker-compose run --rm \
+  -e DJANGO_CONFIGURATION=Test \
+  -w /usr/local/src/marion \
+  marion \
+    pytest ${params}

@@ -1,4 +1,4 @@
-"""Base document issuer for the marion.documents application"""
+"""Base document issuer for the marion application"""
 
 import uuid
 from abc import ABC, abstractmethod

@@ -1,4 +1,4 @@
-"""Models for the marion.documents application"""
+"""Models for the marion application"""
 
 import uuid
 

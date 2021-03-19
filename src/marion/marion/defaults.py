@@ -1,4 +1,4 @@
-"""Default settings for the marion.documents application.
+"""Default settings for the marion application.
 
 Application settings should always be imported from here to ensure that:
 
@@ -19,11 +19,11 @@ from django.utils.translation import gettext_lazy as _
 DOCUMENT_ISSUER_CHOICES_CLASS = getattr(
     settings,
     "MARION_DOCUMENT_ISSUER_CHOICES_CLASS",
-    "marion.documents.defaults.DocumentIssuerChoices",
+    "marion.defaults.DocumentIssuerChoices",
 )
 DOCUMENTS_ROOT = getattr(settings, "MARION_DOCUMENTS_ROOT", Path(settings.MEDIA_ROOT))
 DOCUMENTS_TEMPLATE_ROOT = getattr(
-    settings, "MARION_DOCUMENTS_TEMPLATE_ROOT", Path("marion/documents")
+    settings, "MARION_DOCUMENTS_TEMPLATE_ROOT", Path("marion")
 )
 
 
@@ -35,4 +35,4 @@ class DocumentIssuerChoices(TextChoices):
 
     """
 
-    DUMMY = "marion.documents.issuers.DummyDocument", _("Dummy")
+    DUMMY = "marion.issuers.DummyDocument", _("Dummy")

@@ -1,4 +1,4 @@
-"""Tests for the marion.documents application views"""
+"""Tests for the marion application views"""
 
 import json
 import tempfile
@@ -13,8 +13,8 @@ from rest_framework import exceptions as drf_exceptions
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from marion.documents import defaults, models
-from marion.documents.issuers import DummyDocument
+from marion import defaults, models
+from marion.issuers import DummyDocument
 
 client = APIClient()
 
@@ -48,7 +48,7 @@ def test_document_request_viewset_post(monkeypatch):
 
     # Invalid issuer
     data = {
-        "issuer": "marion.documents.issuers.DumberDocument",
+        "issuer": "marion.issuers.DumberDocument",
         "context_query": json.dumps({"fullname": "Richie Cunningham"}),
     }
     response = client.post(url, data, format="json")
@@ -59,7 +59,7 @@ def test_document_request_viewset_post(monkeypatch):
 
     # Perform standard request
     data = {
-        "issuer": "marion.documents.issuers.DummyDocument",
+        "issuer": "marion.issuers.DummyDocument",
         "context_query": json.dumps({"fullname": "Richie Cunningham"}),
     }
     response = client.post(url, data, format="json")
@@ -89,7 +89,7 @@ def test_document_request_viewset_post_context_query_pydantic_model_validation(
 
     # Refuse extra fields in context query
     data = {
-        "issuer": "marion.documents.issuers.DummyDocument",
+        "issuer": "marion.issuers.DummyDocument",
         "context_query": json.dumps({"fullname": "Richie Cunningham", "friends": 2}),
     }
     response = client.post(url, data, format="json")
@@ -101,7 +101,7 @@ def test_document_request_viewset_post_context_query_pydantic_model_validation(
 
     # Input types checking
     data = {
-        "issuer": "marion.documents.issuers.DummyDocument",
+        "issuer": "marion.issuers.DummyDocument",
         "context_query": json.dumps({"fullname": None}),
     }
     response = client.post(url, data, format="json")
@@ -113,7 +113,7 @@ def test_document_request_viewset_post_context_query_pydantic_model_validation(
 
     # Input contraints checking (short fullname)
     data = {
-        "issuer": "marion.documents.issuers.DummyDocument",
+        "issuer": "marion.issuers.DummyDocument",
         "context_query": json.dumps({"fullname": "D"}),
     }
     response = client.post(url, data, format="json")
@@ -127,7 +127,7 @@ def test_document_request_viewset_post_context_query_pydantic_model_validation(
 
     # Input contraints checking (too long fullname)
     data = {
-        "issuer": "marion.documents.issuers.DummyDocument",
+        "issuer": "marion.issuers.DummyDocument",
         "context_query": json.dumps({"fullname": "F" * 256}),
     }
     response = client.post(url, data, format="json")
@@ -155,7 +155,7 @@ def test_document_request_viewset_post_context_pydantic_model_validation(
     url = reverse("documentrequest-list")
 
     data = {
-        "issuer": "marion.documents.issuers.DummyDocument",
+        "issuer": "marion.issuers.DummyDocument",
         "context_query": json.dumps({"fullname": "Richie Cunningham"}),
     }
 
@@ -250,7 +250,7 @@ def test_document_template_debug_view(settings):
 
     settings.DEBUG = True
     settings.MARION_DOCUMENT_ISSUER_CHOICES_CLASS = (
-        "marion.documents.default.DocumentIssuerChoices"
+        "marion.default.DocumentIssuerChoices"
     )
     url = reverse("documents-template-debug")
 
@@ -262,7 +262,7 @@ def test_document_template_debug_view(settings):
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert b"Unknown issuer foo.bar.baz" in response.content
 
-    response = client.get(url, {"issuer": "marion.documents.issuers.DummyDocument"})
+    response = client.get(url, {"issuer": "marion.issuers.DummyDocument"})
     assert response.status_code == 200
     # pylint: disable=no-member
     django_assertions.assertContains(response, "<h1>Dummy document</h1>")

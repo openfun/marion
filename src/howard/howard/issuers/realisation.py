@@ -11,7 +11,7 @@ import arrow
 from dateutil import parser
 from pydantic import BaseModel, ValidationError
 
-from marion.documents.issuers.base import AbstractDocument
+from marion.issuers.base import AbstractDocument
 
 ArrowSupportedDateType = TypeVar("ArrowSupportedDateType", int, str, datetime.date)
 

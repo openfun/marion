@@ -20,8 +20,9 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./src/marion:/app
+      - ./src/marion:/usr/local/src/marion
       - ./src/howard:/usr/local/src/howard
+      - ./sandbox:/app
       - ./data/media:/data/media
     depends_on:
       - "postgresql"
