@@ -36,12 +36,14 @@ jobs:
       - run:
           name: Install gitlint
           command: |
-            pip install --user .[gitlint]
-          working_directory: src/marion
+            python -m venv venv
+            source venv/bin/activate && \
+              pip install gitlint requests
       - run:
           name: lint commit messages added to master
           command: |
-            ~/.local/bin/gitlint --commits origin/master..HEAD
+            source venv/bin/activate &&
+              gitlint --commits origin/master..HEAD
 
   # Check that the CHANGELOG has been updated in the current branch
   check-changelog:
