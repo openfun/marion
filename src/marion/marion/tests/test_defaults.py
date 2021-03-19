@@ -1,13 +1,13 @@
-"""Tests for the marion.documents application defaults"""
+"""Tests for the marion application defaults"""
 
 import importlib
 from pathlib import Path
 
-from marion.documents import defaults
+from marion import defaults
 
 
 def test_defaults_overrides_with_settings(settings):
-    """Test marion.documents.defaults overrides with settings definition"""
+    """Test marion.defaults overrides with settings definition"""
 
     settings.MARION_DOCUMENT_ISSUER_CHOICES_CLASS = (
         "howard.documents.DocumentIssuerChoices"

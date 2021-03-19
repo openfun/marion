@@ -35,7 +35,7 @@ DOCKER_USER          = $(DOCKER_UID):$(DOCKER_GID)
 COMPOSE              = DOCKER_USER=$(DOCKER_USER) docker-compose
 COMPOSE_RUN          = $(COMPOSE) run --rm
 COMPOSE_RUN_APP      = $(COMPOSE_RUN) marion
-COMPOSE_TEST_RUN     = $(COMPOSE) run --rm -e DJANGO_CONFIGURATION=Test -e HOME=/tmp
+COMPOSE_TEST_RUN     = $(COMPOSE) run --rm -e DJANGO_CONFIGURATION=Test -e HOME=/tmp -w /usr/local/src/marion
 COMPOSE_TEST_RUN_APP = $(COMPOSE_TEST_RUN) marion
 MANAGE               = $(COMPOSE_RUN_APP) python manage.py
 WAIT_DB              = @$(COMPOSE_RUN) dockerize -wait tcp://$(DB_HOST):$(DB_PORT) -timeout 60s
@@ -123,7 +123,7 @@ lint-isort: ## automatically re-arrange python imports in back-end code base
 
 lint-pylint: ## lint back-end python sources with pylint
 	@echo 'lint:pylint started…'
-	@$(COMPOSE_TEST_RUN_APP) pylint marion /usr/local/src/howard/howard
+	bin/pylint marion /usr/local/src/howard/howard
 .PHONY: lint-pylint
 
 # -- Tests

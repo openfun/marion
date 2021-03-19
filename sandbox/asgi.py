@@ -13,7 +13,7 @@ from django.core.asgi import get_asgi_application
 
 from configurations import importer
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "marion.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "settings")
 os.environ.setdefault("DJANGO_CONFIGURATION", "Development")
 importer.install()
 

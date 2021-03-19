@@ -1,4 +1,4 @@
-"""Tests for the marion.documents.issuers.base document"""
+"""Tests for the marion.issuers.base document"""
 
 import uuid
 from datetime import datetime
@@ -13,13 +13,13 @@ from pdfminer.high_level import extract_text as pdf_extract_text
 from pydantic import BaseModel
 from weasyprint.document import DocumentMetadata
 
-from marion.documents.defaults import DOCUMENTS_ROOT
-from marion.documents.exceptions import (
+from marion.defaults import DOCUMENTS_ROOT
+from marion.exceptions import (
     DocumentIssuerContextQueryValidationError,
     DocumentIssuerContextValidationError,
     DocumentIssuerMissingContext,
 )
-from marion.documents.issuers.base import AbstractDocument
+from marion.issuers.base import AbstractDocument
 
 
 def test_abstract_document_interface_with_missing_abstract_methods():
@@ -174,7 +174,7 @@ def test_abstract_document_get_css_template_path():
             pass
 
     test_document = TestDocument()
-    assert test_document.get_css_template_path() == Path("marion/documents/test.css")
+    assert test_document.get_css_template_path() == Path("marion/test.css")
 
     test_document.css_template_path = Path("foo/bar.css")
     assert test_document.get_css_template_path() == Path("foo/bar.css")
@@ -222,7 +222,7 @@ def test_abstract_document_get_html_template_path():
             pass
 
     test_document = TestDocument()
-    assert test_document.get_html_template_path() == Path("marion/documents/test.html")
+    assert test_document.get_html_template_path() == Path("marion/test.html")
 
     test_document.html_template_path = Path("foo/bar.html")
     assert test_document.get_html_template_path() == Path("foo/bar.html")

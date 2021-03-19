@@ -1,4 +1,4 @@
-"""Admin for the marion.documents application"""
+"""Admin for the marion application"""
 
 from django.contrib import admin
 

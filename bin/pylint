@@ -3,4 +3,4 @@
 # Fix docker vs local path when project sources are mounted as a volume
 params=$(echo $@ | sed "s|src/marion/||g")
 
-docker-compose run --rm marion pylint ${params}
+docker-compose run --rm -w /usr/local/src/marion marion pylint ${params}

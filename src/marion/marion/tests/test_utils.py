@@ -1,10 +1,11 @@
-"""Tests for the marion.documents.utils module"""
+"""Tests for the marion.utils module"""
 
 from pathlib import Path
 
 from django.conf import settings
 
-from marion.documents.utils import static_file_fetcher
+import marion
+from marion.utils import static_file_fetcher
 
 
 # pylint: disable=invalid-name
@@ -13,9 +14,7 @@ def test_static_file_fetcher(fs):
 
     # Create a fake static file for the marion app
     relative_static_file_path = "marion/test.txt"
-    static_file_path = Path(
-        f"{settings.BASE_DIR}/marion/documents/static/{relative_static_file_path}"
-    )
+    static_file_path = Path(f"{marion.__path__[0]}/static/{relative_static_file_path}")
     fs.create_file(static_file_path, contents="This is content.")
 
     # Fetch this file

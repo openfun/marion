@@ -1,4 +1,4 @@
-"""Factories for the marion.documents application"""
+"""Factories for the marion application"""
 
 from factory.django import DjangoModelFactory
 

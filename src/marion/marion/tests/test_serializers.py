@@ -1,4 +1,4 @@
-"""Tests for the marion.documents application serializers"""
+"""Tests for the marion application serializers"""
 
 from django.urls import reverse
 
@@ -8,7 +8,7 @@ from rest_framework import exceptions as drf_exceptions
 from rest_framework.serializers import Serializer
 from rest_framework.test import APIRequestFactory
 
-from marion.documents import factories, serializers
+from marion import factories, serializers
 
 
 def test_pydantic_model_field_validation():
@@ -96,7 +96,7 @@ def test_document_request_serializer_document_url_field():
     """Test the document request serializer document_url field"""
 
     document_request = factories.DocumentRequestFactory(
-        issuer="marion.documents.issuers.DummyDocument",
+        issuer="marion.issuers.DummyDocument",
         context_query={"fullname": "Richie Cunningham"},
     )
 

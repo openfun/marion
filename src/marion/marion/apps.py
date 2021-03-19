@@ -1,4 +1,4 @@
-"""AppConfig for the marion.documents application"""
+"""AppConfig for the marion application"""
 
 from django.apps import AppConfig
 

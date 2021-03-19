@@ -7,7 +7,7 @@ from tempfile import mkdtemp
 
 from configurations import Configuration, values
 
-BASE_DIR = Path(__file__).parent.parent.resolve()
+BASE_DIR = Path(__file__).parent.resolve()
 DATA_DIR = Path("/data")
 
 
@@ -62,8 +62,8 @@ class Base(Configuration):
     ]
 
     # Application
-    ROOT_URLCONF = "marion.urls"
-    WSGI_APPLICATION = "marion.wsgi.application"
+    ROOT_URLCONF = "urls"
+    WSGI_APPLICATION = "wsgi.application"
 
     # Database
     DATABASES = {
@@ -107,7 +107,7 @@ class Base(Configuration):
         "django.contrib.messages",
         "django.contrib.staticfiles",
         "rest_framework",
-        "marion.documents",
+        "marion",
     ]
 
     MIDDLEWARE = [
@@ -146,7 +146,7 @@ class Development(Base):
     DEBUG = True
     ALLOWED_HOSTS = ["*"]
 
-    ROOT_URLCONF = "marion.urls.debug"
+    ROOT_URLCONF = "urls.debug"
 
     # Application definition
     INSTALLED_APPS = Base.INSTALLED_APPS + [
@@ -161,4 +161,4 @@ class Test(Base):
 
     MEDIA_ROOT = Path(mkdtemp())
 
-    ROOT_URLCONF = "marion.urls.debug"
+    ROOT_URLCONF = "urls.debug"

@@ -1,4 +1,4 @@
-"""Tests for the marion.documents application models"""
+"""Tests for the marion application models"""
 
 from django.core.exceptions import FieldError as DjangoFieldError
 from django.core.exceptions import ValidationError as DjangoValidationError
@@ -8,7 +8,7 @@ from django.template import Context
 import pytest
 from pydantic import BaseModel
 
-from marion.documents import exceptions, factories, issuers, models
+from marion import exceptions, factories, issuers, models
 
 
 def test_pydantic_model_field_validation():
@@ -86,19 +86,19 @@ def test_document_request_default_ordering():
     """Test the `DocumentRequest` default ordering"""
 
     first_document_request = factories.DocumentRequestFactory(
-        issuer="marion.documents.issuers.DummyDocument",
+        issuer="marion.issuers.DummyDocument",
         context_query={"fullname": "Richie Cunningham"},
     )
     second_document_request = factories.DocumentRequestFactory(
-        issuer="marion.documents.issuers.DummyDocument",
+        issuer="marion.issuers.DummyDocument",
         context_query={"fullname": "Marion Cunningham"},
     )
     third_document_request = factories.DocumentRequestFactory(
-        issuer="marion.documents.issuers.DummyDocument",
+        issuer="marion.issuers.DummyDocument",
         context_query={"fullname": "Howard Cunningham"},
     )
     fourth_document_request = factories.DocumentRequestFactory(
-        issuer="marion.documents.issuers.DummyDocument",
+        issuer="marion.issuers.DummyDocument",
         context_query={"fullname": "Joanie Cunningham"},
     )
 
@@ -114,7 +114,7 @@ def test_document_request_save(monkeypatch):
     """Test the `DocumentRequest.save()` method"""
 
     document_request = factories.DocumentRequestFactory(
-        issuer="marion.documents.issuers.DummyDocument",
+        issuer="marion.issuers.DummyDocument",
         context_query={"fullname": "Richie Cunningham"},
     )
 
@@ -134,7 +134,7 @@ def test_document_request_save(monkeypatch):
 
     # We should perform validation before saving
     document_request = factories.DocumentRequestFactory.build(
-        issuer="marion.documents.issuers.DummyDocument",
+        issuer="marion.issuers.DummyDocument",
         context_query={"fullname": ""},
     )
     with pytest.raises(
@@ -144,7 +144,7 @@ def test_document_request_save(monkeypatch):
         document_request.save()
 
     document_request = factories.DocumentRequestFactory.build(
-        issuer="marion.documents.issuers.DummyDocument",
+        issuer="marion.issuers.DummyDocument",
         context_query={"fullname": "Richie Cunningham"},
     )
     with monkeypatch.context() as mk_patch:
@@ -168,10 +168,10 @@ def test_document_request_get_issuer_class(monkeypatch):
         models.DocumentRequest.issuer.field,
         "choices",
         [
-            ("marion.documents.issuers.Arnold", "Arnold"),
-            ("marion.documents.issuers.DummyDocument", "Dummy"),
-            ("marion.documents.issuers.Marsha", "Marsha"),
-            ("marion.documents.issuers.Richie", "Richie"),
+            ("marion.issuers.Arnold", "Arnold"),
+            ("marion.issuers.DummyDocument", "Dummy"),
+            ("marion.issuers.Marsha", "Marsha"),
+            ("marion.issuers.Richie", "Richie"),
             ("howard.documents.issuers.Richie", "Richou"),
             ("issuers.Richie", "Richinou"),
             ("Richie", "Riccardo"),
@@ -200,7 +200,7 @@ def test_document_request_get_issuer():
     """Test the `DocumentRequest.get_issuer()` method"""
 
     document_request = factories.DocumentRequestFactory(
-        issuer="marion.documents.issuers.DummyDocument",
+        issuer="marion.issuers.DummyDocument",
         context_query={"fullname": "Richie Cunningham"},
     )
 
@@ -212,7 +212,7 @@ def test_document_request_get_document_url():
     """Test the `DocumentRequest.get_document_url()` method"""
 
     document_request = factories.DocumentRequestFactory(
-        issuer="marion.documents.issuers.DummyDocument",
+        issuer="marion.issuers.DummyDocument",
         context_query={"fullname": "Richie Cunningham"},
     )
 

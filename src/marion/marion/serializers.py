@@ -1,4 +1,4 @@
-"""Serializers for the marion.documents application"""
+"""Serializers for the marion application"""
 
 from django.utils.translation import gettext_lazy as _
 
