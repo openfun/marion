@@ -1,6 +1,7 @@
 """Realisation Certificate"""
 
 import datetime
+import json
 from enum import Enum
 from pathlib import Path
 from typing import Generic, TypeVar
@@ -14,7 +15,9 @@ from pydantic import BaseModel, ValidationError
 
 from marion.issuers.base import AbstractDocument
 
-ArrowSupportedDateType = TypeVar("ArrowSupportedDateType", int, str, datetime.date)
+ArrowSupportedDateType = TypeVar(
+    "ArrowSupportedDateType", int, str, datetime.date, datetime.datetime
+)
 
 
 class StrEnum(str, Enum):
@@ -30,9 +33,6 @@ class Gender(StrEnum):
     MALE = "Mr"
     FEMALE = "Mme"
 
-    def __str__(self):
-        return f"{self.value}"
-
 
 class CertificateScope(StrEnum):
     """Allowed scopes for the RealisationCertificate."""
@@ -42,12 +42,9 @@ class CertificateScope(StrEnum):
     VAE = "action de VAE"
     APPRENTISSAGE = "action de formation par apprentissage"
 
-    def __str__(self):
-        return f"{self.value}"
-
 
 class ArrowDate(Generic[ArrowSupportedDateType]):
-    """ArrowDate generic class definition.
+    """ArrowDate field definition.
 
     To accept several input date types as string, integer or datetime.date,
     it is necessary to parse them to get a datetime.date object.
@@ -57,9 +54,6 @@ class ArrowDate(Generic[ArrowSupportedDateType]):
 
     """
 
-    def __init__(self, date: ArrowSupportedDateType) -> None:
-        self.date = date
-
     @classmethod
     def __get_validators__(cls):
         yield cls.validate
@@ -68,23 +62,18 @@ class ArrowDate(Generic[ArrowSupportedDateType]):
     def validate(cls, value):
         """Validates input date format with arrow library object."""
 
-        if not isinstance(value, cls):
-            raise TypeError("Invalid value")
+        if isinstance(value, (int, str)):
+            return arrow.get(value).date()
 
-        if isinstance(value.date, (int, str)):
-            return arrow.get(value.date).date()
+        if isinstance(value, datetime.datetime):
+            return value.date()
 
-        if isinstance(value.date, datetime.date):
-            return value.date
+        if isinstance(value, datetime.date):
+            return value
 
-        raise ValidationError("Date value must be of type int, str or datetime.date.")
-
-
-class DateSpan(BaseModel):
-    """DateSpan model definition."""
-
-    start: ArrowDate
-    end: ArrowDate
+        raise ValidationError(
+            "Date value must be of type int, str, datetime.date or datetime.datetime."
+        )
 
 
 class Manager(BaseModel):
@@ -112,28 +101,29 @@ class Student(BaseModel):
     organization: Organization
 
 
-class Session(BaseModel):
-    """Course session model definition."""
-
-    datespan: DateSpan
-    duration: int
-    scope: CertificateScope
-    manager: Manager
-
-
 class Course(BaseModel):
     """Course model definition."""
 
     name: str
-    session: Session
+    duration: int
+    scope: CertificateScope
     organization: Organization
+
+
+class CourseRun(BaseModel):
+    """Course run model definition."""
+
+    course: Course
+    start: ArrowDate
+    end: ArrowDate
+    manager: Manager
 
 
 class ContextModel(BaseModel):
     """Context model definition."""
 
     identifier: UUID
-    course: Course
+    course_run: CourseRun
     student: Student
     creation_date: datetime.datetime
     delivery_stamp: datetime.datetime
@@ -143,7 +133,7 @@ class ContextQueryModel(BaseModel):
     """Context query model definition."""
 
     student: Student
-    course: Course
+    course_run: CourseRun
 
 
 class RealisationCertificate(AbstractDocument):
@@ -162,13 +152,13 @@ class RealisationCertificate(AbstractDocument):
         """Fetch the context that will be used to compile the certificate template."""
 
         validated = self.validate_context_query(context_query)
-
-        return Context(
-            {
-                "identifier": self.identifier,
-                "course": validated.course,
-                "student": validated.student,
-                "creation_date": parser.isoparse(self.created),
-                "delivery_stamp": self.created,
-            }
+        context = json.loads(
+            self.context_model(
+                identifier=self.identifier,
+                creation_date=parser.isoparse(self.created),
+                delivery_stamp=self.created,
+                **validated.dict(),
+            ).json()
         )
+
+        return Context(context)

@@ -1,5 +1,6 @@
 """Tests for the howard.issuers.realisation application views"""
 
+import json
 import uuid
 from datetime import date, datetime
 
@@ -1474,6 +1475,7 @@ def test_realisation_certificate_fetch_context(monkeypatch):
     )
 
     expected = Context(
+<<<<<<< HEAD
         {
             "identifier": str(identifier),
             "course": course,
@@ -1481,6 +1483,16 @@ def test_realisation_certificate_fetch_context(monkeypatch):
             "creation_date": freezed_now,
             "delivery_stamp": freezed_now.isoformat(),
         }
+=======
+        json.loads(
+            ContextModel(
+                identifier=str(identifier),
+                creation_date=freezed_now,
+                delivery_stamp=freezed_now,
+                **context_query.dict()
+            ).json()
+        )
+>>>>>>> dd35458... fixup! ⚡️(howard) update realisation certificate modelisation
     )
 
     context = test_certificate.fetch_context(

@@ -29,14 +29,14 @@
           <p>
             Je soussigné(e)
             <span>
-              {{ course.organization.manager.first_name }}
-              {{ course.organization.manager.last_name }}
+              {{ course_run.course.organization.manager.first_name }}
+              {{ course_run.course.organization.manager.last_name }}
               </span>
           </p>
           <p>
             représentant légal du dispensateur de formation
             <span>
-              {{ course.organization.name }}
+              {{ course_run.course.organization.name }}
             </span>
           </p>
           <p>atteste que :</p>
@@ -53,21 +53,21 @@
         </section>
         <section id="course">
           <div class="name">
-            a suivi l'action de formation <span>{{ course.name }}</span>.
+            a suivi l'action de formation <span>{{ course_run.course.name }}</span>.
           </div>
           <div class="scope">
             <p>
               Nature de l'action de formation :
-              <span>{{ course.session.scope }}</span>
+              <span>{{ course_run.course.scope }}</span>
             </p>
           </div>
           <div class="dates">
             qui s'est déroulée du
-            <span>{{ course.session.datespan.start | date:"d/m/Y" }}</span> au
-            <span>{{ course.session.datespan.end | date:"d/m/Y" }} </span>
+            <span>{{ course_run.start | date:"d/m/Y" }}</span> au
+            <span>{{ course_run.end | date:"d/m/Y" }} </span>
           </div>
           <div class="duration">
-            pour une durée totale de <span>{{ course.session.duration }}</span> heures.
+            pour une durée totale de <span>{{ course_run.course.duration }}</span> heures.
           </div>
         </section>
         <section id="legal">
@@ -84,7 +84,7 @@
         <section id="signatures">
           <div>
             <div class="location">
-              Fait à : <span>{{ course.organization.location }}</span>
+              Fait à : <span>{{ course_run.course.organization.location }}</span>
             </div>
             <div class="date">
               Le : <span>{{ creation_date | date:"d/m/Y" }}</span>
@@ -95,10 +95,10 @@
               Cachet et signature du responsable du dispensateur de formation
             </p>
             <div class="manager">
-              <span class="gender">{{ course.session.manager.gender }}</span>
-              <span class="last-name">{{ course.session.manager.last_name }}</span>
-              <span class="first-name">{{ course.session.manager.first_name }}</span>,
-              <span class="first-name">{{ course.session.manager.position }}</span>
+              <span class="gender">{{ course_run.manager.gender }}</span>
+              <span class="last-name">{{ course_run.manager.last_name }}</span>
+              <span class="first-name">{{ course_run.manager.first_name }}</span>,
+              <span class="first-name">{{ course_run.manager.position }}</span>
               <br/>
 
               <img src="{{ debug | yesno:",file://" }}{% static "howard/test-signature.png" %}" />
