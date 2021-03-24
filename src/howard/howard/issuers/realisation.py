@@ -2,6 +2,7 @@
 
 import datetime
 from enum import Enum
+from pathlib import Path
 from typing import Generic, TypeVar
 from uuid import UUID
 
@@ -153,6 +154,9 @@ class RealisationCertificate(AbstractDocument):
 
     context_model = ContextModel
     context_query_model = ContextQueryModel
+
+    css_template_path = Path("howard/realisation.css")
+    html_template_path = Path("howard/realisation.html")
 
     def fetch_context(self, **context_query):
         """Fetch the context that will be used to compile the certificate template."""
