@@ -1,10 +1,7 @@
 """Tests for the howard.issuers.realisation application views"""
 
-import json
+import datetime
 import uuid
-from datetime import date, datetime
-
-from django.template import Context
 
 import pytest
 from howard.issuers.realisation import (
@@ -25,8 +22,8 @@ from pydantic import BaseModel, ValidationError
         "2021-03-24",
         "20210324",
         1616598447,
-        date(2021, 3, 24),
-        datetime(2021, 3, 24, 12, 12),
+        datetime.date(2021, 3, 24),
+        datetime.datetime(2021, 3, 24, 12, 12),
     ],
 )
 def test_arrowdate_field_with_valid_dates(input_date):
@@ -37,7 +34,7 @@ def test_arrowdate_field_with_valid_dates(input_date):
 
         date: ArrowDate
 
-    assert Foo(date=input_date).date == date(2021, 3, 24)
+    assert Foo(date=input_date).date == datetime.date(2021, 3, 24)
 
 
 @pytest.mark.parametrize(
@@ -66,33 +63,20 @@ def test_arrowdate_field_with_invalid_dates(input_date):
 def test_realisation_certificate_fetch_context(monkeypatch, context_query):
     """Test Realisation Certificate fetch_context"""
 
-    freezed_now = datetime(2021, 1, 1)
+    freezed_now = datetime.datetime(2021, 1, 1)
     monkeypatch.setattr("django.utils.timezone.now", lambda: freezed_now)
 
     identifier = uuid.uuid4()
-    test_certificate = RealisationCertificate(identifier=identifier)
-
-    expected = Context(
-<<<<<<< HEAD
-        {
-            "identifier": identifier,
-            "course_run": context_query.course_run.dict(),
-            "student": context_query.student.dict(),
-            "creation_date": freezed_now,
-            "delivery_stamp": freezed_now,
-        }
-=======
-        json.loads(
-            ContextModel(
-                identifier=str(identifier),
-                creation_date=freezed_now,
-                delivery_stamp=freezed_now,
-                **context_query.dict()
-            ).json()
-        )
->>>>>>> dd35458... fixup! ⚡️(howard) update realisation certificate modelisation
+    test_certificate = RealisationCertificate(
+        identifier=identifier, context_query=context_query
     )
 
-    context = test_certificate.fetch_context(**context_query.dict())
+    expected = {
+        "identifier": str(identifier),
+        "creation_date": freezed_now,
+        "delivery_stamp": freezed_now.isoformat(),
+        **context_query.dict(),
+    }
+    context = test_certificate.fetch_context()
 
     assert context == expected

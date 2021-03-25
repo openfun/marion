@@ -3,7 +3,7 @@
 import json
 
 from django.conf import settings
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import PermissionDenied, ValidationError
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.template import Context
 from django.utils.module_loading import import_string
@@ -11,7 +11,10 @@ from django.utils.module_loading import import_string
 from rest_framework import mixins, status, viewsets
 from rest_framework.response import Response
 
-from .exceptions import DocumentIssuerContextValidationError
+from .exceptions import (
+    DocumentIssuerContextQueryValidationError,
+    DocumentIssuerContextValidationError,
+)
 from .models import DocumentRequest
 from .serializers import DocumentRequestSerializer
 
@@ -33,7 +36,11 @@ class DocumentRequestViewSet(
 
         try:
             return super().create(request, *args, **kwargs)
-        except (DocumentIssuerContextValidationError,) as error:
+        except (
+            DocumentIssuerContextQueryValidationError,
+            DocumentIssuerContextValidationError,
+            ValidationError,
+        ) as error:
             return Response(
                 data={"error": str(error)}, status=status.HTTP_400_BAD_REQUEST
             )

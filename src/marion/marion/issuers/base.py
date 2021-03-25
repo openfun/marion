@@ -2,8 +2,10 @@
 
 import uuid
 from abc import ABC, abstractmethod
+from typing import Union
 
 from django.conf import settings
+from django.template import Context
 from django.template.engine import Engine
 from django.utils import timezone
 from django.utils.functional import cached_property
@@ -23,6 +25,7 @@ from ..exceptions import (
     DocumentIssuerContextQueryValidationError,
     DocumentIssuerContextValidationError,
     DocumentIssuerMissingContext,
+    DocumentIssuerMissingContextQuery,
 )
 from ..utils import static_file_fetcher
 
@@ -121,48 +124,65 @@ class AbstractDocument(PDFFileMetadataMixin, ABC):
     context_model: BaseModel = None
     context_query_model: BaseModel = None
 
-    def __init__(self, identifier=None):
+    def __init__(
+        self, identifier: uuid.UUID = None, context_query: Union[str, dict] = None
+    ):
 
         # Document
         self.identifier = self.generate_identifier(identifier)
         self.document_path = self.get_document_path()
 
-        # Templates
+        # Data
         self.context = None
+        self.context_query = (
+            self.validate_context_query(context_query)
+            if context_query is not None
+            else None
+        )
+
+        # Templates
         self.css = None
         self.html = None
 
         super().__init__()
 
     @classmethod
-    def validate_context(cls, context):
+    def validate_context(cls, context: Union[str, dict]) -> BaseModel:
         """Use required context pydantic model to validate input context."""
 
         if cls.context_model is None:
-            raise DocumentIssuerContextValidationError(
-                str(_("Context model is missing"))
-            )
+            raise DocumentIssuerMissingContext(str(_("Context model is missing")))
+
         try:
-            return cls.context_model(**context)
+            if isinstance(context, str):
+                context = cls.context_model.parse_raw(context)
+            elif isinstance(context, dict):
+                context = cls.context_model(**context)
         except ValidationError as error:
             raise DocumentIssuerContextValidationError(
-                _(f"Document issuer context is not valid: {error}")
+                _(f"Document issuer context string is not valid: {error}")
             ) from error
+        return context
 
     @classmethod
-    def validate_context_query(cls, context_query):
+    def validate_context_query(cls, context_query: Union[str, dict]) -> BaseModel:
         """Use required context query pydantic model to validate input context query."""
 
         if cls.context_query_model is None:
-            raise DocumentIssuerContextQueryValidationError(
+            raise DocumentIssuerMissingContextQuery(
                 str(_("Context query model is missing"))
             )
+
         try:
-            return cls.context_query_model(**context_query)
+            if isinstance(context_query, str):
+                context_query = cls.context_query_model.parse_raw(context_query)
+            if isinstance(context_query, dict):
+                context_query = cls.context_query_model(**context_query)
         except ValidationError as error:
             raise DocumentIssuerContextQueryValidationError(
-                _(f"Document issuer context query is not valid: {error}")
+                _(f"Document issuer context query string is not valid: {error}")
             ) from error
+        return context_query
 
     @cached_property
     def __default_template_basename(self):
@@ -283,7 +303,7 @@ class AbstractDocument(PDFFileMetadataMixin, ABC):
         return Engine.get_default()
 
     @abstractmethod
-    def fetch_context(self, **context_query):
+    def fetch_context(self) -> dict:
         """Fetch document context given context query parameters.
 
         This method should be implemented while using this interface for a
@@ -293,26 +313,17 @@ class AbstractDocument(PDFFileMetadataMixin, ABC):
         the validate_context_query method in your implementation to ensure data
         consistency.
 
-        Returns fetched context as a Django Context instance.
+        Returns fetched context as a dictionnary.
 
         """
 
-    def load_context(self, context):
-        """Validate and set context passed as a Django Context instance"""
+    def set_context(self, context: dict):
+        """Validate and set context passed as a dictionary instance"""
+        self.context = self.validate_context(context)
 
-        try:
-            self.validate_context(self.get_context_dict(context))
-        except ValidationError as error:
-            raise DocumentIssuerContextValidationError(
-                _(f"Fetched context is not valid, error was: {error}")
-            ) from error
-        else:
-            self.context = context
-
-    @classmethod
-    def get_context_dict(cls, context):
-        """Get the context dict from a Django Context instance"""
-        return context.dicts[1]
+    def get_django_context(self) -> Context:
+        """Get the Django Context instance from the context model instance."""
+        return Context(self.context.dict())
 
     def create(self):
         """Create document.
@@ -327,11 +338,12 @@ class AbstractDocument(PDFFileMetadataMixin, ABC):
         """
 
         if self.context is None:
-            raise DocumentIssuerMissingContext("Context needs to be loaded first")
+            self.set_context(self.fetch_context())
 
         document_path = self.get_document_path()
-        html_str = self.get_html().render(self.context)
-        css_str = self.get_css().render(self.context)
+        django_context = self.get_django_context()
+        html_str = self.get_html().render(django_context)
+        css_str = self.get_css().render(django_context)
 
         font_config = FontConfiguration()
         html = HTML(string=html_str, url_fetcher=static_file_fetcher)
