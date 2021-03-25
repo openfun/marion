@@ -45,10 +45,11 @@ env.d/development/crowdin
 
 # Test & lint
 .coverage
+.hypothesis
+.mypy_cache
 .pylint.d
 .pytest_cache
 db.sqlite3
-.mypy_cache
 
 # Development files
 data/
