@@ -3,7 +3,6 @@
 from django.core.exceptions import FieldError as DjangoFieldError
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import models as django_models
-from django.template import Context
 
 import pytest
 from pydantic import BaseModel
@@ -151,11 +150,11 @@ def test_document_request_save(monkeypatch):
         mk_patch.setattr(
             issuers.DummyDocument,
             "fetch_context",
-            lambda *args, **kwargs: Context({"fullname": "Richie Cunningham"}),
+            lambda *args, **kwargs: {"fullname": "Richie Cunningham"},
         )
         with pytest.raises(
             exceptions.DocumentIssuerContextValidationError,
-            match="Document issuer context is not valid",
+            match="identifier\n  field required",
         ):
             document_request.save()
 

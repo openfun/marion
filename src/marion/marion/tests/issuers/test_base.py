@@ -18,6 +18,7 @@ from marion.exceptions import (
     DocumentIssuerContextQueryValidationError,
     DocumentIssuerContextValidationError,
     DocumentIssuerMissingContext,
+    DocumentIssuerMissingContextQuery,
 )
 from marion.issuers.base import AbstractDocument
 
@@ -265,9 +266,7 @@ def test_abstract_document_validate_context():
         def fetch_context(self, **context_query):
             pass
 
-    with pytest.raises(
-        DocumentIssuerContextValidationError, match="Context model is missing"
-    ):
+    with pytest.raises(DocumentIssuerMissingContext, match="Context model is missing"):
         TestDocumentWithMissingContextModel.validate_context({"foo": 1})
 
     class ContextModel(BaseModel):
@@ -306,7 +305,7 @@ def test_abstract_document_validate_context_query():
             pass
 
     with pytest.raises(
-        DocumentIssuerContextQueryValidationError,
+        DocumentIssuerMissingContextQuery,
         match="Context query model is missing",
     ):
         TestDocumentWithMissingContextModel.validate_context_query({"foo": 1})
@@ -340,8 +339,8 @@ def test_abstract_document_validate_context_query():
     )
 
 
-def test_abstract_document_load_context():
-    """Test AbstractDocument load_context method"""
+def test_abstract_document_set_context():
+    """Test AbstractDocument set_context method"""
 
     # pylint: disable=missing-class-docstring
     class ContextModel(BaseModel):
@@ -360,27 +359,38 @@ def test_abstract_document_load_context():
 
     # Load valid context
     context = Context({"fullname": "Richie Cunningham", "friends": 2})
-    test_document.load_context(context)
+    test_document.set_context(context)
     assert test_document.context == context
 
     # Load invalid context
-    context = Context({"fullname": "Richie Cunningham", "friends": "None"})
+    context = {"fullname": "Richie Cunningham", "friends": "None"}
     with pytest.raises(
         DocumentIssuerContextValidationError,
         match="value is not a valid integer",
     ):
-        test_document.load_context(context)
+        test_document.set_context(context)
 
 
-def test_abstract_document_get_context_dict():
-    """Test AbstractDocument get_context_dict method"""
+# pylint: disable=missing-class-docstring
+def test_abstract_document_get_django_context():
+    """Test AbstractDocument get_django_context method"""
 
-    # pylint: disable=missing-class-docstring
+    class ContextModel(BaseModel):
+        life: int
+
+    class ContextQueryModel(BaseModel):
+        intergalactic: str
+
     class TestDocument(AbstractDocument):
-        def fetch_context(self, **context_query):
-            pass
+        context_model = ContextModel
+        context_query_model = ContextQueryModel
 
-    assert TestDocument.get_context_dict(Context({"foo": 1})) == {"foo": 1}
+        def fetch_context(self):
+            return {"life": 42}
+
+    document = TestDocument(context_query={"intergalactic": "voyager"})
+    document.set_context(document.fetch_context())
+    assert document.get_django_context() == Context({"life": 42})
 
 
 def test_abstract_document_create():
@@ -408,18 +418,10 @@ def test_abstract_document_create():
         def get_css(self):
             return Template("body {color: red}")
 
-        def fetch_context(self, **context_query):
-            return Context({"fullname": "Richie Cunningham", **context_query})
+        def fetch_context(self):
+            return {"fullname": "Richie Cunningham", **self.context_query.dict()}
 
-    test_document = TestDocument()
-
-    with pytest.raises(
-        DocumentIssuerMissingContext, match="Context needs to be loaded first"
-    ):
-        test_document.create()
-
-    context = test_document.fetch_context(user_id="rcunningham")
-    test_document.load_context(context)
+    test_document = TestDocument(context_query={"user_id": "rcunningham"})
     test_document_path = test_document.create()
 
     assert Path(test_document_path).exists()
@@ -448,7 +450,7 @@ def test_abstract_document_jinja_template_engine(settings):
                 "<body>My name is {{ fullname }} (status: {{ status }})</body>"
             )
 
-        def fetch_context(self, **context_query):
+        def fetch_context(self):
             pass
 
     test_document = TestDocument()

@@ -36,3 +36,12 @@ class DocumentIssuerMissingContext(Exception):
     perform an action, e.g. to create a document.
 
     """
+
+
+class DocumentIssuerMissingContextQuery(Exception):
+    """Document issuer missing context query error.
+
+    This exception is raised when the document issuer context query is missing
+    to perform an action, e.g. to create a document.
+
+    """

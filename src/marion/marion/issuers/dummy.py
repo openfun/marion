@@ -2,8 +2,6 @@
 
 from uuid import UUID
 
-from django.template import Context
-
 from pydantic import BaseModel, constr
 
 from .base import AbstractDocument
@@ -41,7 +39,7 @@ class DummyDocument(AbstractDocument):
 
     keywords = ["dummy", "test", "document"]
 
-    def fetch_context(self, **context_query):
+    def fetch_context(self) -> dict:
         """Fetch the context that will be used to compile the document template.
 
         This method is required by the AbstractDocument interface. The
@@ -49,8 +47,7 @@ class DummyDocument(AbstractDocument):
 
         """
 
-        validated = self.validate_context_query(context_query)
-        return Context({"fullname": validated.fullname, "identifier": self.identifier})
+        return {"fullname": self.context_query.fullname, "identifier": self.identifier}
 
     def get_title(self):
         """Define a custom title for the generated PDF metadata"""

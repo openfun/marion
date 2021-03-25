@@ -1,5 +1,6 @@
 """Models for the marion application"""
 
+import json
 import uuid
 
 from django.core.exceptions import FieldError
@@ -11,7 +12,7 @@ from django.utils.translation import gettext_lazy as _
 from pydantic.error_wrappers import ValidationError as PydanticValidationError
 
 from .defaults import DOCUMENT_ISSUER_CHOICES_CLASS
-from .exceptions import InvalidDocumentIssuer
+from .exceptions import DocumentIssuerContextQueryValidationError, InvalidDocumentIssuer
 
 DocumentIssuerChoices = import_string(DOCUMENT_ISSUER_CHOICES_CLASS)
 
@@ -36,8 +37,14 @@ class PydanticModelField(models.JSONField):
         # Disable validation when migrations are faked
         if self.model.__module__ == "__fake__":
             return
+
+        # Validate either raw (JSON string) data or a serialized dict (before
+        # saving the Django model).
         try:
-            pydantic_model(**value)
+            if isinstance(value, str):
+                pydantic_model.parse_raw(value)
+            elif isinstance(value, dict):
+                pydantic_model(**value)
         except PydanticValidationError as error:
             raise DjangoValidationError(error, code="invalid") from error
 
@@ -63,6 +70,7 @@ class PydanticModelField(models.JSONField):
     def validate(self, value, model_instance):
         """Add pydantic model validation to field validation"""
 
+        # Validate JSON value
         super().validate(value, model_instance)
 
         self._validate_pydantic_model(value, model_instance)
@@ -169,18 +177,18 @@ class DocumentRequest(models.Model):
     def save(self, *args, **kwargs):
         """Generate the document along with the document request"""
 
-        # Perform early clean up
-        self.full_clean(exclude=["document_id", "context"])
-
         document = self.get_issuer()
-        document.load_context(document.fetch_context(**self.context_query))
         document.create()
 
         self.document_id = document.identifier
-        self.context = document.get_context_dict(document.context)
 
-        # Validate new fields before saving
-        self.full_clean(exclude=["context_query", "issuer"])
+        # Prevent JSON encoding issues
+        #
+        # Pydantic knows how to JSON-serialize all fields, the standard JSON
+        # encoder does not. So we convert pydantic model data to a
+        # dumb-dict with simple types using this trick.
+        self.context = json.loads(document.context.json())
+        self.context_query = json.loads(document.context_query.json())
 
         super().save(*args, **kwargs)
 
@@ -214,7 +222,13 @@ class DocumentRequest(models.Model):
 
     def get_issuer(self):
         """Get instanciated issuer class"""
-        return self.get_issuer_class(self.issuer)(identifier=self.document_id)
+
+        try:
+            return self.get_issuer_class(self.issuer)(
+                identifier=self.document_id, context_query=self.context_query
+            )
+        except DocumentIssuerContextQueryValidationError as error:
+            raise DjangoValidationError(error, code="invalid") from error
 
     def get_document_url(self, host=None, schema="https"):
         """Shortcut to get the document URL.

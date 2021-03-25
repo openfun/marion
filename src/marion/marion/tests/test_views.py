@@ -4,7 +4,6 @@ import json
 import tempfile
 from pathlib import Path
 
-from django.template import Context
 from django.urls import reverse
 
 import pytest
@@ -94,8 +93,7 @@ def test_document_request_viewset_post_context_query_pydantic_model_validation(
     }
     response = client.post(url, data, format="json")
     assert response.status_code == status.HTTP_400_BAD_REQUEST
-    assert isinstance(response.data.get("context_query")[0], drf_exceptions.ErrorDetail)
-    assert "extra fields not permitted" in str(response.data.get("context_query")[0])
+    assert "extra fields not permitted" in str(response.data.get("error"))
     assert models.DocumentRequest.objects.count() == 0
     assert count_documents(defaults.DOCUMENTS_ROOT) == 0
 
@@ -106,8 +104,7 @@ def test_document_request_viewset_post_context_query_pydantic_model_validation(
     }
     response = client.post(url, data, format="json")
     assert response.status_code == status.HTTP_400_BAD_REQUEST
-    assert isinstance(response.data.get("context_query")[0], drf_exceptions.ErrorDetail)
-    assert "none is not an allowed value" in str(response.data.get("context_query")[0])
+    assert "none is not an allowed value" in str(response.data.get("error"))
     assert models.DocumentRequest.objects.count() == 0
     assert count_documents(defaults.DOCUMENTS_ROOT) == 0
 
@@ -118,9 +115,8 @@ def test_document_request_viewset_post_context_query_pydantic_model_validation(
     }
     response = client.post(url, data, format="json")
     assert response.status_code == status.HTTP_400_BAD_REQUEST
-    assert isinstance(response.data.get("context_query")[0], drf_exceptions.ErrorDetail)
     assert "ensure this value has at least 2 characters" in str(
-        response.data.get("context_query")[0]
+        response.data.get("error")
     )
     assert models.DocumentRequest.objects.count() == 0
     assert count_documents(defaults.DOCUMENTS_ROOT) == 0
@@ -132,9 +128,8 @@ def test_document_request_viewset_post_context_query_pydantic_model_validation(
     }
     response = client.post(url, data, format="json")
     assert response.status_code == status.HTTP_400_BAD_REQUEST
-    assert isinstance(response.data.get("context_query")[0], drf_exceptions.ErrorDetail)
     assert "ensure this value has at most 255 characters" in str(
-        response.data.get("context_query")[0]
+        response.data.get("error")
     )
     assert models.DocumentRequest.objects.count() == 0
     assert count_documents(defaults.DOCUMENTS_ROOT) == 0
@@ -161,14 +156,12 @@ def test_document_request_viewset_post_context_pydantic_model_validation(
 
     # Refuse extra fields in context
     def mock_fetch_context(*args, **kwargs):
-        """A mock that return invalid context"""
-        return Context(
-            {
-                "fullname": "Richie Cunningham",
-                "identifier": "0a1c3ccf-c67d-4071-ab1f-3b27628db9b1",
-                "friends": 2,
-            }
-        )
+        """A mock that returns invalid context"""
+        return {
+            "fullname": "Richie Cunningham",
+            "identifier": "0a1c3ccf-c67d-4071-ab1f-3b27628db9b1",
+            "friends": 2,
+        }
 
     monkeypatch.setattr(DummyDocument, "fetch_context", mock_fetch_context)
     response = client.post(url, data, format="json")
@@ -179,10 +172,8 @@ def test_document_request_viewset_post_context_pydantic_model_validation(
 
     # Types checking
     def mock_fetch_context(*args, **kwargs):
-        """A mock that return invalid context"""
-        return Context(
-            {"fullname": None, "identifier": "0a1c3ccf-c67d-4071-ab1f-3b27628db9b1"}
-        )
+        """A mock that returns invalid context"""
+        return {"fullname": None, "identifier": "0a1c3ccf-c67d-4071-ab1f-3b27628db9b1"}
 
     monkeypatch.setattr(DummyDocument, "fetch_context", mock_fetch_context)
     response = client.post(url, data, format="json")
@@ -193,8 +184,8 @@ def test_document_request_viewset_post_context_pydantic_model_validation(
 
     # Missing identifier
     def mock_fetch_context(*args, **kwargs):
-        """A mock that return invalid context"""
-        return Context({"fullname": "Richie Cunningham"})
+        """A mock that returns invalid context"""
+        return {"fullname": "Richie Cunningham"}
 
     monkeypatch.setattr(DummyDocument, "fetch_context", mock_fetch_context)
     response = client.post(url, data, format="json")
@@ -205,10 +196,8 @@ def test_document_request_viewset_post_context_pydantic_model_validation(
 
     # Constraints checking (short fullname)
     def mock_fetch_context(*args, **kwargs):
-        """A mock that return invalid context"""
-        return Context(
-            {"fullname": "D", "identifier": "0a1c3ccf-c67d-4071-ab1f-3b27628db9b1"}
-        )
+        """A mock that returns invalid context"""
+        return {"fullname": "D", "identifier": "0a1c3ccf-c67d-4071-ab1f-3b27628db9b1"}
 
     monkeypatch.setattr(DummyDocument, "fetch_context", mock_fetch_context)
     response = client.post(url, data, format="json")
@@ -219,13 +208,11 @@ def test_document_request_viewset_post_context_pydantic_model_validation(
 
     # Constraints checking (too long fullname)
     def mock_fetch_context(*args, **kwargs):
-        """A mock that return invalid context"""
-        return Context(
-            {
-                "fullname": "F" * 256,
-                "identifier": "0a1c3ccf-c67d-4071-ab1f-3b27628db9b1",
-            }
-        )
+        """A mock that returns invalid context"""
+        return {
+            "fullname": "F" * 256,
+            "identifier": "0a1c3ccf-c67d-4071-ab1f-3b27628db9b1",
+        }
 
     monkeypatch.setattr(DummyDocument, "fetch_context", mock_fetch_context)
     response = client.post(url, data, format="json")

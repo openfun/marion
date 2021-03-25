@@ -1,13 +1,10 @@
 """Realisation Certificate"""
 
 import datetime
-import json
 from enum import Enum
 from pathlib import Path
 from typing import Generic, TypeVar
 from uuid import UUID
-
-from django.template import Context
 
 import arrow
 from dateutil import parser
@@ -46,8 +43,8 @@ class CertificateScope(StrEnum):
 class ArrowDate(Generic[ArrowSupportedDateType]):
     """ArrowDate field definition.
 
-    To accept several input date types as string, integer or datetime.date,
-    it is necessary to parse them to get a datetime.date object.
+    To accept several input date types as string, integer, datetime.datetime or
+    datetime.date, it is necessary to parse them to get a datetime.date object.
 
     The 'arrow' package is used to convert inputs in datetime.date with a
     wide range of possible writing formats.
@@ -148,17 +145,12 @@ class RealisationCertificate(AbstractDocument):
     css_template_path = Path("howard/realisation.css")
     html_template_path = Path("howard/realisation.html")
 
-    def fetch_context(self, **context_query):
+    def fetch_context(self) -> dict:
         """Fetch the context that will be used to compile the certificate template."""
 
-        validated = self.validate_context_query(context_query)
-        context = json.loads(
-            self.context_model(
-                identifier=self.identifier,
-                creation_date=parser.isoparse(self.created),
-                delivery_stamp=self.created,
-                **validated.dict(),
-            ).json()
-        )
-
-        return Context(context)
+        return {
+            "identifier": self.identifier,
+            "creation_date": parser.isoparse(self.created),
+            "delivery_stamp": self.created,
+            **self.context_query.dict(),
+        }
