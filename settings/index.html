@@ -13,14 +13,14 @@
         <meta name="author" content="Open FUN (France Universite Numerique)">
       
       
-        <link rel="canonical" href="https://openfun.github.io/marion/issuer-reference/">
+        <link rel="canonical" href="https://openfun.github.io/marion/settings/">
       
       <link rel="shortcut icon" href="../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-7.0.5">
     
     
       
-        <title>Issuer reference - Marion</title>
+        <title>Settings - Marion</title>
       
     
     
@@ -66,7 +66,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#issuer_reference" class="md-skip">
+        <a href="#settings" class="md-skip">
           Skip to content
         </a>
       
@@ -98,7 +98,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Issuer reference
+              Settings
             
           </span>
         </div>
@@ -259,12 +259,14 @@
 
   
   
+    
+  
   
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" checked>
       
       <label class="md-nav__link" for="__nav_2">
         User guide
@@ -289,6 +291,27 @@
   
 
           
+            
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+        
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Settings
+      </a>
+      
+    </li>
+  
+
+          
         </ul>
       </nav>
     </li>
@@ -301,14 +324,12 @@
 
   
   
-    
-  
   
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" checked>
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
       
       <label class="md-nav__link" for="__nav_3">
         Developer guide
@@ -336,20 +357,50 @@
             
   
   
+  
     
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2" type="checkbox" id="__nav_3_2" >
+      
+      <label class="md-nav__link" for="__nav_3_2">
+        References
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="References" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_2">
+          <span class="md-nav__icon md-icon"></span>
+          References
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
   
   
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-      
-        
-      
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
-        Issuer reference
+  
+    <li class="md-nav__item">
+      <a href="../sources/issuer/" class="md-nav__link">
+        Issuer
       </a>
-      
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sources/model/" class="md-nav__link">
+        Model
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
     </li>
   
 
@@ -442,13 +493,21 @@
             <article class="md-content__inner md-typeset">
               
                 
-                  <a href="https://github.com/openfun/marion/edit/master/docs/issuer-reference.md" title="Edit this page" class="md-content__button md-icon">
+                  <a href="https://github.com/openfun/marion/edit/master/docs/settings.md" title="Edit this page" class="md-content__button md-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
                   </a>
                 
                 
-                <h1 id="issuer_reference">Issuer reference<a class="headerlink" href="#issuer_reference" title="Permanent link">&para;</a></h1>
-<p>TODO: include base issuer source code here.</p>
+                <h1 id="settings">Settings<a class="headerlink" href="#settings" title="Permanent link">&para;</a></h1>
+<p>Marion&rsquo;s defaults can be overridden using the following Django settings:</p>
+<ul>
+<li><code>MARION_DOCUMENT_ISSUER_CHOICES_CLASS</code>: the list of avaiable active issuers
+  for your project (default: <code>marion.defaults.DocumentIssuerChoices</code>)</li>
+<li><code>MARION_DOCUMENTS_ROOT</code>: the root directory that will store generated
+  documents (default: <code>Path(settings.MEDIA_ROOT)</code>)</li>
+<li><code>MARION_DOCUMENTS_TEMPLATE_ROOT</code>: the default relative template path where to
+  find templates for your issuer (default: <code>Path("marion")</code>)</li>
+</ul>
                 
               
               
@@ -466,7 +525,7 @@
   
     <nav class="md-footer__inner md-grid" aria-label="Footer">
       
-        <a href="../contribute/" class="md-footer__link md-footer__link--prev" rel="prev">
+        <a href="../issuer/" class="md-footer__link md-footer__link--prev" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
           </div>
@@ -475,19 +534,19 @@
               <span class="md-footer__direction">
                 Previous
               </span>
-              Contribute
+              Create an issuer
             </div>
           </div>
         </a>
       
       
-        <a href="../CHANGELOG/" class="md-footer__link md-footer__link--next" rel="next">
+        <a href="../contribute/" class="md-footer__link md-footer__link--next" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              Changelog
+              Contribute
             </div>
           </div>
           <div class="md-footer__button md-icon">
@@ -502,7 +561,7 @@
       <div class="md-footer-copyright">
         
           <div class="md-footer-copyright__highlight">
-            2020-present GIP FUN MOOC
+            2021-present GIP FUN MOOC
           </div>
         
         Made with
