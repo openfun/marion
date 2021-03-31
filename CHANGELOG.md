@@ -12,6 +12,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 
 ### Added
 
+- Install security updates in project Docker images
 - Add `DocumentRequest` model, serializer and API viewset
 - Add `DummyDocument` example document issuer
 - Implement document issuer pattern

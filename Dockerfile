@@ -6,6 +6,12 @@ FROM python:3.8-slim as base
 # Upgrade pip to its latest release to speed up dependencies installation
 RUN python -m pip install --upgrade pip
 
+# Upgrade system packages to install security updates
+RUN apt-get update && \
+    apt-get -y upgrade && \
+    rm -rf /var/lib/apt/lists/*
+
+    
 # ---- Back-end builder image ----
 FROM base as builder
 
@@ -16,6 +22,7 @@ COPY ./src/marion /builder
 
 RUN mkdir /install && \
     pip install --prefix=/install .
+
 
 # ---- Core application image ----
 FROM base as core
@@ -55,6 +62,7 @@ RUN chmod g=u /etc/passwd
 # ID.
 ENTRYPOINT [ "/usr/local/bin/entrypoint" ]
 
+
 # ---- Development image ----
 FROM core as development
 
@@ -80,6 +88,7 @@ USER ${DOCKER_USER}
 
 # Run django development server
 CMD python manage.py runserver 0.0.0.0:8000
+
 
 # ---- Production image ----
 FROM core as production
