@@ -28,7 +28,7 @@ jobs:
       - run:
           name: enforce absence of print statements in code
           command: |
-            ! git diff origin/master..HEAD -- . ':(exclude).circleci' | grep "print("
+            ! git diff origin/master..HEAD -- . ':(exclude).circleci' ':(exclude)docs/*' | grep "print("
       - run:
           name: Check absence of fixup commits
           command: |
@@ -252,6 +252,41 @@ jobs:
           name: Upload howard's package to PyPI
           command: ~/.local/bin/twine upload --skip-existing howard/dist/*
 
+
+  # ---- Documentation jobs ----
+  build-docs:
+    docker:
+      - image: circleci/python:3.8-buster
+    working_directory: ~/marion
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-back-dependencies-{{ .Revision }}
+      - run:
+          name: Build documentation
+          command: ~/.local/bin/mkdocs build
+
+  # Deploy the docs website to GitHub pages.
+  deploy-docs:
+    docker:
+      - image: circleci/python:3.8-buster
+    working_directory: ~/marion
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-back-dependencies-{{ .Revision }}
+      - add_ssh_keys:
+          fingerprints:
+            - "4c:34:2f:ed:ac:a2:76:a6:f6:30:c3:c2:76:b5:58:39"
+      - run:
+          name: Deploying to GitHub Pages
+          command: |
+            git config --global user.email "funmoocbot@users.noreply.github.com"
+            git config --global user.name "FUN MOOC Bot"
+            ~/.local/bin/mkdocs gh-deploy
+
 workflows:
   version: 2
 
@@ -307,12 +342,23 @@ workflows:
             tags:
               only: /.*/
 
+      # Docs
+      #
+      # Test documentation build
+      - build-docs:
+          requires:
+            - build-back
+          filters:
+            tags:
+              only: /.*/
+
       # Packaging: python
       #
       # Build the python package
       - package-back:
           requires:
             - build-back
+            - build-docs
             - lint-back
             - test-back
           filters:
@@ -331,3 +377,15 @@ workflows:
               ignore: /.*/
             tags:
               only: /^v.*/
+
+      # Publish the documentation website to GitHub Pages.
+      # Only do it for master as tagged releases are supposed to tag their own version of the
+      # documentation in the release commit on master before they go out.
+      - deploy-docs:
+          requires:
+            - package-back
+          filters:
+            branches:
+              only: master
+            tags:
+              only: /.*/
