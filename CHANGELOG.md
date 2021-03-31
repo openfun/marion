@@ -8,6 +8,14 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- Distribute a complete documentation
+
+### Fixed
+
+- Add package description (README)
+
 ## [0.1.2] - 2021-04-06
 
 ### Fixed
