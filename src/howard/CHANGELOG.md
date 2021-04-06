@@ -8,6 +8,12 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 
 ## [Unreleased]
 
+## [0.1.1-howard] - 2021-04-06
+
+### Changed
+
+- Upgrade `django-marion` dependency to `0.1.1`
+
 ### Fixed
 
 - Package name in version metadata
@@ -18,5 +24,6 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 
 - Draft realisation certificate issuer
 
-[unreleased]: https://github.com/openfun/marion/compare/v0.1.0-howard...master
+[unreleased]: https://github.com/openfun/marion/compare/v0.1.1-howard...master
+[0.1.1-howard]: https://github.com/openfun/marion/compare/v0.1.0-howard...v0.1.1-howard
 [0.1.0-howard]: https://github.com/openfun/marion/compare/090add7...v0.1.0-howard
