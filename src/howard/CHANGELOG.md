@@ -8,6 +8,8 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 
 ## [Unreleased]
 
+## [0.1.2-howard] - 2021-04-06
+
 ### Fixed
 
 - Include templates and static files in distributed package
@@ -28,6 +30,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 
 - Draft realisation certificate issuer
 
-[unreleased]: https://github.com/openfun/marion/compare/v0.1.1-howard...master
+[unreleased]: https://github.com/openfun/marion/compare/v0.1.2-howard...master
+[0.1.2-howard]: https://github.com/openfun/marion/compare/v0.1.1-howard...v0.1.2-howard
 [0.1.1-howard]: https://github.com/openfun/marion/compare/v0.1.0-howard...v0.1.1-howard
 [0.1.0-howard]: https://github.com/openfun/marion/compare/090add7...v0.1.0-howard
