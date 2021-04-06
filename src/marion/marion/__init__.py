@@ -13,7 +13,7 @@ def _get_version():
     """
 
     try:
-        return importlib.metadata.version("marion")
+        return importlib.metadata.version("django-marion")
     except importlib.metadata.PackageNotFoundError:
         return read_configuration(Path(__file__).parent / ".." / "setup.cfg")[
             "metadata"
