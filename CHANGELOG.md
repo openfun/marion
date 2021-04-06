@@ -8,6 +8,8 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 
 ## [Unreleased]
 
+## [0.1.0] - 2021-04-06
+
 ### Fixed
 
 - Package name in version metadata
@@ -21,5 +23,6 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 - Add `DummyDocument` example document issuer
 - Implement document issuer pattern
 
-[unreleased]: https://github.com/openfun/marion/compare/v0.1.0...master
+[unreleased]: https://github.com/openfun/marion/compare/v0.1.1...master
+[0.1.1]: https://github.com/openfun/marion/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/openfun/marion/compare/ebaa308...v0.1.0
