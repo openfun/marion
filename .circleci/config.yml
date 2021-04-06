@@ -202,7 +202,7 @@ jobs:
             cd marion && \
             python setup.py sdist bdist_wheel
       - run:
-          name: Build marion-howard python package
+          name: Build howard python package
           command: |
             cd howard && \
             python setup.py sdist bdist_wheel
@@ -236,7 +236,7 @@ jobs:
           name: List built marion package
           command: ls marion/dist/*
       - run:
-          name: List built marion-howard package
+          name: List built howard package
           command: ls howard/dist/*
       - run:
           name: Install base requirements (twine)
@@ -249,7 +249,7 @@ jobs:
           name: Upload marion's package to PyPI
           command: ~/.local/bin/twine upload --skip-existing marion/dist/*
       - run:
-          name: Upload marion-howard's package to PyPI
+          name: Upload howard's package to PyPI
           command: ~/.local/bin/twine upload --skip-existing howard/dist/*
 
 workflows:
