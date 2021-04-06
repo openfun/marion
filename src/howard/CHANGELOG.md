@@ -8,6 +8,10 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 
 ## [Unreleased]
 
+### Fixed
+
+- Include templates and static files in distributed package
+
 ## [0.1.1-howard] - 2021-04-06
 
 ### Changed
