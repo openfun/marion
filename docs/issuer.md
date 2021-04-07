@@ -173,7 +173,9 @@ Simplified example template files for the `Invoice` issuer are presented below.
 <html>
   {% if debug %}
   <head>
-    {{ css }}
+    <style>
+      {{ css }}
+    </style>
   </head>
   {% endif %}
   <body>
@@ -278,7 +280,7 @@ if settings.DEBUG:
 
 By using this view, you will be able to "see" your document in your browser as
 a normal web page at the following URL:
-[http://localhost:8000/__debug__/templates/](http://localhost:8000/__debug__/templates/)
+[http://localhost:8000/\_\_debug\_\_/templates/](http://localhost:8000/__debug__/templates/)
 
 Two GET request parameters are required to point to your template:
 
