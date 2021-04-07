@@ -82,8 +82,11 @@ $ make docs-build
 $ make docs-serve
 ```
 
-Note that the documentation is automatically built by the CI platform we use,
-so you don't need to manually deploy it.
+The documentation development server is then accessible on your browser at the 
+following address: [http://localhost:8001](http://localhost:8001).
+
+> Note that the documentation is automatically built by the CI platform we use,
+> so you don't need to manually deploy it.
 
 ## Misc
 
