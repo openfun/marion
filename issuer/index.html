@@ -848,7 +848,9 @@ that are consequently context-aware and versatile.</p>
 <span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
   <span class="cp">{%</span> <span class="k">if</span> <span class="nv">debug</span> <span class="cp">%}</span>
   <span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
-    <span class="cp">{{</span> <span class="nv">css</span> <span class="cp">}}</span>
+    <span class="p">&lt;</span><span class="nt">style</span><span class="p">&gt;</span>
+      <span class="cp">{{</span> <span class="nv">css</span> <span class="cp">}}</span>
+    <span class="p">&lt;/</span><span class="nt">style</span><span class="p">&gt;</span>
   <span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
   <span class="cp">{%</span> <span class="k">endif</span> <span class="cp">%}</span>
   <span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
@@ -948,7 +950,7 @@ for development.</p>
 </blockquote>
 <p>By using this view, you will be able to &ldquo;see&rdquo; your document in your browser as
 a normal web page at the following URL:
-<a href="http://localhost:8000/__debug__/templates/">http://localhost:8000/<strong>debug</strong>/templates/</a></p>
+<a href="http://localhost:8000/__debug__/templates/">http://localhost:8000/__debug__/templates/</a></p>
 <p>Two GET request parameters are required to point to your template:</p>
 <ol>
 <li><code>issuer</code>: the target issuer path</li>
