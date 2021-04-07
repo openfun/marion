@@ -472,6 +472,6 @@ $ http GET http://localhost:8000/api/documents/requests/
 ## Issuer testing
 
 Don't forget to test your business logic implemented in the `fetch_context`
-method of your issuer. We use pytest along with
+method of your issuer. We use `pytest` along with
 [hypothesis](https://hypothesis.readthedocs.io/en/latest/) as it has builtin
 support for [Pydantic](https://pydantic-docs.helpmanual.io/) models.
