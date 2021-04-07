@@ -10,6 +10,8 @@ copyright: 2021-present GIP FUN MOOC
 
 theme:
     name: material
+    palette:
+        primary: teal
 
 markdown_extensions:
     - attr_list
