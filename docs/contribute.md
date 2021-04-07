@@ -55,7 +55,7 @@ $ bin/pylint
 
 ## Run tests
 
-Running tests with pytest can be achieved using:
+Running tests with `pytest` can be achieved using:
 
 ```
 $ make test
