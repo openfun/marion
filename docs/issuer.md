@@ -121,9 +121,9 @@ class Invoice(AbstractDocument):
          "invoice": {
             "invoice_id": order.get("id"),
             "customer": {
-               "name": order.get("customer").get("fullname")
-            }
-            "total": order.get("total")
+               "name": order.get("customer").get("fullname"),
+            },
+            "total": order.get("total"),
          }
       }
 
