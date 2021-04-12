@@ -6,4 +6,5 @@ from django.apps import AppConfig
 class DocumentsConfig(AppConfig):
     """Documents application configuration"""
 
-    name = "documents"
+    default = False
+    name = "document"
