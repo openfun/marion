@@ -10,6 +10,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 
 ### Added
 
+- Add Django 3.2 compatibilty 
 - Distribute a complete documentation
 
 ### Fixed
