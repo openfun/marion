@@ -98,7 +98,7 @@ class ContextQueryModel(BaseModel):
    order_id: UUID
 
 
-class Invoice(AbstractDocument):
+class InvoiceDocument(AbstractDocument):
    """Invoice issuer"""
 
    keywords = ["MyShop", "invoice"]
@@ -233,7 +233,7 @@ body {
    * Reset margins for media
    * ---------------------- */
   @page {
-    size: A4 landscape;
+    size: A4 portrait;
     margin: 0;
     padding: 0;
   }
@@ -291,7 +291,7 @@ Two GET request parameters are required to point to your template:
 A complete debug template URL example may look like:
 
 ```
-http://localhost:8000/__debug__/templates/?issuer=apps.shop.issuers.invoice.Invoice&context=%7B%22invoice%22%3A+%7B%22invoice-id%22%3A+%22d972fef9%22%7D
+http://localhost:8000/__debug__/templates/?issuer=apps.shop.issuers.invoice.InvoiceDocument&context=%7B%22invoice%22%3A+%7B%22invoice-id%22%3A+%22d972fef9%22%7D
 ```
 
 Note that the JSON-serialized `context` should be URL encoded. This can be
@@ -360,7 +360,7 @@ from django.utils.translation import gettext_lazy as _
 class ShopDocumentIssuerChoices(TextChoices):
     """List active document issuers."""
 
-    INVOICE = "apps.shop.issuers.invoice.Invoice", _("Invoice")
+    INVOICE = "apps.shop.issuers.invoice.InvoiceDocument", _("Invoice")
 ```
 
 And activate them in our Django settings:
@@ -402,9 +402,9 @@ To generate a document, you will need to instantiate the corresponding issuer
 with an appropriate context query, and then call the `create()` method:
 
 ```python
-from apps.shop.issuers.invoice.Invoice
+from apps.shop.issuers.invoice.InvoiceDocument
 
-invoice = Invoice(
+invoice = InvoiceDocument(
    context_query={"order_id": "7866454a-600e-434a-a546-04a286b208db"}
 )
 
@@ -434,7 +434,7 @@ def payment(request):
     order_id = request.POST.get("order_id")
 
     invoice = DocumentRequest.objects.create(
-      issuer="apps.shop.issuers.invoice.Invoice",
+      issuer="apps.shop.issuers.invoice.InvoiceDocument",
       context_query={"order_id": order_id}
    )
 
@@ -454,7 +454,7 @@ request view set to get, list or create a new document:
 ```bash
 # Create a new document using the invoice issuer
 $ http POST http://localhost:8000/api/documents/requests/ \
-    issuer="apps.shop.issuers.invoice.Invoice" \
+    issuer="apps.shop.issuers.invoice.InvoiceDocument" \
     context_query='{"order_id": "7866454a-600e-434a-a546-04a286b208db"}'
 ```
 
