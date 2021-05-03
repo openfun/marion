@@ -38,6 +38,7 @@ COMPOSE_RUN_APP      = $(COMPOSE_RUN) marion
 COMPOSE_TEST_RUN     = $(COMPOSE) run --rm -e DJANGO_CONFIGURATION=Test -e HOME=/tmp -w /usr/local/src/marion
 COMPOSE_TEST_RUN_APP = $(COMPOSE_TEST_RUN) marion
 MANAGE               = $(COMPOSE_RUN_APP) python manage.py
+MANAGE_HOWARD        = $(COMPOSE) run --rm --workdir /usr/local/src/howard marion /app/manage.py
 WAIT_DB              = @$(COMPOSE_RUN) dockerize -wait tcp://$(DB_HOST):$(DB_PORT) -timeout 60s
 MKDOCS               = $(COMPOSE_RUN) mkdocs
 
@@ -102,6 +103,14 @@ status: ## an alias for "docker-compose ps"
 stop: ## stop the development server using Docker
 	@$(COMPOSE) stop
 .PHONY: stop
+
+i18n-generate: ## generate .pot files used for i18n
+	@$(MANAGE_HOWARD) makemessages -a --keep-pot
+.PHONY: i18n-generate
+
+i18n-compile: ## compile translations
+	@$(MANAGE_HOWARD) compilemessages --ignore="venv/**/*"
+.PHONY: i18n-compile
 
 # -- Linters
 # Nota bene: Black should come after isort just in case they don't agree...
