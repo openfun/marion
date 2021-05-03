@@ -1,0 +1,65 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: howard\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-05-04 08:25+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: \n"
+"Language-Team: French\n"
+"Language: fr_FR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: howard/defaults.py:15
+msgid "Realisation"
+msgstr "Réalisation"
+
+#: howard/defaults.py:16 howard/templates/howard/invoice.html:16
+msgid "Invoice"
+msgstr "Facture"
+
+#: howard/templates/howard/invoice.html:20
+msgid "company logo"
+msgstr "logo entreprise"
+
+#: howard/templates/howard/invoice.html:36
+msgid "Invoice reference:"
+msgstr "Référence de la facture :"
+
+#: howard/templates/howard/invoice.html:41
+msgid "Product"
+msgstr "Produit"
+
+#: howard/templates/howard/invoice.html:42
+msgid "Description"
+msgstr "Description"
+
+#: howard/templates/howard/invoice.html:43
+msgid "Taxes"
+msgstr "Taxes"
+
+#: howard/templates/howard/invoice.html:44
+msgid "Price"
+msgstr "Prix"
+
+#: howard/templates/howard/invoice.html:58
+msgid "Subtotal"
+msgstr "Sous-total"
+
+#: howard/templates/howard/invoice.html:62
+msgid "Sales Tax VAT"
+msgstr "Taxe de vente TVA"
+
+#: howard/templates/howard/invoice.html:66
+msgid "Total"
+msgstr "Total"
+
+#: howard/templates/howard/invoice.html:70
+msgid "Payment Method"
+msgstr "Moyen de paiement"
+
+#: howard/templates/howard/invoice.html:71
+msgid "Credit card"
+msgstr "Carte de crédit"

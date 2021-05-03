@@ -1,0 +1,83 @@
+/* load extra fonts */
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans");
+
+body {
+  font-family: "Open Sans", sans-serif;
+  font-size: 11pt;
+  color: #222;
+}
+
+@media print {
+  /* ----------------------
+   * Reset margins for media
+   * ---------------------- */
+  @page {
+    size: A4 portrait;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    padding: 0;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+  }
+
+  .invoice {
+    margin: 50px;
+  }
+  header {
+    min-height: 250px;
+  }
+  header .top {
+    height: 100px;
+  }
+  header .logo img {
+    height: 100px;
+  }
+  header .label {
+    font-size: 50px;
+    float: right;
+    font-weight: bold;
+    opacity: 0.50;
+    color: gray;
+  }
+
+  .customer > div {
+    position: absolute;
+    right: 50px;
+  }
+  .date {
+    margin-bottom: 30px;
+  }
+
+  table {
+    width: 100%;
+    text-align: left;
+    margin: 30px 0px;
+  }
+  th {
+    border-bottom: 1px dotted grey;
+    font-weight: 100;
+  }
+
+  footer {
+    padding-top: 100px;
+    margin-top: 150px;
+    clear: both;
+    font-size: 0.8em;
+    text-align: center;
+  }
+
+  .price {
+    width: 250px;
+    float: right;
+  }
+  .product :nth-child(4n),
+  .price td:nth-child(2n) {
+    text-align: right;
+  }
+}

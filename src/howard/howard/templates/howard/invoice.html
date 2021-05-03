@@ -1,0 +1,82 @@
+{% load i18n %}
+{% load static %}
+
+<html>
+  {% if debug %}
+  <head>
+    <style>
+      {{ css }}
+    </style>
+  </head>
+  {% endif %}
+  <body>
+    <div class="invoice">
+      <header>
+        <div class="top">
+          <div class="label">{% trans "Invoice" %}</div>
+          <div class="logo">
+            <img
+              src="{{ debug | yesno:",file://" }}{% static "howard/logo-invoice.png" %}"
+              alt="{% trans "company logo" %}"
+            />
+          </div>
+        </div>
+        <div class="customer">
+          <div>
+            <div class="date">{% now "DATE_FORMAT" %}</div>
+            <div>
+              {{ order.customer.name }}<br>
+              {{ order.customer.address|linebreaksbr }}
+            </div>
+          </div>
+        </div>
+      </header>
+      <article>
+        {% with currency=order.price.currency %}
+        <div class="invoice-id">
+          {% trans "Invoice reference:" %} {{ order.invoice_id }}
+        </div>
+        <table class="product">
+          <thead>
+            <tr>
+              <th>{% trans "Product" %}</th>
+              <th>{% trans "Description" %}</th>
+              <th>{% trans "Taxes" %}</th>
+              <th>{% trans "Price" %}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>{{ order.product.name }}</b></td>
+              <td>{{ order.product.description }}</td>
+              <td>{{ order.price.vat }}%</td>
+              <td>{{ currency }}{{ order.price.total|floatformat:2 }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <table class="price">
+          <tr>
+            <td>{% trans "Subtotal" %}</td>
+            <td>{{ currency }}{{ order.price.subtotal|floatformat:2 }}</td>
+          </tr>
+          <tr>
+            <td>{% trans "Sales Tax VAT" %} {{ order.price.vat }}%</td>
+            <td>{{ currency }}{{ order.price.vat_amount|floatformat:2 }}</td>
+          </tr>
+          <tr>
+            <td>{% trans "Total" %}</td>
+            <td>{{ currency }}{{ order.price.total|floatformat:2 }}</td>
+          </tr>
+          <tr>
+            <td>{% trans "Payment Method" %}</td>
+            <td>{% trans "Credit card" %}</td>
+          </tr>
+        </table>
+      </article>
+      {% endwith %}
+      <footer>
+        {{ order.company|linebreaksbr }}
+      </footer>
+    </div>
+  </body>
+</html>
