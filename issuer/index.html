@@ -784,7 +784,7 @@ details later):</p>
    <span class="n">order_id</span><span class="p">:</span> <span class="n">UUID</span>
 
 
-<span class="k">class</span> <span class="nc">Invoice</span><span class="p">(</span><span class="n">AbstractDocument</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">InvoiceDocument</span><span class="p">(</span><span class="n">AbstractDocument</span><span class="p">):</span>
    <span class="sd">&quot;&quot;&quot;Invoice issuer&quot;&quot;&quot;</span>
 
    <span class="n">keywords</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;MyShop&quot;</span><span class="p">,</span> <span class="s2">&quot;invoice&quot;</span><span class="p">]</span>
@@ -910,7 +910,7 @@ subsection.</p>
 <span class="c">   * Reset margins for media</span>
 <span class="c">   * ---------------------- */</span>
   <span class="p">@</span><span class="k">page</span> <span class="p">{</span>
-    <span class="nt">size</span><span class="o">:</span> <span class="nt">A4</span> <span class="nt">landscape</span><span class="o">;</span>
+    <span class="nt">size</span><span class="o">:</span> <span class="nt">A4</span> <span class="nt">portrait</span><span class="o">;</span>
     <span class="nt">margin</span><span class="o">:</span> <span class="nt">0</span><span class="o">;</span>
     <span class="nt">padding</span><span class="o">:</span> <span class="nt">0</span><span class="o">;</span>
   <span class="p">}</span>
@@ -961,7 +961,7 @@ a normal web page at the following URL:
    <code>fetch_context</code> method)</li>
 </ol>
 <p>A complete debug template URL example may look like:</p>
-<div class="highlight"><pre><span></span><code>http://localhost:8000/__debug__/templates/?issuer=apps.shop.issuers.invoice.Invoice&amp;context=%7B%22invoice%22%3A+%7B%22invoice-id%22%3A+%22d972fef9%22%7D
+<div class="highlight"><pre><span></span><code>http://localhost:8000/__debug__/templates/?issuer=apps.shop.issuers.invoice.InvoiceDocument&amp;context=%7B%22invoice%22%3A+%7B%22invoice-id%22%3A+%22d972fef9%22%7D
 </code></pre></div>
 <p>Note that the JSON-serialized <code>context</code> should be URL encoded. This can be
 achieved using the following python snippet:</p>
@@ -1016,7 +1016,7 @@ in the debug view:</p>
 <span class="k">class</span> <span class="nc">ShopDocumentIssuerChoices</span><span class="p">(</span><span class="n">TextChoices</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;List active document issuers.&quot;&quot;&quot;</span>
 
-    <span class="n">INVOICE</span> <span class="o">=</span> <span class="s2">&quot;apps.shop.issuers.invoice.Invoice&quot;</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;Invoice&quot;</span><span class="p">)</span>
+    <span class="n">INVOICE</span> <span class="o">=</span> <span class="s2">&quot;apps.shop.issuers.invoice.InvoiceDocument&quot;</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;Invoice&quot;</span><span class="p">)</span>
 </code></pre></div>
 <p>And activate them in our Django settings:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># pyproject/myproject/settings.py</span>
@@ -1049,9 +1049,9 @@ document will not be tracked as a document request in your database.</p>
 <h3 id="using_the_issuer_api">Using the issuer API<a class="headerlink" href="#using_the_issuer_api" title="Permanent link">&para;</a></h3>
 <p>To generate a document, you will need to instantiate the corresponding issuer
 with an appropriate context query, and then call the <code>create()</code> method:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">apps.shop.issuers.invoice.Invoice</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">apps.shop.issuers.invoice.InvoiceDocument</span>
 
-<span class="n">invoice</span> <span class="o">=</span> <span class="n">Invoice</span><span class="p">(</span>
+<span class="n">invoice</span> <span class="o">=</span> <span class="n">InvoiceDocument</span><span class="p">(</span>
    <span class="n">context_query</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;order_id&quot;</span><span class="p">:</span> <span class="s2">&quot;7866454a-600e-434a-a546-04a286b208db&quot;</span><span class="p">}</span>
 <span class="p">)</span>
 
@@ -1075,7 +1075,7 @@ Marion&rsquo;s <code>DocumentRequest</code> model in your views:</p>
     <span class="n">order_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;order_id&quot;</span><span class="p">)</span>
 
     <span class="n">invoice</span> <span class="o">=</span> <span class="n">DocumentRequest</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
-      <span class="n">issuer</span><span class="o">=</span><span class="s2">&quot;apps.shop.issuers.invoice.Invoice&quot;</span><span class="p">,</span>
+      <span class="n">issuer</span><span class="o">=</span><span class="s2">&quot;apps.shop.issuers.invoice.InvoiceDocument&quot;</span><span class="p">,</span>
       <span class="n">context_query</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;order_id&quot;</span><span class="p">:</span> <span class="n">order_id</span><span class="p">}</span>
    <span class="p">)</span>
 
@@ -1090,7 +1090,7 @@ Marion&rsquo;s <code>DocumentRequest</code> model in your views:</p>
 request view set to get, list or create a new document:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Create a new document using the invoice issuer</span>
 $ http POST http://localhost:8000/api/documents/requests/ <span class="se">\</span>
-    <span class="nv">issuer</span><span class="o">=</span><span class="s2">&quot;apps.shop.issuers.invoice.Invoice&quot;</span> <span class="se">\</span>
+    <span class="nv">issuer</span><span class="o">=</span><span class="s2">&quot;apps.shop.issuers.invoice.InvoiceDocument&quot;</span> <span class="se">\</span>
     <span class="nv">context_query</span><span class="o">=</span><span class="s1">&#39;{&quot;order_id&quot;: &quot;7866454a-600e-434a-a546-04a286b208db&quot;}&#39;</span>
 </code></pre></div>
 <p>You should have a <code>HTTP 200 OK</code> response. Yatta!</p>
