@@ -53,9 +53,7 @@ class PydanticModelField(models.JSONField):
 
         if self.pydantic_model is None:
             try:
-                self.pydantic_model = getattr(
-                    model_instance, f"get_{self.name}_pydantic_model"
-                )()
+                return getattr(model_instance, f"get_{self.name}_pydantic_model")()
             except AttributeError as error:
                 raise FieldError(
                     _(
@@ -239,3 +237,12 @@ class DocumentRequest(models.Model):
 
         """
         return self.get_issuer().get_document_url(host=host, schema=schema)
+
+    def get_document_path(self):
+        """Shortcut to get the document PATH.
+
+        This method is mostly a wrapper for the issuer's `get_document_path`
+        method.
+
+        """
+        return self.get_issuer().get_document_path()

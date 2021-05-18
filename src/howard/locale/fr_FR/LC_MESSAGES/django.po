@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: howard\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-05-04 08:25+0000\n"
+"POT-Creation-Date: 2021-06-07 14:58+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
@@ -20,46 +20,89 @@ msgstr "Réalisation"
 msgid "Invoice"
 msgstr "Facture"
 
+#: howard/defaults.py:17 howard/templates/howard/certificate.html:24
+msgid "Certificate"
+msgstr "Certificat"
+
+#: howard/templates/howard/certificate.html:30
+msgid ""
+"I, %(reprensentative)s,<br/> legal representative of the course provider "
+"%(organization)s<br/> certifies that:"
+msgstr ""
+"Je soussigné(e) %(representative)s,<br/> représentant légal du dispensateur "
+"de formation %(organization)s<br/> atteste que :"
+
+#: howard/templates/howard/certificate.html:39
+#, python-format
+msgid "%(student)s <br>successfully completed the course %(course)s."
+msgstr "%(student)s <br>a suivi avec succès la formation %(course)s."
+
+#: howard/templates/howard/certificate.html:43
+msgid "Nature of course"
+msgstr "Nature de la formation"
+
+#: howard/templates/howard/certificate.html:43
+#: howard/templates/howard/certificate.html:61
+#: howard/templates/howard/certificate.html:64
+msgid ":"
+msgstr " :"
+
+#: howard/templates/howard/certificate.html:44
+msgid "Issued on"
+msgstr "Délivré le"
+
+#: howard/templates/howard/certificate.html:51
+msgid "Stamp and signature of the course provider manager"
+msgstr "Cachet et signature du représentant du dispensateur de formation"
+
+#: howard/templates/howard/certificate.html:61
+msgid "Delivery stamp"
+msgstr "Tampon de livraison"
+
+#: howard/templates/howard/certificate.html:64
+msgid "Certificate ID"
+msgstr "Identifiant du certificat"
+
 #: howard/templates/howard/invoice.html:20
 msgid "company logo"
 msgstr "logo entreprise"
 
-#: howard/templates/howard/invoice.html:36
+#: howard/templates/howard/invoice.html:37
 msgid "Invoice reference:"
 msgstr "Référence de la facture :"
 
-#: howard/templates/howard/invoice.html:41
+#: howard/templates/howard/invoice.html:42
 msgid "Product"
 msgstr "Produit"
 
-#: howard/templates/howard/invoice.html:42
+#: howard/templates/howard/invoice.html:43
 msgid "Description"
 msgstr "Description"
 
-#: howard/templates/howard/invoice.html:43
+#: howard/templates/howard/invoice.html:44
 msgid "Taxes"
 msgstr "Taxes"
 
-#: howard/templates/howard/invoice.html:44
+#: howard/templates/howard/invoice.html:45
 msgid "Price"
 msgstr "Prix"
 
-#: howard/templates/howard/invoice.html:58
+#: howard/templates/howard/invoice.html:59
 msgid "Subtotal"
 msgstr "Sous-total"
 
-#: howard/templates/howard/invoice.html:62
+#: howard/templates/howard/invoice.html:63
 msgid "Sales Tax VAT"
 msgstr "Taxe de vente TVA"
 
-#: howard/templates/howard/invoice.html:66
+#: howard/templates/howard/invoice.html:67
 msgid "Total"
 msgstr "Total"
 
-#: howard/templates/howard/invoice.html:70
+#: howard/templates/howard/invoice.html:71
 msgid "Payment Method"
 msgstr "Moyen de paiement"
 
-#: howard/templates/howard/invoice.html:71
+#: howard/templates/howard/invoice.html:72
 msgid "Credit card"
 msgstr "Carte de crédit"

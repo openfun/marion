@@ -13,4 +13,5 @@ class DocumentIssuerChoices(TextChoices):
     """
 
     REALISATION = "howard.issuers.RealisationCertificate", _("Realisation")
-    INVOICE = "howard.issuers.invoice.InvoiceDocument", _("Invoice")
+    INVOICE = "howard.issuers.InvoiceDocument", _("Invoice")
+    CERTIFICATE = "howard.issuers.CertificateDocument", _("Certificate")

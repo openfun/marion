@@ -1,0 +1,69 @@
+{% load i18n %}
+{% load static %}
+
+<html>
+  {% if debug %}
+  <head>
+    <style>
+      {{ css }}
+    </style>
+  </head>
+  {% endif %}
+  <body>
+    <div id="certificate">
+      <header>
+        <div class="logos">
+          <div class="fun">
+            <img src="{{ debug | yesno:",file://" }}{% static "howard/logo-fun.png" %}" />
+          </div>
+          <div class="organization">
+            <img src="{{ debug | yesno:",file://" }}{{ course.organization.logo }}" />
+          </div>
+        </div>
+        <div class="title">
+          <h1>{% translate "Certificate" %}</h1>
+        </div>
+      </header>
+      <article class="main">
+        <section id="representative">
+          <p>
+            {% blocktranslate trimmed with reprensentative=course.organization.representative organization=course.organization.name %}
+              I, {{ reprensentative }},<br/>
+              legal representative of the course provider {{ organization }}<br/>
+              certifies that:
+            {% endblocktranslate %}
+          </p>
+        </section>
+        <section id="student">
+          <p>
+            {% blocktranslate trimmed with student=student.name course=course.name %}
+              {{ student }}
+              <br>successfully completed the course {{ course }}.
+            {% endblocktranslate %}
+            <br>{% translate "Nature of course" %}{% translate ":" %} {{ course.description }}
+            <br>{% translate "Issued on" %} {{ creation_date | date:"d/m/Y" }}
+          </p>
+        </section>
+        <section id="signatures">
+          <div></div>
+          <div class="seal">
+            <p>
+              {% translate "Stamp and signature of the course provider manager" %}
+            </p>
+            <div class="manager">
+              <img src="{{ debug | yesno:",file://" }}{{ course.organization.signature }}" />
+            </div>
+          </div>
+        </section>
+      </article>
+      <footer>
+        <div class="generated-at">
+          {% translate "Delivery stamp" %}{% translate ":" %} {{ delivery_stamp }}
+        </div>
+        <div class="identifier">
+          {% translate "Certificate ID"%}{% translate ":" %} {{ identifier }}
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>
