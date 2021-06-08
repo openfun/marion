@@ -10,6 +10,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 
 ### Added
 
+- Rename and resize FUN logo
 - Add invoice issuer
 
 ### Fixed
