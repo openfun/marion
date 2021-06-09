@@ -8,6 +8,13 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 
 ## [Unreleased]
 
+## [0.2.1-howard] - 2021-06-09
+
+### Fixed
+
+- Upgrade `django-marion` dependency to `0.3.0`
+- Move local files to `howard` Django project location
+
 ## [0.2.0-howard] - 2021-06-08
 
 ### Added
@@ -42,7 +49,8 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 
 - Draft realisation certificate issuer
 
-[unreleased]: https://github.com/openfun/marion/compare/v0.2.0-howard...master
+[unreleased]: https://github.com/openfun/marion/compare/v0.2.1-howard...master
+[0.2.1-howard]: https://github.com/openfun/marion/compare/v0.2.0-howard...v0.2.1-howard
 [0.2.0-howard]: https://github.com/openfun/marion/compare/v0.1.2-howard...v0.2.0-howard
 [0.1.2-howard]: https://github.com/openfun/marion/compare/v0.1.1-howard...v0.1.2-howard
 [0.1.1-howard]: https://github.com/openfun/marion/compare/v0.1.0-howard...v0.1.1-howard
