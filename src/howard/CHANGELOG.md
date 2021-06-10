@@ -12,6 +12,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 
 ### Fixed
 
+- Fix path to compile translations after move local files
 - Fix translation typo in the `certificate` document
 
 ## [0.2.1-howard] - 2021-06-09

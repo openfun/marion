@@ -38,7 +38,7 @@ COMPOSE_RUN_APP      = $(COMPOSE_RUN) marion
 COMPOSE_TEST_RUN     = $(COMPOSE) run --rm -e DJANGO_CONFIGURATION=Test -e HOME=/tmp -w /usr/local/src/marion
 COMPOSE_TEST_RUN_APP = $(COMPOSE_TEST_RUN) marion
 MANAGE               = $(COMPOSE_RUN_APP) python manage.py
-MANAGE_HOWARD        = $(COMPOSE) run --rm --workdir /usr/local/src/howard marion /app/manage.py
+MANAGE_HOWARD        = $(COMPOSE) run --rm --workdir /usr/local/src/howard/howard marion /app/manage.py
 WAIT_DB              = @$(COMPOSE_RUN) dockerize -wait tcp://$(DB_HOST):$(DB_PORT) -timeout 60s
 MKDOCS               = $(COMPOSE_RUN) mkdocs
 
