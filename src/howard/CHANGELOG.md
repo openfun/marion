@@ -8,6 +8,8 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 
 ## [Unreleased]
 
+## [0.2.2-howard] - 2021-06-10
+
 ### Fixed
 
 - Fix translation typo in the `certificate` document
@@ -53,7 +55,8 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 
 - Draft realisation certificate issuer
 
-[unreleased]: https://github.com/openfun/marion/compare/v0.2.1-howard...master
+[unreleased]: https://github.com/openfun/marion/compare/v0.2.2-howard...master
+[0.2.2-howard]: https://github.com/openfun/marion/compare/v0.2.1-howard...v0.2.2-howard
 [0.2.1-howard]: https://github.com/openfun/marion/compare/v0.2.0-howard...v0.2.1-howard
 [0.2.0-howard]: https://github.com/openfun/marion/compare/v0.1.2-howard...v0.2.0-howard
 [0.1.2-howard]: https://github.com/openfun/marion/compare/v0.1.1-howard...v0.1.2-howard
