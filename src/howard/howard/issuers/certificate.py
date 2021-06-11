@@ -29,7 +29,6 @@ class Course(BaseModel):
     """Course pydantic model"""
 
     name: str
-    description: str
     organization: Organization
 
 

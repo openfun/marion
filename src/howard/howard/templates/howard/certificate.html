@@ -40,7 +40,6 @@
               {{ student }}
               <br>successfully completed the course {{ course }}.
             {% endblocktranslate %}
-            <br>{% translate "Nature of course" %}{% translate ":" %} {{ course.description }}
             <br>{% translate "Issued on" %} {{ creation_date | date:"d/m/Y" }}
           </p>
         </section>

@@ -8,6 +8,10 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 
 ## [Unreleased]
 
+### Removed
+
+- Useless course description on certificate template
+
 ## [0.2.3-howard] - 2021-06-11
 
 ### Fixed
