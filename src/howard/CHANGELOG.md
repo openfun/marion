@@ -8,6 +8,8 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 
 ## [Unreleased]
 
+## [0.2.4-howard] - 2021-06-15
+
 ### Removed
 
 - Useless course description on certificate template
@@ -65,7 +67,8 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 
 - Draft realisation certificate issuer
 
-[unreleased]: https://github.com/openfun/marion/compare/v0.2.3-howard...master
+[unreleased]: https://github.com/openfun/marion/compare/v0.2.4-howard...master
+[0.2.4-howard]: https://github.com/openfun/marion/compare/v0.2.3-howard...v0.2.4-howard
 [0.2.3-howard]: https://github.com/openfun/marion/compare/v0.2.2-howard...v0.2.3-howard
 [0.2.2-howard]: https://github.com/openfun/marion/compare/v0.2.1-howard...v0.2.2-howard
 [0.2.1-howard]: https://github.com/openfun/marion/compare/v0.2.0-howard...v0.2.1-howard
