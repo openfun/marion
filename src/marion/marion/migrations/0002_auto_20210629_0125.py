@@ -27,10 +27,14 @@ class Migration(migrations.Migration):
                     "issuer_path",
                     models.TextField(
                         help_text="Full dot-notation path to the issuer class. e.g.: 'apps.shop.issuers.invoice.InvoiceDocument'",
+                        unique=True,
                         verbose_name="Issuer Path",
                     ),
                 ),
-                ("label", models.CharField(max_length=100, verbose_name="Label")),
+                (
+                    "label",
+                    models.CharField(max_length=100, unique=True, verbose_name="Label"),
+                ),
             ],
         ),
         migrations.AlterField(

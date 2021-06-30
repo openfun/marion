@@ -107,7 +107,7 @@ class Base(Configuration):
         "django.contrib.messages",
         "django.contrib.staticfiles",
         "rest_framework",
-        "marion",
+        "marion.apps.MarionConfig",
     ]
 
     MIDDLEWARE = [

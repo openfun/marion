@@ -17,11 +17,11 @@ def create_issuer_objects(sender, **kwargs):
         IssuerChoice.objects.get_or_create(**issuer)
 
 
-class DocumentsConfig(AppConfig):
-    """Documents application configuration"""
+class MarionConfig(AppConfig):
+    """Marion application configuration"""
 
     default = False
-    name = "document"
+    name = "marion"
 
     def ready(self):
         post_migrate.connect(create_issuer_objects, sender=self)

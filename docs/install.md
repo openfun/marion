@@ -78,7 +78,7 @@ You can now proceed with Marion's integration in the next subsection.
 Marion's integration in your project follows a standard procedure for a Django
 application:
 
-1\. add `rest_framework` and `marion` to your installed apps:
+1\. add `rest_framework` and `marion.apps.MarionConfig` to your installed apps:
 
 ```python
 # myproject/settings.py
@@ -87,7 +87,7 @@ INSTALLED_APPS = [
     "django.contrib.admin",
     # [...]
     "rest_framework",
-    "marion",
+    "marion.apps.MarionConfig",
 ]
 ```
 

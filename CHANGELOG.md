@@ -8,6 +8,21 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- `IssuerChoice` model to specify a path and a label for each issuer
+- New migration file
+
+### Fixed
+
+- Update the `issuer` field of `DocumentRequest` to be a ForeignKey to the 
+  `IssuerChoice` model, along with the required changes to other files within
+  the project
+
+### Removed
+
+- the `defaults.py` file from howard, as it is no longer needed
+
 ## [0.3.0] - 2021-06-08
 
 ### Added
