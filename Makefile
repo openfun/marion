@@ -90,6 +90,18 @@ migrate: ## run database migrations
 	@$(MANAGE) migrate
 .PHONY: migrate
 
+makemigrations: ## run makemigrations
+	@$(COMPOSE) up -d postgresql
+	@$(WAIT_DB)
+	@$(MANAGE) makemigrations
+.PHONY: makemigrations
+
+shell: ## run python shell
+	@$(COMPOSE) up -d postgresql
+	@$(WAIT_DB)
+	@$(MANAGE) shell
+.PHONY: shell
+
 run: ## start the development server using Docker
 	@$(COMPOSE) up -d
 	@echo "Wait for postgresql to be up..."
