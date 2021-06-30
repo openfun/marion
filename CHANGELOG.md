@@ -8,6 +8,11 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- django management commands for `makemigrations` and `shell` to aid in 
+  development work when using the `make` command
+
 ## [0.3.0] - 2021-06-08
 
 ### Added
