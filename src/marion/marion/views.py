@@ -14,6 +14,8 @@ from rest_framework.response import Response
 from .exceptions import (
     DocumentIssuerContextQueryValidationError,
     DocumentIssuerContextValidationError,
+    DocumentIssuerMissingContext,
+    InvalidDocumentIssuer,
 )
 from .models import DocumentRequest
 from .serializers import DocumentRequestSerializer
@@ -39,6 +41,8 @@ class DocumentRequestViewSet(
         except (
             DocumentIssuerContextQueryValidationError,
             DocumentIssuerContextValidationError,
+            DocumentIssuerMissingContext,
+            InvalidDocumentIssuer,
             ValidationError,
         ) as error:
             return Response(

@@ -6,14 +6,19 @@ import pytest
 from rest_framework.test import APIRequestFactory
 
 from marion import factories, serializers
+from marion.models import IssuerChoice
 
 
 @pytest.mark.django_db
 def test_document_request_serializer_document_url_field():
     """Test the document request serializer document_url field"""
 
+    issuer, _ = IssuerChoice.objects.get_or_create(
+        issuer_path="marion.issuers.DummyDocument", label="Dummy"
+    )
+
     document_request = factories.DocumentRequestFactory(
-        issuer="marion.issuers.DummyDocument",
+        issuer=issuer,
         context_query={"fullname": "Richie Cunningham"},
     )
 

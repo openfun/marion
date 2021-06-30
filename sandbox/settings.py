@@ -153,8 +153,12 @@ class Development(Base):
         "howard",
     ]
 
-    MARION_DOCUMENT_ISSUER_CHOICES_CLASS = "howard.defaults.DocumentIssuerChoices"
-
+    MARION_DOCUMENT_ISSUER_CHOICES = [
+        {"issuer_path": "howard.issuers.RealisationCertificate", "label": "Realisation"},
+        {"issuer_path": "howard.issuers.InvoiceDocument", "label": "Invoice"},
+        {"issuer_path": "howard.issuers.CertificateDocument", "label": "Certificate"},
+    ]
+    
 
 class Test(Base):
     """Test environment settings"""
@@ -162,3 +166,8 @@ class Test(Base):
     MEDIA_ROOT = Path(mkdtemp())
 
     ROOT_URLCONF = "urls.debug"
+    
+    MARION_DOCUMENT_ISSUER_CHOICES = [
+        {"issuer_path": "marion.issuers.DummyDocument", "label": "Dummy"},
+    ]
+

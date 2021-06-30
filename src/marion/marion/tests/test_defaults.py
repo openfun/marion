@@ -9,9 +9,9 @@ from marion import defaults
 def test_defaults_overrides_with_settings(settings):
     """Test marion.defaults overrides with settings definition"""
 
-    settings.MARION_DOCUMENT_ISSUER_CHOICES_CLASS = (
-        "howard.documents.DocumentIssuerChoices"
-    )
+    settings.MARION_DOCUMENT_ISSUER_CHOICES = [
+        {"issuer_path": "marion.issuers.DummyDocument", "label": "Dummy"},
+    ]
     settings.MARION_DOCUMENTS_ROOT = Path("/tmp/documents/abc")
     settings.MARION_DOCUMENTS_TEMPLATE_ROOT = Path("howard/documents/abc")
 
@@ -19,10 +19,9 @@ def test_defaults_overrides_with_settings(settings):
     # very early in the stack
     importlib.reload(defaults)
 
-    assert (
-        defaults.DOCUMENT_ISSUER_CHOICES_CLASS
-        == "howard.documents.DocumentIssuerChoices"
-    )
+    assert defaults.DOCUMENT_ISSUER_CHOICES == [
+        {"issuer_path": "marion.issuers.DummyDocument", "label": "Dummy"},
+    ]
     assert defaults.DOCUMENTS_ROOT == Path("/tmp/documents/abc")
     assert defaults.DOCUMENTS_TEMPLATE_ROOT == Path("howard/documents/abc")
 

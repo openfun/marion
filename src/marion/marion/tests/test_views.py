@@ -14,6 +14,7 @@ from rest_framework.test import APIClient
 
 from marion import defaults, models
 from marion.issuers import DummyDocument
+from marion.models import IssuerChoice
 
 client = APIClient()
 
@@ -28,6 +29,10 @@ def count_documents(root):
 def test_document_request_viewset_post(monkeypatch):
     """Test the DocumentRequestViewSet create view"""
 
+    IssuerChoice.objects.get_or_create(
+        issuer_path="marion.issuers.DummyDocument", label="Dummy"
+    )
+
     monkeypatch.setattr(defaults, "DOCUMENTS_ROOT", Path(tempfile.mkdtemp()))
 
     url = reverse("documentrequest-list")
@@ -40,7 +45,6 @@ def test_document_request_viewset_post(monkeypatch):
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert isinstance(response.data.get("context_query")[0], drf_exceptions.ErrorDetail)
     assert response.data.get("context_query")[0].code == "required"
-    assert isinstance(response.data.get("issuer")[0], drf_exceptions.ErrorDetail)
     assert response.data.get("issuer")[0].code == "required"
     assert models.DocumentRequest.objects.count() == 0
     assert count_documents(defaults.DOCUMENTS_ROOT) == 0
@@ -52,7 +56,7 @@ def test_document_request_viewset_post(monkeypatch):
     }
     response = client.post(url, data, format="json")
     assert response.status_code == status.HTTP_400_BAD_REQUEST
-    assert response.data.get("issuer")[0].code == "invalid_choice"
+    assert response.data.get("issuer") is None
     assert models.DocumentRequest.objects.count() == 0
     assert count_documents(defaults.DOCUMENTS_ROOT) == 0
 
@@ -79,6 +83,10 @@ def test_document_request_viewset_post_context_query_pydantic_model_validation(
     validation.
 
     """
+
+    IssuerChoice.objects.get_or_create(
+        issuer_path="marion.issuers.DummyDocument", label="Dummy"
+    )
 
     monkeypatch.setattr(defaults, "DOCUMENTS_ROOT", Path(tempfile.mkdtemp()))
 
@@ -144,6 +152,10 @@ def test_document_request_viewset_post_context_pydantic_model_validation(
 
     """
     # pylint: disable=unused-argument,function-redefined
+
+    IssuerChoice.objects.get_or_create(
+        issuer_path="marion.issuers.DummyDocument", label="Dummy"
+    )
 
     monkeypatch.setattr(defaults, "DOCUMENTS_ROOT", Path(tempfile.mkdtemp()))
 

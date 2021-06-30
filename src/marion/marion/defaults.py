@@ -16,10 +16,12 @@ from django.conf import settings
 from django.db.models import TextChoices
 from django.utils.translation import gettext_lazy as _
 
-DOCUMENT_ISSUER_CHOICES_CLASS = getattr(
+DOCUMENT_ISSUER_CHOICES = getattr(
     settings,
-    "MARION_DOCUMENT_ISSUER_CHOICES_CLASS",
-    "marion.defaults.DocumentIssuerChoices",
+    "MARION_DOCUMENT_ISSUER_CHOICES",
+    [
+        {"issuer_path": "marion.issuers.DummyDocument", "label": "Dummy"},
+    ],
 )
 DOCUMENTS_ROOT = getattr(settings, "MARION_DOCUMENTS_ROOT", Path(settings.MEDIA_ROOT))
 DOCUMENTS_TEMPLATE_ROOT = getattr(

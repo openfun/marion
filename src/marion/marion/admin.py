@@ -2,11 +2,16 @@
 
 from django.contrib import admin
 
-from .models import DocumentRequest
+from .models import DocumentRequest, IssuerChoice
 
 
 class DocumentRequestAdmin(admin.ModelAdmin):
-    """DocumentModel admin"""
+    """DocumentRequest admin"""
+
+
+class IssuerChoiceAdmin(admin.ModelAdmin):
+    """IssuerChoice admin"""
 
 
 admin.site.register(DocumentRequest, DocumentRequestAdmin)
+admin.site.register(IssuerChoice, IssuerChoiceAdmin)

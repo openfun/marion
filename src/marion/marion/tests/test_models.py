@@ -8,6 +8,7 @@ import pytest
 from pydantic import BaseModel
 
 from marion import exceptions, factories, issuers, models
+from marion.models import IssuerChoice
 
 
 def test_pydantic_model_field_validation():
@@ -84,20 +85,24 @@ def test_pydantic_model_field_validation():
 def test_document_request_default_ordering():
     """Test the `DocumentRequest` default ordering"""
 
+    issuer, _ = IssuerChoice.objects.get_or_create(
+        issuer_path="marion.issuers.DummyDocument", label="Dummy"
+    )
+
     first_document_request = factories.DocumentRequestFactory(
-        issuer="marion.issuers.DummyDocument",
+        issuer=issuer,
         context_query={"fullname": "Richie Cunningham"},
     )
     second_document_request = factories.DocumentRequestFactory(
-        issuer="marion.issuers.DummyDocument",
+        issuer=issuer,
         context_query={"fullname": "Marion Cunningham"},
     )
     third_document_request = factories.DocumentRequestFactory(
-        issuer="marion.issuers.DummyDocument",
+        issuer=issuer,
         context_query={"fullname": "Howard Cunningham"},
     )
     fourth_document_request = factories.DocumentRequestFactory(
-        issuer="marion.issuers.DummyDocument",
+        issuer=issuer,
         context_query={"fullname": "Joanie Cunningham"},
     )
 
@@ -112,8 +117,12 @@ def test_document_request_default_ordering():
 def test_document_request_save(monkeypatch):
     """Test the `DocumentRequest.save()` method"""
 
+    issuer, _ = IssuerChoice.objects.get_or_create(
+        issuer_path="marion.issuers.DummyDocument", label="Dummy"
+    )
+
     document_request = factories.DocumentRequestFactory(
-        issuer="marion.issuers.DummyDocument",
+        issuer=issuer,
         context_query={"fullname": "Richie Cunningham"},
     )
 
@@ -133,7 +142,7 @@ def test_document_request_save(monkeypatch):
 
     # We should perform validation before saving
     document_request = factories.DocumentRequestFactory.build(
-        issuer="marion.issuers.DummyDocument",
+        issuer=issuer,
         context_query={"fullname": ""},
     )
     with pytest.raises(
@@ -143,7 +152,7 @@ def test_document_request_save(monkeypatch):
         document_request.save()
 
     document_request = factories.DocumentRequestFactory.build(
-        issuer="marion.issuers.DummyDocument",
+        issuer=issuer,
         context_query={"fullname": "Richie Cunningham"},
     )
     with monkeypatch.context() as mk_patch:
@@ -159,22 +168,18 @@ def test_document_request_save(monkeypatch):
             document_request.save()
 
 
-def test_document_request_get_issuer_class(monkeypatch):
+@pytest.mark.django_db
+def test_document_request_get_issuer_class():
     """Test the `DocumentRequest.get_issuer_class()` method"""
 
-    # pylint: disable=no-member
-    monkeypatch.setattr(
-        models.DocumentRequest.issuer.field,
-        "choices",
-        [
-            ("marion.issuers.Arnold", "Arnold"),
-            ("marion.issuers.DummyDocument", "Dummy"),
-            ("marion.issuers.Marsha", "Marsha"),
-            ("marion.issuers.Richie", "Richie"),
-            ("howard.documents.issuers.Richie", "Richou"),
-            ("issuers.Richie", "Richinou"),
-            ("Richie", "Riccardo"),
-        ],
+    IssuerChoice.objects.get_or_create(
+        issuer_path="marion.issuers.DummyDocument", label="Dummy"
+    )
+    IssuerChoice.objects.get_or_create(
+        issuer_path="marion.issuers.Richie", label="Richie"
+    )
+    IssuerChoice.objects.get_or_create(
+        issuer_path="howard.documents.issuers.Richie", label="Richou"
     )
 
     with pytest.raises(
@@ -184,7 +189,7 @@ def test_document_request_get_issuer_class(monkeypatch):
 
     with pytest.raises(
         exceptions.InvalidDocumentIssuer,
-        match="Issuer class name should be unique, found 4 for Richie",
+        match="Issuer class name should be unique, found multiple for Richie",
     ):
         models.DocumentRequest.get_issuer_class("Richie")
 
@@ -198,8 +203,12 @@ def test_document_request_get_issuer_class(monkeypatch):
 def test_document_request_get_issuer():
     """Test the `DocumentRequest.get_issuer()` method"""
 
+    issuer, _ = IssuerChoice.objects.get_or_create(
+        issuer_path="marion.issuers.DummyDocument", label="Dummy"
+    )
+
     document_request = factories.DocumentRequestFactory(
-        issuer="marion.issuers.DummyDocument",
+        issuer=issuer,
         context_query={"fullname": "Richie Cunningham"},
     )
 
@@ -210,8 +219,12 @@ def test_document_request_get_issuer():
 def test_document_request_get_document_url():
     """Test the `DocumentRequest.get_document_url()` method"""
 
+    issuer, _ = IssuerChoice.objects.get_or_create(
+        issuer_path="marion.issuers.DummyDocument", label="Dummy"
+    )
+
     document_request = factories.DocumentRequestFactory(
-        issuer="marion.issuers.DummyDocument",
+        issuer=issuer,
         context_query={"fullname": "Richie Cunningham"},
     )
 

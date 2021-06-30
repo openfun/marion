@@ -11,10 +11,7 @@ from django.utils.translation import gettext_lazy as _
 
 from pydantic.error_wrappers import ValidationError as PydanticValidationError
 
-from .defaults import DOCUMENT_ISSUER_CHOICES_CLASS
 from .exceptions import DocumentIssuerContextQueryValidationError, InvalidDocumentIssuer
-
-DocumentIssuerChoices = import_string(DOCUMENT_ISSUER_CHOICES_CLASS)
 
 
 class PydanticModelField(models.JSONField):
@@ -82,6 +79,24 @@ class PydanticModelField(models.JSONField):
         return value
 
 
+class IssuerChoice(models.Model):
+    """Provides the list of allowed issuers for documents."""
+
+    issuer_path = models.TextField(
+        _("Issuer Path"),
+        help_text=_(
+            "Full dot-notation path to the issuer class. e.g.: "
+            "'apps.shop.issuers.invoice.InvoiceDocument'"
+        ),
+        unique=True,
+    )
+
+    label = models.CharField(_("Label"), max_length=100, unique=True)
+
+    def __str__(self):
+        return f"{self.issuer_path}"
+
+
 class DocumentRequest(models.Model):
     """Document Requests are stored in models and linked to documents.
 
@@ -136,11 +151,11 @@ class DocumentRequest(models.Model):
         unique=True,
     )
 
-    issuer = models.CharField(
+    issuer = models.ForeignKey(
+        IssuerChoice,
         verbose_name=_("Issuer"),
+        on_delete=models.CASCADE,
         help_text=_("The issuer of the document among allowed ones"),
-        max_length=200,
-        choices=DocumentIssuerChoices.choices,
     )
 
     context = PydanticModelField(
@@ -191,32 +206,35 @@ class DocumentRequest(models.Model):
         super().save(*args, **kwargs)
 
     @classmethod
-    def get_issuer_class(cls, issuer_class_name):
-        """Get issuer class given its class name (or its path)"""
+    def get_issuer_class(cls, issuer_choice):
+        """Get issuer class from issuer_choice.
 
-        # pylint: disable=no-member
-        issuer_class_paths = list(
-            filter(
-                lambda issuer_module_path: issuer_module_path.endswith(
-                    issuer_class_name
-                ),
-                # pylint: disable=no-member
-                (issuer for issuer, _ in cls.issuer.field.choices),
-            )
-        )
-        matches = len(issuer_class_paths)
-        if matches == 0:
-            raise InvalidDocumentIssuer(
-                _(f"{issuer_class_name} is not an allowed issuer")
-            )
-        if matches > 1:
-            raise InvalidDocumentIssuer(
-                _(
-                    f"Issuer class name should be unique, found {matches} for "
-                    f"{issuer_class_name}"
-                )
-            )
-        return import_string(issuer_class_paths[0])
+        `issuer_choice` can be an IssuerChoice instance or a string denoting
+        either the `issuer_path` or the class name of an IssuerChoice instance.
+
+        """
+
+        if isinstance(issuer_choice, IssuerChoice):
+            return import_string(issuer_choice.issuer_path)
+
+        if isinstance(issuer_choice, str):
+            if "." in issuer_choice:
+                return import_string(issuer_choice)
+
+            try:
+                issuer = IssuerChoice.objects.get(issuer_path__endswith=issuer_choice)
+                return import_string(issuer.issuer_path)
+            except IssuerChoice.DoesNotExist:
+                pass
+            except IssuerChoice.MultipleObjectsReturned as error:
+                raise InvalidDocumentIssuer(
+                    _(
+                        f"Issuer class name should be unique, found multiple "
+                        f"for {issuer_choice}: {error}"
+                    )
+                ) from error
+
+        raise InvalidDocumentIssuer(_(f"{issuer_choice} is not an allowed issuer"))
 
     def get_issuer(self):
         """Get instanciated issuer class"""
