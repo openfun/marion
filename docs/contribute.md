@@ -95,3 +95,14 @@ You will find the complete list of useful commands using:
 ```
 $ make help
 ```
+
+## Git conventions
+
+In addition to linting and tests, when creating a Pull Request, be sure to title
+and format your git commit messages appropriately using the guidelines at 
+[FUN with Git](https://openfun.gitbooks.io/handbook/content/git.html)
+
+## CHANGELOG entries
+
+Finally, be sure to add an entry to CHANGELOG with the additions, fixes, and
+removals you have made in the pull request.
