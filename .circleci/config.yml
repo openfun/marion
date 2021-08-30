@@ -18,7 +18,7 @@ jobs:
   # Check that the git history is clean and complies with our expectations
   lint-git:
     docker:
-      - image: python:3.8-buster
+      - image: circleci/python:3.8-bullseye
     working_directory: ~/marion
     steps:
       - checkout
@@ -48,7 +48,7 @@ jobs:
   # Check that the CHANGELOG has been updated in the current branch
   check-changelog:
     docker:
-      - image: circleci/buildpack-deps:buster-scm
+      - image: circleci/buildpack-deps:bullseye-scm
     working_directory: ~/marion
     steps:
       - checkout
@@ -60,7 +60,7 @@ jobs:
   # Check that the CHANGELOG max line length does not exceed 80 characters
   lint-changelog:
     docker:
-      - image: debian:buster-slim
+      - image: debian:bullseye-slim
     working_directory: ~/marion
     steps:
       - checkout
@@ -74,7 +74,7 @@ jobs:
   # Build the Docker image ready for production
   build-docker:
     docker:
-      - image: circleci/buildpack-deps:buster
+      - image: circleci/buildpack-deps:bullseye
     working_directory: ~/marion
     steps:
       # Checkout repository sources
@@ -97,7 +97,7 @@ jobs:
   # Build backend development environment
   build-back:
     docker:
-      - image: circleci/python:3.8-buster
+      - image: circleci/python:3.8-bullseye
     working_directory: ~/marion
     steps:
       - checkout
@@ -115,7 +115,7 @@ jobs:
 
   lint-back:
     docker:
-      - image: circleci/python:3.8-buster
+      - image: circleci/python:3.8-bullseye
     working_directory: ~/marion/src/marion
     steps:
       - checkout:
@@ -142,7 +142,7 @@ jobs:
 
   test-back:
     docker:
-      - image: circleci/python:3.8-buster
+      - image: circleci/python:3.8-bullseye
         environment:
           DJANGO_SETTINGS_MODULE: settings
           DJANGO_CONFIGURATION: Test
@@ -191,7 +191,7 @@ jobs:
   # ---- Packaging jobs ----
   package-back:
     docker:
-      - image: circleci/python:3.8-buster
+      - image: circleci/python:3.8-bullseye
     working_directory: ~/marion/src
     steps:
       - checkout:
@@ -224,7 +224,7 @@ jobs:
   #     environment variables in CircleCI UI (with your PyPI credentials)
   pypi:
     docker:
-      - image: circleci/python:3.8-buster
+      - image: circleci/python:3.8-bullseye
     working_directory: ~/marion/src
     steps:
       - checkout:
@@ -252,11 +252,10 @@ jobs:
           name: Upload howard's package to PyPI
           command: ~/.local/bin/twine upload --skip-existing howard/dist/*
 
-
   # ---- Documentation jobs ----
   build-docs:
     docker:
-      - image: circleci/python:3.8-buster
+      - image: circleci/python:3.8-bullseye
     working_directory: ~/marion
     steps:
       - checkout
@@ -270,7 +269,7 @@ jobs:
   # Deploy the docs website to GitHub pages.
   deploy-docs:
     docker:
-      - image: circleci/python:3.8-buster
+      - image: circleci/python:3.8-bullseye
     working_directory: ~/marion
     steps:
       - checkout

@@ -11,7 +11,7 @@ RUN apt-get update && \
     apt-get -y upgrade && \
     rm -rf /var/lib/apt/lists/*
 
-    
+
 # ---- Back-end builder image ----
 FROM base as builder
 
