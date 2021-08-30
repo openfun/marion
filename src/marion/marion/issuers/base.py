@@ -16,7 +16,7 @@ from pydantic import BaseModel
 from pydantic.error_wrappers import ValidationError
 from weasyprint import CSS, HTML
 from weasyprint.document import DocumentMetadata
-from weasyprint.fonts import FontConfiguration
+from weasyprint.text.fonts import FontConfiguration
 
 from marion import __version__ as marion_version
 
