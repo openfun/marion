@@ -2,6 +2,8 @@
     "extends": [
         "github>openfun/renovate-configuration"
     ],
+    "commitMessagePrefix": "⬆️(project)",
+    "commitMessageAction": "upgrade",
     "packageRules": [
         {
             "enabled": false,
