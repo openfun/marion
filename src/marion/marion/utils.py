@@ -35,7 +35,9 @@ def static_file_fetcher(url, *args, **kwargs):
 
         path = url_path.replace(settings.STATIC_URL, "", 1)
         try:
-            data["file_obj"] = open(find(path), "rb")
+            data["file_obj"] = open(  # pylint: disable=consider-using-with
+                find(path), "rb"
+            )
         # A SuspiciousFileOperation is raised by Django if the file has been
         # found outside referenced static file paths. In this case, we ignore
         # this error and fallback to the default Weasyprint fetcher for files
