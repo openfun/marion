@@ -4,6 +4,7 @@
     ],
     "commitMessagePrefix": "⬆️(project)",
     "commitMessageAction": "upgrade",
+    "commitBodyTable": true,
     "packageRules": [
         {
             "enabled": false,
