@@ -11,10 +11,8 @@ from django.utils.translation import gettext_lazy as _
 
 from pydantic.error_wrappers import ValidationError as PydanticValidationError
 
-from .defaults import DOCUMENT_ISSUER_CHOICES_CLASS
 from .exceptions import DocumentIssuerContextQueryValidationError, InvalidDocumentIssuer
-
-DocumentIssuerChoices = import_string(DOCUMENT_ISSUER_CHOICES_CLASS)
+from .fields import IssuerLazyChoiceField
 
 
 class PydanticModelField(models.JSONField):
@@ -136,11 +134,10 @@ class DocumentRequest(models.Model):
         unique=True,
     )
 
-    issuer = models.CharField(
+    issuer = IssuerLazyChoiceField(
         verbose_name=_("Issuer"),
         help_text=_("The issuer of the document among allowed ones"),
         max_length=200,
-        choices=DocumentIssuerChoices.choices,
     )
 
     context = PydanticModelField(

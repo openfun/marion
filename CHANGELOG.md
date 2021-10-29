@@ -8,6 +8,15 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- Create a `IssuerLazyChoiceField` to be able to update issuer field choices
+  without creating migrations.
+
+### Changed
+
+- Add a `persist` argument to `AbstractDocument.create` method
+
 ## [0.3.1] - 2021-09-02
 
 ### Added
