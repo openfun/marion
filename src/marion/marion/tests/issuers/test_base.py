@@ -2,6 +2,7 @@
 
 import uuid
 from datetime import datetime
+from io import BytesIO
 from pathlib import Path
 from unittest.mock import patch
 
@@ -430,6 +431,45 @@ def test_abstract_document_create():
             pdf_extract_text(test_document_file).strip()
             == "My name is Richie Cunningham (user id: rcunningham)"
         )
+
+
+def test_abstract_document_create_without_persist():
+    """Test AbstractDocument create method with persist=False"""
+
+    # pylint: disable=missing-class-docstring
+    class ContextModel(BaseModel):
+        user_id: str
+        fullname: str
+
+    # pylint: disable=missing-class-docstring
+    class ContextQueryModel(BaseModel):
+        user_id: str
+
+    # pylint: disable=missing-class-docstring
+    class TestDocument(AbstractDocument):
+        context_model = ContextModel
+        context_query_model = ContextQueryModel
+
+        def get_html(self):
+            return Template(
+                "<body>My name is {{ fullname }} (user id: {{ user_id }})</body>"
+            )
+
+        def get_css(self):
+            return Template("body {color: red}")
+
+        def fetch_context(self):
+            return {"fullname": "Richie Cunningham", **self.context_query.dict()}
+
+    test_document = TestDocument(context_query={"user_id": "rcunningham"})
+    test_document_file = test_document.create(persist=False)
+
+    assert isinstance(test_document_file, bytes)
+
+    assert (
+        pdf_extract_text(BytesIO(test_document_file)).strip()
+        == "My name is Richie Cunningham (user id: rcunningham)"
+    )
 
 
 def test_abstract_document_jinja_template_engine(settings):
