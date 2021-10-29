@@ -325,7 +325,7 @@ class AbstractDocument(PDFFileMetadataMixin, ABC):
         """Get the Django Context instance from the context model instance."""
         return Context(self.context.dict())
 
-    def create(self):
+    def create(self, persist=True):
         """Create document.
 
         Given an HTML template, a CSS template and the required context to
@@ -333,14 +333,22 @@ class AbstractDocument(PDFFileMetadataMixin, ABC):
         Weasyprint's headless web browser to generate the document as a PDF
         file.
 
-        The path of the document is returned as a pathlib.Path instance.
+        Arguments:
+
+        - persist<bool> = True
+
+            By default persist is True. In this way file is created and
+            persisted into the document_path finally the path of the document is
+            returned as a pathlib.Path instance.
+
+            When persist is False, document is created without persisting. In
+            this case create returns the PDF document as bytes.
 
         """
 
         if self.context is None:
             self.set_context(self.fetch_context())
 
-        document_path = self.get_document_path()
         django_context = self.get_django_context()
         html_str = self.get_html().render(django_context)
         css_str = self.get_css().render(django_context)
@@ -351,6 +359,11 @@ class AbstractDocument(PDFFileMetadataMixin, ABC):
 
         document = html.render(stylesheets=[css], font_config=font_config)
         document.metadata = self.metadata
+
+        if persist is False:
+            return document.write_pdf(zoom=1)
+
+        document_path = self.get_document_path()
         document.write_pdf(target=document_path, zoom=1)
 
         return document_path
