@@ -1,17 +1,33 @@
 """"Invoice issuer"""
 
+import datetime
 import decimal
 from pathlib import Path
 
-from pydantic import BaseModel, constr
+from pydantic import BaseModel
 
 from marion.issuers.base import AbstractDocument
+
+from ..utils import StrEnum
+
+
+class Type(StrEnum):
+    """Type definition"""
+
+    INVOICE = "invoice"
+    CREDIT_NOTE = "credit_note"
 
 
 class Customer(BaseModel):
     """Customer pydantic model"""
 
     name: str
+    address: str
+
+
+class Seller(BaseModel):
+    """Seller pydantic model"""
+
     address: str
 
 
@@ -22,8 +38,8 @@ class Product(BaseModel):
     description: str
 
 
-class Price(BaseModel):
-    """Price pydantic model"""
+class Amount(BaseModel):
+    """Amount pydantic model"""
 
     total: decimal.Decimal
     subtotal: decimal.Decimal
@@ -35,29 +51,42 @@ class Price(BaseModel):
 class Order(BaseModel):
     """Order pydantic model"""
 
-    invoice_id: constr(regex=r"^[0-9]{14}-[a-zA-Z0-9]{8}$")  # noqa: F722
     customer: Customer
-    product: Product
-    price: Price
     company: str
+    product: Product
+    amount: Amount
+    seller: Seller
+
+
+class Metadata(BaseModel):
+    """Metadata pydantic model"""
+
+    reference: str
+    issued_on: datetime.datetime
+    type: Type
 
 
 class ContextModel(BaseModel):
     """Context pydantic model"""
 
+    metadata: Metadata
     order: Order
 
 
 class ContextQueryModel(BaseModel):
     """Context query pydantic model"""
 
+    metadata: Metadata
     order: Order
 
 
 class InvoiceDocument(AbstractDocument):
-    """Invoice issuer"""
+    """
+    Invoicing Document
+    to act debit (Invoice) or credit (Credit note) transaction.
+    """
 
-    keywords = ["invoice"]
+    keywords = ["invoice", "credit_note"]
 
     context_model = ContextModel
     context_query_model = ContextQueryModel
@@ -69,6 +98,6 @@ class InvoiceDocument(AbstractDocument):
         """Invoice context"""
         return self.context_query.dict()
 
-    def get_title(self):
+    def get_title(self) -> str:
         """Generate a PDF title that depends on the context"""
-        return f"Invoice ref. {self.context.order.invoice_id}"
+        return f"{self.context.metadata.type}-{self.context.metadata.reference}"
