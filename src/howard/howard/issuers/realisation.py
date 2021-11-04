@@ -1,7 +1,6 @@
 """Realisation Certificate"""
 
 import datetime
-from enum import Enum
 from pathlib import Path
 from typing import Generic, TypeVar
 from uuid import UUID
@@ -12,16 +11,11 @@ from pydantic import BaseModel, ValidationError
 
 from marion.issuers.base import AbstractDocument
 
+from ..utils import StrEnum
+
 ArrowSupportedDateType = TypeVar(
     "ArrowSupportedDateType", int, str, datetime.date, datetime.datetime
 )
-
-
-class StrEnum(str, Enum):
-    """String Enum."""
-
-    def __str__(self):
-        return f"{self.value}"
 
 
 class Gender(StrEnum):
