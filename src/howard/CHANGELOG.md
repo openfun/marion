@@ -10,7 +10,8 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 
 ### Changed
 
-- Create an utils module to share code throughout application
+- Update InvoiceIssuer to generate both invoice and credit note
+- Create a utils module to share code throughout the application
 
 ## [0.2.4-howard] - 2021-06-15
 

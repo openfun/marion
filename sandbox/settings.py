@@ -162,3 +162,8 @@ class Test(Base):
     MEDIA_ROOT = Path(mkdtemp())
 
     ROOT_URLCONF = "urls.debug"
+
+    # Application definition
+    INSTALLED_APPS = Base.INSTALLED_APPS + [
+        "howard",
+    ]
