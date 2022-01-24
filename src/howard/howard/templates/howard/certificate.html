@@ -1,5 +1,6 @@
 {% load i18n %}
 {% load static %}
+{% load howard_tags %}
 
 <html>
   {% if debug %}
@@ -17,7 +18,11 @@
             <img src="{{ debug | yesno:",file://" }}{% static "howard/logo-fun.png" %}" />
           </div>
           <div class="organization">
-            <img src="{{ debug | yesno:",file://" }}{{ course.organization.logo }}" />
+              {% if course.organization.logo | is_path %}
+                    <img src="{{ debug | yesno:",file://" }}{{ course.organization.logo }}" />
+              {% else %}
+                    <img src="{{ course.organization.logo }}" />
+              {% endif %}
           </div>
         </div>
         <div class="title">
@@ -50,7 +55,11 @@
               {% translate "Stamp and signature of the course provider manager" %}
             </p>
             <div class="manager">
-              <img src="{{ debug | yesno:",file://" }}{{ course.organization.signature }}" />
+                {% if course.organization.signature | is_path %}
+                    <img src="{{ debug | yesno:",file://" }}{{ course.organization.signature }}" />
+                {% else %}
+                    <img src="{{ course.organization.signature }}" />
+                {% endif %}
             </div>
           </div>
         </section>

@@ -8,6 +8,10 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 
 ## [Unreleased]
 
+### Changed
+
+- Update CertificateIssuer to add an optional `creation_date` field into context_query
+
 ## [0.2.5-howard] - 2021-11-29
 
 ### Changed

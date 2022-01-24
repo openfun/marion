@@ -2,12 +2,14 @@
 
 import datetime
 from pathlib import Path
+from typing import Optional, Union
 from uuid import UUID
 
-from dateutil import parser
-from pydantic import BaseModel
+from pydantic import BaseModel, constr
 
 from marion.issuers.base import AbstractDocument
+
+BASE_64_IMAGE_REGEXP = r"^data:image/[-+\w.]+;base64,.*$"
 
 
 class Organization(BaseModel):
@@ -15,8 +17,8 @@ class Organization(BaseModel):
 
     name: str
     representative: str
-    signature: Path
-    logo: Path
+    signature: Union[constr(regex=BASE_64_IMAGE_REGEXP), Path]
+    logo: Union[constr(regex=BASE_64_IMAGE_REGEXP), Path]
 
 
 class Student(BaseModel):
@@ -45,6 +47,7 @@ class ContextModel(BaseModel):
 class ContextQueryModel(BaseModel):
     """Context query pydantic model"""
 
+    creation_date: Optional[datetime.datetime] = None
     student: Student
     course: Course
 
@@ -62,9 +65,14 @@ class CertificateDocument(AbstractDocument):
 
     def fetch_context(self) -> dict:
         """Certificate context"""
+
+        context = self.context_query.dict()
+
+        if context.get("creation_date") is None:
+            context["creation_date"] = self.created
+
         return {
             "identifier": self.identifier,
-            "creation_date": parser.isoparse(self.created),
             "delivery_stamp": self.created,
-            **self.context_query.dict(),
+            **context,
         }
