@@ -8,6 +8,8 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 
 ## [Unreleased]
 
+## [0.2.7-howard] - 2022-01-25
+
 ### Fixed
 
 - Fix syntax error within CertificateIssuer template
@@ -84,8 +86,9 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 
 - Draft realisation certificate issuer
 
-[unreleased]: https://github.com/openfun/marion/compare/v0.2.6-howard...master
-[0.2.5-howard]: https://github.com/openfun/marion/compare/v0.2.5-howard...v0.2.6-howard
+[unreleased]: https://github.com/openfun/marion/compare/v0.2.7-howard...master
+[0.2.7-howard]: https://github.com/openfun/marion/compare/v0.2.6-howard...v0.2.7-howard
+[0.2.6-howard]: https://github.com/openfun/marion/compare/v0.2.5-howard...v0.2.6-howard
 [0.2.5-howard]: https://github.com/openfun/marion/compare/v0.2.4-howard...v0.2.5-howard
 [0.2.4-howard]: https://github.com/openfun/marion/compare/v0.2.3-howard...v0.2.4-howard
 [0.2.3-howard]: https://github.com/openfun/marion/compare/v0.2.2-howard...v0.2.3-howard
