@@ -18,7 +18,7 @@
             <img src="{{ debug | yesno:",file://" }}{% static "howard/logo-fun.png" %}" />
           </div>
           <div class="organization">
-              {% if course.organization.logo | is_path %}
+              {% if course.organization.logo|is_path %}
                     <img src="{{ debug | yesno:",file://" }}{{ course.organization.logo }}" />
               {% else %}
                     <img src="{{ course.organization.logo }}" />
@@ -55,7 +55,7 @@
               {% translate "Stamp and signature of the course provider manager" %}
             </p>
             <div class="manager">
-                {% if course.organization.signature | is_path %}
+                {% if course.organization.signature|is_path %}
                     <img src="{{ debug | yesno:",file://" }}{{ course.organization.signature }}" />
                 {% else %}
                     <img src="{{ course.organization.signature }}" />

@@ -8,6 +8,10 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix syntax error within CertificateIssuer template
+
 ## [0.2.6-howard] - 2022-01-25
 
 ### Changed
