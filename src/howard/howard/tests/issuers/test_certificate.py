@@ -1,6 +1,7 @@
 """Tests for the howard.issuers.certificate application views"""
 
 import datetime
+import re
 import uuid
 
 from howard.issuers.certificate import (
@@ -11,6 +12,7 @@ from howard.issuers.certificate import (
 )
 from hypothesis import HealthCheck, given, settings
 from hypothesis import strategies as st
+from pdfminer.high_level import extract_text as pdf_extract_text
 
 
 @given(
@@ -72,3 +74,17 @@ def test_certificate_default_creation_date(monkeypatch, context_query):
     assert context_query.dict()["creation_date"] is None
     context = test_certificate.fetch_context()
     assert context == expected
+
+
+@settings(max_examples=1, deadline=datetime.timedelta(seconds=1.5))
+@given(
+    st.builds(ContextQueryModel, student=st.builds(Student), course=st.builds(Course))
+)
+def test_certificate_should_render_without_error(context_query):
+    """Test to render a certificate document"""
+    certificate_document = CertificateDocument(context_query=context_query)
+    certificate_document_path = certificate_document.create()
+
+    with certificate_document_path.open("rb") as certificate_document_file:
+        text_content = pdf_extract_text(certificate_document_file)
+        assert re.search(".*CERTIFICATE.*", text_content)
