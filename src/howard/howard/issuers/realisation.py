@@ -13,6 +13,7 @@ from marion.issuers.base import AbstractDocument
 
 from ..utils import StrEnum
 
+# pylint: disable=invalid-name
 ArrowSupportedDateType = TypeVar(
     "ArrowSupportedDateType", int, str, datetime.date, datetime.datetime
 )
