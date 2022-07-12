@@ -145,7 +145,7 @@ lint-isort: ## automatically re-arrange python imports in back-end code base
 
 lint-pylint: ## lint back-end python sources with pylint
 	@echo 'lint:pylint started…'
-	bin/pylint marion /usr/local/src/howard/howard
+	bin/pylint marion howard
 .PHONY: lint-pylint
 
 # -- Tests
