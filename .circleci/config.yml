@@ -105,9 +105,13 @@ jobs:
           keys:
             - v1-back-dependencies-{{ .Revision }}
       - run:
-          name: Install development dependencies
+          name: Install Marion along with development dependencies
           command: pip install --user .[dev,sandbox]
           working_directory: src/marion
+      - run:
+          name: Install Howard and its dependencies
+          command: pip install --user .
+          working_directory: src/howard
       - save_cache:
           paths:
             - ~/.local
@@ -138,7 +142,12 @@ jobs:
       - run:
           name: Lint code with pylint
           command: |
-            ~/.local/bin/pylint marion ../howard/howard
+            PYTHONPATH=${PYTHONPATH}:${PWD} \
+              ~/.local/bin/pylint \
+              --rcfile ../src/marion/.pylintrc \
+              marion \
+              howard
+          working_directory: ~/marion/sandbox
 
   test-back:
     docker:
