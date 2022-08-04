@@ -12,6 +12,10 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 
 - Add Django 4.0 compatibility
 
+## Fixed
+
+- Use static storage class to open static files
+
 ## [0.3.2] - 2021-11-29
 
 ### Added

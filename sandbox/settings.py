@@ -160,6 +160,7 @@ class Test(Base):
     """Test environment settings"""
 
     MEDIA_ROOT = Path(mkdtemp())
+    STATIC_ROOT = Path(mkdtemp())
 
     ROOT_URLCONF = "urls.debug"
 
