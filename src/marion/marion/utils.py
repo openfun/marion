@@ -5,10 +5,12 @@ from pathlib import Path
 from urllib.parse import urlparse
 
 from django.conf import settings
-from django.contrib.staticfiles.finders import find
+from django.contrib.staticfiles.storage import get_storage_class
 from django.core.exceptions import SuspiciousFileOperation
 
 import weasyprint
+
+static_storage = get_storage_class(settings.STATICFILES_STORAGE)()
 
 
 def static_file_fetcher(url, *args, **kwargs):
@@ -35,9 +37,7 @@ def static_file_fetcher(url, *args, **kwargs):
 
         path = url_path.replace(settings.STATIC_URL, "", 1)
         try:
-            data["file_obj"] = open(  # pylint: disable=consider-using-with
-                find(path), "rb"
-            )
+            data["file_obj"] = static_storage.open(path, "rb")
         # A SuspiciousFileOperation is raised by Django if the file has been
         # found outside referenced static file paths. In this case, we ignore
         # this error and fallback to the default Weasyprint fetcher for files
