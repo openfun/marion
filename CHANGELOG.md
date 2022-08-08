@@ -8,6 +8,10 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- Add Django 4.1 compatibility
+
 ## [0.4.0] - 2022-08-05
 
 ### Added
