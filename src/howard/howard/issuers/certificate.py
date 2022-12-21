@@ -31,7 +31,6 @@ class Course(BaseModel):
     """Course pydantic model"""
 
     name: str
-    organization: Organization
 
 
 class ContextModel(BaseModel):
@@ -39,6 +38,7 @@ class ContextModel(BaseModel):
 
     identifier: UUID
     student: Student
+    organization: Organization
     course: Course
     creation_date: datetime.datetime
     delivery_stamp: datetime.datetime
@@ -50,6 +50,7 @@ class ContextQueryModel(BaseModel):
     creation_date: Optional[datetime.datetime] = None
     student: Student
     course: Course
+    organization: Organization
 
 
 class CertificateDocument(AbstractDocument):

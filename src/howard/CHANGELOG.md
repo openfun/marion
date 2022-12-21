@@ -8,6 +8,10 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 
 ## [Unreleased]
 
+### Changed
+
+- Certificate issuer now has the organization as first level attribute
+
 ## [0.3.0-howard] - 2022-08-05
 
 ### Changed
