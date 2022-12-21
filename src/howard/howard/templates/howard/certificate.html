@@ -18,10 +18,10 @@
             <img src="{{ debug | yesno:",file://" }}{% static "howard/logo-fun.png" %}" />
           </div>
           <div class="organization">
-              {% if course.organization.logo|is_path %}
-                    <img src="{{ debug | yesno:",file://" }}{{ course.organization.logo }}" />
+              {% if organization.logo|is_path %}
+                    <img src="{{ debug | yesno:",file://" }}{{ organization.logo }}" />
               {% else %}
-                    <img src="{{ course.organization.logo }}" />
+                    <img src="{{ organization.logo }}" />
               {% endif %}
           </div>
         </div>
@@ -32,7 +32,7 @@
       <article class="main">
         <section id="representative">
           <p>
-            {% blocktranslate trimmed with representative=course.organization.representative organization=course.organization.name %}
+            {% blocktranslate trimmed with representative=organization.representative organization=organization.name %}
               I, {{ representative }},<br/>
               legal representative of the course provider {{ organization }}<br/>
               certifies that:
@@ -55,10 +55,10 @@
               {% translate "Stamp and signature of the course provider manager" %}
             </p>
             <div class="manager">
-                {% if course.organization.signature|is_path %}
-                    <img src="{{ debug | yesno:",file://" }}{{ course.organization.signature }}" />
+                {% if organization.signature|is_path %}
+                    <img src="{{ debug | yesno:",file://" }}{{ organization.signature }}" />
                 {% else %}
-                    <img src="{{ course.organization.signature }}" />
+                    <img src="{{ organization.signature }}" />
                 {% endif %}
             </div>
           </div>
