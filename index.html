@@ -639,9 +639,9 @@ package. Once your issuer has been installed and configured, you can create a
 <strong>document request</strong> using the backend API with your favorite HTTP client (we ❤️
 <a href="https://httpie.io/"><code>http</code></a>, but <code>curl</code> is perfectly fine 😉):</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Create a new document using the dummy issuer</span>
-$ http POST http://localhost:8000/api/documents/requests/ <span class="se">\</span>
-    <span class="nv">issuer</span><span class="o">=</span><span class="s2">&quot;marion.certificates.issuers.DummyDocument&quot;</span> <span class="se">\</span>
-    <span class="nv">context_query</span><span class="o">=</span><span class="s1">&#39;{&quot;fullname&quot;: &quot;John Doe&quot;}&#39;</span>
+$<span class="w"> </span>http<span class="w"> </span>POST<span class="w"> </span>http://localhost:8000/api/documents/requests/<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span><span class="nv">issuer</span><span class="o">=</span><span class="s2">&quot;marion.certificates.issuers.DummyDocument&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span><span class="nv">context_query</span><span class="o">=</span><span class="s1">&#39;{&quot;fullname&quot;: &quot;John Doe&quot;}&#39;</span>
 </code></pre></div>
 <p>As you may have noticed, you should provide two parameters for this request:</p>
 <ol>
@@ -655,21 +655,21 @@ $ http POST http://localhost:8000/api/documents/requests/ <span class="se">\</sp
 in the configured <code>MEDIA_ROOT</code> of the Django project Marion has been integrated
 to. You will find the link to the PDF document in the newly created document
 request (see the <code>document_url</code> field):</p>
-<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;document_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;60593260-2c0f-4c54-88e5-96ae0db06081&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;document_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;http://localhost:8000/media/60593260-2c0f-4c54-88e5-96ae0db06081.pdf&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;context&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="nt">&quot;fullname&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;John Doe&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">        </span><span class="nt">&quot;identifier&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;60593260-2c0f-4c54-88e5-96ae0db06081&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="p">},</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;context_query&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="nt">&quot;fullname&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;John Doe&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="p">},</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;created_on&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2021-03-12T15:48:15.737311Z&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;issuer&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;marion.documents.issuers.DummyDocument&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;updated_on&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2021-03-12T15:48:15.737336Z&quot;</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="nt">&quot;url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;http://localhost:8000/api/documents/requests/b90031a6-dcb4-49d6-ac6c-017030352f33/&quot;</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;document_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;60593260-2c0f-4c54-88e5-96ae0db06081&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;document_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;http://localhost:8000/media/60593260-2c0f-4c54-88e5-96ae0db06081.pdf&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;context&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;fullname&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;John Doe&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;identifier&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;60593260-2c0f-4c54-88e5-96ae0db06081&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;context_query&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;fullname&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;John Doe&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;created_on&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2021-03-12T15:48:15.737311Z&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;issuer&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;marion.documents.issuers.DummyDocument&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;updated_on&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2021-03-12T15:48:15.737336Z&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;http://localhost:8000/api/documents/requests/b90031a6-dcb4-49d6-ac6c-017030352f33/&quot;</span>
+<span class="p">}</span>
 </code></pre></div>
 <h3 id="key_takeways">Key takeways<a class="headerlink" href="#key_takeways" title="Permanent link">&para;</a></h3>
 <ul>

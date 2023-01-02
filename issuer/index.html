@@ -814,13 +814,13 @@ details later):</p>
 
 
 <span class="k">class</span> <span class="nc">Customer</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-   <span class="sd">&quot;&quot;&quot;Customer pydantic model&quot;&quot;&quot;</span>
+<span class="w">   </span><span class="sd">&quot;&quot;&quot;Customer pydantic model&quot;&quot;&quot;</span>
 
    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
 
 
 <span class="k">class</span> <span class="nc">Invoice</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-   <span class="sd">&quot;&quot;&quot;Invoice pydantic model&quot;&quot;&quot;</span>
+<span class="w">   </span><span class="sd">&quot;&quot;&quot;Invoice pydantic model&quot;&quot;&quot;</span>
 
    <span class="n">invoice_id</span><span class="p">:</span> <span class="n">UUID</span>
    <span class="n">customer</span><span class="p">:</span> <span class="n">Customer</span>
@@ -828,19 +828,19 @@ details later):</p>
 
 
 <span class="k">class</span> <span class="nc">ContextModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-   <span class="sd">&quot;&quot;&quot;Context pydantic model&quot;&quot;&quot;</span>
+<span class="w">   </span><span class="sd">&quot;&quot;&quot;Context pydantic model&quot;&quot;&quot;</span>
 
    <span class="n">invoice</span><span class="p">:</span> <span class="n">Invoice</span>
 
 
 <span class="k">class</span> <span class="nc">ContextQueryModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-   <span class="sd">&quot;&quot;&quot;Context query pydantic model&quot;&quot;&quot;</span>
+<span class="w">   </span><span class="sd">&quot;&quot;&quot;Context query pydantic model&quot;&quot;&quot;</span>
 
    <span class="n">order_id</span><span class="p">:</span> <span class="n">UUID</span>
 
 
 <span class="k">class</span> <span class="nc">InvoiceDocument</span><span class="p">(</span><span class="n">AbstractDocument</span><span class="p">):</span>
-   <span class="sd">&quot;&quot;&quot;Invoice issuer&quot;&quot;&quot;</span>
+<span class="w">   </span><span class="sd">&quot;&quot;&quot;Invoice issuer&quot;&quot;&quot;</span>
 
    <span class="n">keywords</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;MyShop&quot;</span><span class="p">,</span> <span class="s2">&quot;invoice&quot;</span><span class="p">]</span>
 
@@ -851,7 +851,7 @@ details later):</p>
    <span class="n">html_template_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;shop/invoice.html&quot;</span><span class="p">)</span>
 
    <span class="k">def</span> <span class="nf">fetch_context</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-      <span class="sd">&quot;&quot;&quot;Write your business logic to fetch the context here&quot;&quot;&quot;</span>
+<span class="w">      </span><span class="sd">&quot;&quot;&quot;Write your business logic to fetch the context here&quot;&quot;&quot;</span>
 
       <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
          <span class="sa">f</span><span class="s2">&quot;https://www.myshop.com/api/orders/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">context_query</span><span class="o">.</span><span class="n">order_id</span><span class="si">}</span><span class="s2">&quot;</span>
@@ -869,7 +869,7 @@ details later):</p>
       <span class="p">}</span>
 
    <span class="k">def</span> <span class="nf">get_title</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-      <span class="sd">&quot;&quot;&quot;Generate a PDF title that depends on the context&quot;&quot;&quot;</span>
+<span class="w">      </span><span class="sd">&quot;&quot;&quot;Generate a PDF title that depends on the context&quot;&quot;&quot;</span>
       <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Invoice ref. </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">invoice</span><span class="o">.</span><span class="n">invoice_id</span><span class="si">}</span><span class="s2">&quot;</span>
 </code></pre></div>
 <p>After reading this simplified piece of code, you may have noticed that:</p>
@@ -906,8 +906,8 @@ that are consequently context-aware and versatile.</p>
 <span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
   <span class="cp">{%</span> <span class="k">if</span> <span class="nv">debug</span> <span class="cp">%}</span>
   <span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
-    <span class="p">&lt;</span><span class="nt">style</span><span class="p">&gt;</span><span class="w"></span>
-<span class="w">      </span><span class="cp">{{</span> <span class="nv">css</span> <span class="cp">}}</span><span class="w"></span>
+    <span class="p">&lt;</span><span class="nt">style</span><span class="p">&gt;</span>
+<span class="w">      </span><span class="cp">{{</span> <span class="nv">css</span> <span class="cp">}}</span>
 <span class="w">    </span><span class="p">&lt;/</span><span class="nt">style</span><span class="p">&gt;</span>
   <span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
   <span class="cp">{%</span> <span class="k">endif</span> <span class="cp">%}</span>
@@ -949,44 +949,44 @@ that are consequently context-aware and versatile.</p>
 can be confusing at first sight. We will explain those in the next
 subsection.</p>
 </blockquote>
-<div class="highlight"><pre><span></span><code><span class="c">/* apps/shop/templates/shop/invoice.css */</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="c">/* apps/shop/templates/shop/invoice.css */</span>
 
-<span class="c">/* load extra fonts */</span><span class="w"></span>
-<span class="p">@</span><span class="k">import</span><span class="w"> </span><span class="nt">url</span><span class="o">(</span><span class="s2">&quot;https://fonts.googleapis.com/css2?family=Open+Sans&quot;</span><span class="o">)</span><span class="p">;</span><span class="w"></span>
+<span class="c">/* load extra fonts */</span>
+<span class="p">@</span><span class="k">import</span><span class="w"> </span><span class="nt">url</span><span class="o">(</span><span class="s2">&quot;https://fonts.googleapis.com/css2?family=Open+Sans&quot;</span><span class="o">)</span><span class="p">;</span>
 
-<span class="nt">body</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">  </span><span class="k">font-family</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Open Sans&quot;</span><span class="p">,</span><span class="w"> </span><span class="kc">sans-serif</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">font-size</span><span class="p">:</span><span class="w"> </span><span class="mi">11</span><span class="kt">pt</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">color</span><span class="p">:</span><span class="w"> </span><span class="mh">#222</span><span class="p">;</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="nt">body</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">font-family</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Open Sans&quot;</span><span class="p">,</span><span class="w"> </span><span class="kc">sans-serif</span><span class="p">;</span>
+<span class="w">  </span><span class="k">font-size</span><span class="p">:</span><span class="w"> </span><span class="mi">11</span><span class="kt">pt</span><span class="p">;</span>
+<span class="w">  </span><span class="k">color</span><span class="p">:</span><span class="w"> </span><span class="mh">#222</span><span class="p">;</span>
+<span class="p">}</span>
 
-<span class="p">@</span><span class="k">media</span><span class="w"> </span><span class="nt">print</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="p">@</span><span class="k">media</span><span class="w"> </span><span class="nt">print</span><span class="w"> </span><span class="p">{</span>
 <span class="w">  </span><span class="c">/* ----------------------</span>
 <span class="c">   * Reset margins for media</span>
-<span class="c">   * ---------------------- */</span><span class="w"></span>
-<span class="w">  </span><span class="p">@</span><span class="k">page</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nt">size</span><span class="o">:</span><span class="w"> </span><span class="nt">A4</span><span class="w"> </span><span class="nt">portrait</span><span class="o">;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">margin</span><span class="o">:</span><span class="w"> </span><span class="nt">0</span><span class="o">;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">padding</span><span class="o">:</span><span class="w"> </span><span class="nt">0</span><span class="o">;</span><span class="w"></span>
-<span class="w">  </span><span class="p">}</span><span class="w"></span>
+<span class="c">   * ---------------------- */</span>
+<span class="w">  </span><span class="p">@</span><span class="k">page</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">size</span><span class="o">:</span><span class="w"> </span><span class="nt">A4</span><span class="w"> </span><span class="nt">portrait</span><span class="o">;</span>
+<span class="w">    </span><span class="nt">margin</span><span class="o">:</span><span class="w"> </span><span class="nt">0</span><span class="o">;</span>
+<span class="w">    </span><span class="nt">padding</span><span class="o">:</span><span class="w"> </span><span class="nt">0</span><span class="o">;</span>
+<span class="w">  </span><span class="p">}</span>
 
-<span class="w">  </span><span class="nt">body</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">padding</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="k">background</span><span class="p">:</span><span class="w"> </span><span class="mh">#ffbe0b</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="nt">body</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">padding</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="k">background</span><span class="p">:</span><span class="w"> </span><span class="mh">#ffbe0b</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
 
-<span class="w">  </span><span class="o">*</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">margin</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="k">padding</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="o">*</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">margin</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="k">padding</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
 
 <span class="w">  </span><span class="c">/* ----------------------</span>
 <span class="c">   * Add custom styles below</span>
-<span class="c">   * ---------------------- */</span><span class="w"></span>
-<span class="w">  </span><span class="p">.</span><span class="nc">invoice</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="c">/* [...] */</span><span class="w"></span>
-<span class="w">  </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="c">   * ---------------------- */</span>
+<span class="w">  </span><span class="p">.</span><span class="nc">invoice</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c">/* [...] */</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
 </code></pre></div>
 <h3 id="using_the_document_template_debug_view">Using the document template debug view<a class="headerlink" href="#using_the_document_template_debug_view" title="Permanent link">&para;</a></h3>
 <p>Integrating a document template can be time consuming if you need to render it
@@ -1069,7 +1069,7 @@ in the debug view:</p>
 
 
 <span class="k">class</span> <span class="nc">ShopDocumentIssuerChoices</span><span class="p">(</span><span class="n">TextChoices</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;List active document issuers.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;List active document issuers.&quot;&quot;&quot;</span>
 
     <span class="n">INVOICE</span> <span class="o">=</span> <span class="s2">&quot;apps.shop.issuers.invoice.InvoiceDocument&quot;</span><span class="p">,</span> <span class="n">_</span><span class="p">(</span><span class="s2">&quot;Invoice&quot;</span><span class="p">)</span>
 </code></pre></div>
@@ -1125,7 +1125,7 @@ Marion&rsquo;s <code>DocumentRequest</code> model in your views:</p>
 
 
 <span class="k">def</span> <span class="nf">payment</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Payment view&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Payment view&quot;&quot;&quot;</span>
 
     <span class="n">order_id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;order_id&quot;</span><span class="p">)</span>
 
@@ -1144,15 +1144,15 @@ Marion&rsquo;s <code>DocumentRequest</code> model in your views:</p>
 <p>If you have configured Marion&rsquo;s urls in your project, you can use the document
 request view set to get, list or create a new document:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Create a new document using the invoice issuer</span>
-$ http POST http://localhost:8000/api/documents/requests/ <span class="se">\</span>
-    <span class="nv">issuer</span><span class="o">=</span><span class="s2">&quot;apps.shop.issuers.invoice.InvoiceDocument&quot;</span> <span class="se">\</span>
-    <span class="nv">context_query</span><span class="o">=</span><span class="s1">&#39;{&quot;order_id&quot;: &quot;7866454a-600e-434a-a546-04a286b208db&quot;}&#39;</span>
+$<span class="w"> </span>http<span class="w"> </span>POST<span class="w"> </span>http://localhost:8000/api/documents/requests/<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span><span class="nv">issuer</span><span class="o">=</span><span class="s2">&quot;apps.shop.issuers.invoice.InvoiceDocument&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span><span class="nv">context_query</span><span class="o">=</span><span class="s1">&#39;{&quot;order_id&quot;: &quot;7866454a-600e-434a-a546-04a286b208db&quot;}&#39;</span>
 </code></pre></div>
 <p>You should have a <code>HTTP 200 OK</code> response. Yatta!</p>
 <p><img alt="Yatta" src="https://media.giphy.com/media/x2z9nswqAfpp6/giphy.gif" /></p>
 <p>Once created, check the document request ID (and the corresponding document) by
 listing created objects <em>via</em>:</p>
-<div class="highlight"><pre><span></span><code>$ http GET http://localhost:8000/api/documents/requests/
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>http<span class="w"> </span>GET<span class="w"> </span>http://localhost:8000/api/documents/requests/
 </code></pre></div>
 <h2 id="issuer_testing">Issuer testing<a class="headerlink" href="#issuer_testing" title="Permanent link">&para;</a></h2>
 <p>Don&rsquo;t forget to test your business logic implemented in the <code>fetch_context</code>
