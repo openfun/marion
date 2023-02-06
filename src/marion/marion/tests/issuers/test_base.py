@@ -276,7 +276,6 @@ def test_abstract_document_validate_context():
 
     # pylint: disable=missing-class-docstring
     class TestDocument(AbstractDocument):
-
         context_model = ContextModel
 
         def fetch_context(self, **context_query):
@@ -318,7 +317,6 @@ def test_abstract_document_validate_context_query():
 
     # pylint: disable=missing-class-docstring
     class TestDocument(AbstractDocument):
-
         context_query_model = ContextQueryModel
 
         def fetch_context(self, **context_query):
@@ -350,7 +348,6 @@ def test_abstract_document_set_context():
 
     # pylint: disable=missing-class-docstring
     class TestDocument(AbstractDocument):
-
         context_model = ContextModel
 
         def fetch_context(self, **context_query):
