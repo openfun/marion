@@ -6,7 +6,6 @@ import marion.fields
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("marion", "0001_initial"),
     ]

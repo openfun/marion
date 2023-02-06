@@ -41,7 +41,6 @@ class PDFFileMetadataMixin:
     title = None
 
     def __init__(self):
-
         self._created = None
         self._metadata = None
         self._modified = None
@@ -127,7 +126,6 @@ class AbstractDocument(PDFFileMetadataMixin, ABC):
     def __init__(
         self, identifier: uuid.UUID = None, context_query: Union[str, dict] = None
     ):
-
         # Document
         self.identifier = self.generate_identifier(identifier)
         self.document_path = self.get_document_path()
