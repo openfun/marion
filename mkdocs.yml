@@ -6,7 +6,7 @@ site_author: Open FUN (France Universite Numerique)
 repo_name: openfun/marion
 repo_url: https://github.com/openfun/marion/
 
-copyright: 2021-present GIP FUN MOOC
+copyright: 2021-present France Université Numérique
 
 theme:
     name: material
