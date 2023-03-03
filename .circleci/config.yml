@@ -12,43 +12,61 @@ generate-version-file: &generate-version-file
         "$CIRCLE_PROJECT_REPONAME" \
         "$CIRCLE_BUILD_URL" > src/marion/version.json
 
+docker-login: &docker-login
+  # Login to DockerHub
+  #
+  # Nota bene: you'll need to define the following secrets environment vars
+  # in CircleCI interface:
+  #
+  #   - DOCKER_HUB_USER
+  #   - DOCKER_HUB_PASSWORD
+  run:
+    name: Login to DockerHub
+    command: >
+      test -n "$DOCKER_HUB_USER" &&
+        echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_USER" --password-stdin ||
+        echo "Docker Hub anonymous mode"
+
 version: 2
 jobs:
-  # Git jobs
+  # ---- Git jobs ----
   # Check that the git history is clean and complies with our expectations
   lint-git:
     docker:
-      - image: circleci/python:3.8-bullseye
-    working_directory: ~/marion
+      - image: cimg/python:3.11
+        auth:
+          username: $DOCKER_HUB_USER
+          password: $DOCKER_HUB_PASSWORD
+    working_directory: ~/fun
     steps:
       - checkout
       # Make sure the changes don't add a "print" statement to the code base.
       # We should exclude the ".circleci" folder from the search as the very command that checks
       # the absence of "print" is including a "print(" itself.
       - run:
-          name: enforce absence of print statements in code
+          name: Enforce absence of print statements in code
           command: |
-            ! git diff origin/master..HEAD -- . ':(exclude).circleci' ':(exclude)docs/*' | grep "print("
+            ! git diff origin/master..HEAD -- . ':(exclude).circleci' | grep "print("
       - run:
           name: Check absence of fixup commits
           command: |
-            ! git log | grep 'fixup!'
+            ! git log --pretty=format:%s | grep 'fixup!'
       - run:
           name: Install gitlint
           command: |
-            python -m venv venv
-            source venv/bin/activate && \
-              pip install gitlint requests
+            pip install --user gitlint requests
       - run:
-          name: lint commit messages added to master
+          name: Lint commit messages added to master
           command: |
-            source venv/bin/activate &&
-              gitlint --commits origin/master..HEAD
+            ~/.local/bin/gitlint --commits origin/master..HEAD
 
   # Check that the CHANGELOG has been updated in the current branch
   check-changelog:
     docker:
-      - image: circleci/buildpack-deps:bullseye-scm
+      - image: cimg/base:current
+        auth:
+          username: $DOCKER_HUB_USER
+          password: $DOCKER_HUB_PASSWORD
     working_directory: ~/marion
     steps:
       - checkout
@@ -60,7 +78,10 @@ jobs:
   # Check that the CHANGELOG max line length does not exceed 80 characters
   lint-changelog:
     docker:
-      - image: debian:bullseye-slim
+      - image: debian:stretch
+        auth:
+          username: $DOCKER_HUB_USER
+          password: $DOCKER_HUB_PASSWORD
     working_directory: ~/marion
     steps:
       - checkout
@@ -70,17 +91,22 @@ jobs:
             # Get the longuest line width (ignoring release links)
             test $(cat CHANGELOG.md | grep -Ev "^\[.*\]: https://github.com/openfun" | wc -L) -le 80
 
+
   # ---- Docker jobs ----
   # Build the Docker image ready for production
   build-docker:
     docker:
-      - image: circleci/buildpack-deps:bullseye
+      - image: cimg/base:current
+        auth:
+          username: $DOCKER_HUB_USER
+          password: $DOCKER_HUB_PASSWORD
     working_directory: ~/marion
     steps:
       # Checkout repository sources
       - checkout
-      # Generate a version.json file describing app release
-      - <<: *generate-version-file
+      # Generate a version.json file describing app release & login to DockerHub
+      - *generate-version-file
+      - *docker-login
       # Activate docker-in-docker (with layers caching enabled)
       - setup_remote_docker:
           docker_layer_caching: true
@@ -97,7 +123,10 @@ jobs:
   # Build backend development environment
   build-back:
     docker:
-      - image: circleci/python:3.8-bullseye
+      - image: cimg/python:3.8
+        auth:
+          username: $DOCKER_HUB_USER
+          password: $DOCKER_HUB_PASSWORD
     working_directory: ~/marion
     steps:
       - checkout
@@ -119,7 +148,10 @@ jobs:
 
   lint-back:
     docker:
-      - image: circleci/python:3.8-bullseye
+      - image: cimg/python:3.8
+        auth:
+          username: $DOCKER_HUB_USER
+          password: $DOCKER_HUB_PASSWORD
     working_directory: ~/marion/src/marion
     steps:
       - checkout:
@@ -151,7 +183,10 @@ jobs:
 
   test-back:
     docker:
-      - image: circleci/python:3.8-bullseye
+      - image: cimg/python:3.8
+        auth:
+          username: $DOCKER_HUB_USER
+          password: $DOCKER_HUB_PASSWORD
         environment:
           DJANGO_SETTINGS_MODULE: settings
           DJANGO_CONFIGURATION: Test
@@ -163,7 +198,10 @@ jobs:
           DB_PASSWORD: pass
           DB_PORT: 5432
       # services
-      - image: circleci/postgres:12-ram
+      - image: cimg/postgres:12.8
+        auth:
+          username: $DOCKER_HUB_USER
+          password: $DOCKER_HUB_PASSWORD
         environment:
           POSTGRES_DB: test_marion
           POSTGRES_USER: fun
@@ -175,6 +213,11 @@ jobs:
       - restore_cache:
           keys:
             - v1-back-dependencies-{{ .Revision }}
+      - run: 
+          name: Install system dependencies for Weasyprint
+          command: |
+            sudo apt update && \
+            sudo apt install libpango-1.0-0 libharfbuzz0b libpangoft2-1.0-0
       # While running tests, we need to make the /data directory writable for
       # the circleci user
       - run:
@@ -200,7 +243,10 @@ jobs:
   # ---- Packaging jobs ----
   package-back:
     docker:
-      - image: circleci/python:3.8-bullseye
+      - image: cimg/python:3.8
+        auth:
+          username: $DOCKER_HUB_USER
+          password: $DOCKER_HUB_PASSWORD
     working_directory: ~/marion/src
     steps:
       - checkout:
@@ -233,7 +279,10 @@ jobs:
   #     environment variables in CircleCI UI (with your PyPI credentials)
   pypi:
     docker:
-      - image: circleci/python:3.8-bullseye
+      - image: cimg/python:3.8
+        auth:
+          username: $DOCKER_HUB_USER
+          password: $DOCKER_HUB_PASSWORD
     working_directory: ~/marion/src
     steps:
       - checkout:
@@ -264,7 +313,10 @@ jobs:
   # ---- Documentation jobs ----
   build-docs:
     docker:
-      - image: circleci/python:3.8-bullseye
+      - image: cimg/python:3.8
+        auth:
+          username: $DOCKER_HUB_USER
+          password: $DOCKER_HUB_PASSWORD
     working_directory: ~/marion
     steps:
       - checkout
@@ -278,7 +330,10 @@ jobs:
   # Deploy the docs website to GitHub pages.
   deploy-docs:
     docker:
-      - image: circleci/python:3.8-bullseye
+      - image: cimg/python:3.8
+        auth:
+          username: $DOCKER_HUB_USER
+          password: $DOCKER_HUB_PASSWORD
     working_directory: ~/marion
     steps:
       - checkout
