@@ -5,12 +5,12 @@ from pathlib import Path
 from urllib.parse import urlparse
 
 from django.conf import settings
-from django.contrib.staticfiles.storage import get_storage_class
+from django.contrib.staticfiles.storage import storages
 from django.core.exceptions import SuspiciousFileOperation
 
 import weasyprint
 
-static_storage = get_storage_class(settings.STATICFILES_STORAGE)()
+static_storage = storages["staticfiles"]
 
 
 def static_file_fetcher(url, *args, **kwargs):
