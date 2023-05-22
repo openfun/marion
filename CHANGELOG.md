@@ -11,6 +11,7 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 ### Added
 
 - Add Django 4.2 compatibility
+- Add `pdf_options` argument to `AbstractDocument.create` method
 
 ## [0.4.0] - 2022-08-05
 
