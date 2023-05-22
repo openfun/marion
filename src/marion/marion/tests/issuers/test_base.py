@@ -12,7 +12,7 @@ from django.template.engine import Engine
 import pytest
 from pdfminer.high_level import extract_text as pdf_extract_text
 from pydantic import BaseModel
-from weasyprint.document import DocumentMetadata
+from weasyprint.document import Document, DocumentMetadata
 
 from marion.defaults import DOCUMENTS_ROOT
 from marion.exceptions import (
@@ -467,6 +467,109 @@ def test_abstract_document_create_without_persist():
         pdf_extract_text(BytesIO(test_document_file)).strip()
         == "My name is Richie Cunningham (user id: rcunningham)"
     )
+
+
+def test_abstract_document_create_with_pdf_options():
+    """Test AbstractDocument create method with pdf_options"""
+
+    # pylint: disable=missing-class-docstring
+    class ContextModel(BaseModel):
+        pass
+
+    # pylint: disable=missing-class-docstring
+    class ContextQueryModel(BaseModel):
+        pass
+
+    class TestDocument(AbstractDocument):
+        context_model = ContextModel
+        context_query_model = ContextQueryModel
+
+        def get_html(self):
+            return Template("<body>An empty document</body>")
+
+        def get_css(self):
+            return Template("")
+
+        def fetch_context(self):
+            return {}
+
+    test_document = TestDocument()
+
+    with patch.object(Document, "write_pdf") as mocked_write_pdf:
+        test_document.create(
+            pdf_options={
+                "presentational_hints": True,
+                "pdf_version": "1.5",
+                "jpeg_quality": 50,
+                "optimize_images": True,
+            }
+        )
+
+    mocked_write_pdf.assert_called_once()
+    kwargs = mocked_write_pdf.call_args[1]
+
+    # PDF compression should be disabled by default
+    assert kwargs["uncompressed_pdf"] is True
+
+    assert kwargs["presentational_hints"] is True
+    assert kwargs["optimize_images"] is True
+    assert kwargs["pdf_version"] == "1.5"
+    assert kwargs["jpeg_quality"] == 50
+
+
+def test_abstract_document_clean_pdf_options():
+    """
+    When pdf_options are passed to the create method, they should be cleaned.
+    """
+
+    # pylint: disable=missing-class-docstring
+    class ContextModel(BaseModel):
+        pass
+
+    # pylint: disable=missing-class-docstring
+    class ContextQueryModel(BaseModel):
+        pass
+
+    class TestDocument(AbstractDocument):
+        context_model = ContextModel
+        context_query_model = ContextQueryModel
+
+        def get_html(self):
+            return Template("<body>An empty document</body>")
+
+        def get_css(self):
+            return Template("")
+
+        def fetch_context(self):
+            return {}
+
+    test_document = TestDocument()
+
+    with patch.object(Document, "write_pdf") as mocked_write_pdf:
+        test_document_file_path = test_document.create(
+            pdf_options={
+                "target": "unknown.pdf",
+                "zoom": 2,
+                "unknown_option": "unknown",
+                "jpeg_quality": 50,
+                "presentational_hints": True,
+                "uncompressed_pdf": False,
+            }
+        )
+
+    mocked_write_pdf.assert_called_once()
+    kwargs = mocked_write_pdf.call_args[1]
+
+    # Valid options should have been kept
+    assert kwargs["presentational_hints"] is True
+    assert kwargs["uncompressed_pdf"] is False
+    assert kwargs["jpeg_quality"] == 50
+
+    # Invalid options should have been removed
+    assert kwargs.get("unknown_option") is None
+    assert kwargs["zoom"] == 1
+    assert kwargs["target"] != "unknown.pdf"
+    assert kwargs["target"] == test_document_file_path
 
 
 def test_abstract_document_jinja_template_engine(settings):

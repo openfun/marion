@@ -14,7 +14,7 @@ from django.utils.translation import gettext_lazy as _
 
 from pydantic import BaseModel
 from pydantic.error_wrappers import ValidationError
-from weasyprint import CSS, HTML
+from weasyprint import CSS, DEFAULT_OPTIONS, HTML
 from weasyprint.document import DocumentMetadata
 from weasyprint.text.fonts import FontConfiguration
 
@@ -323,7 +323,16 @@ class AbstractDocument(PDFFileMetadataMixin, ABC):
         """Get the Django Context instance from the context model instance."""
         return Context(self.context.dict())
 
-    def create(self, persist=True):
+    @staticmethod
+    def _clean_pdf_options(options: dict) -> dict:
+        """Clean pdf options.
+
+        Remove any pdf options that is not in the DEFAULT_OPTIONS list.
+
+        """
+        return {key: value for key, value in options.items() if key in DEFAULT_OPTIONS}
+
+    def create(self, persist=True, pdf_options: DEFAULT_OPTIONS = None):
         """Create document.
 
         Given an HTML template, a CSS template and the required context to
@@ -342,6 +351,12 @@ class AbstractDocument(PDFFileMetadataMixin, ABC):
             When persist is False, document is created without persisting. In
             this case create returns the PDF document as bytes.
 
+        - pdf_options<dict>
+
+            Additional options to pass to Weasyprint's write_pdf method.
+            Check to see all available options:
+            https://doc.courtbouillon.org/weasyprint/stable/api_reference.html#weasyprint.DEFAULT_OPTIONS
+
         """
 
         if self.context is None:
@@ -358,10 +373,22 @@ class AbstractDocument(PDFFileMetadataMixin, ABC):
         document = html.render(stylesheets=[css], font_config=font_config)
         document.metadata = self.metadata
 
+        common_options = {"zoom": 1}
+        cleaned_pdf_options = (
+            self._clean_pdf_options(pdf_options) if pdf_options else {}
+        )
+
+        if "uncompressed_pdf" not in cleaned_pdf_options:
+            # MARK: Disable PDF compression by default until this issue is fixed:
+            # https://github.com/Kozea/WeasyPrint/issues/1885
+            cleaned_pdf_options["uncompressed_pdf"] = True
+
         if persist is False:
-            return document.write_pdf(zoom=1)
+            return document.write_pdf(**common_options, **cleaned_pdf_options)
 
         document_path = self.get_document_path()
-        document.write_pdf(target=document_path, zoom=1)
+        document.write_pdf(
+            target=document_path, **common_options, **cleaned_pdf_options
+        )
 
         return document_path
