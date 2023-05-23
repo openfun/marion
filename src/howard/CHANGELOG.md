@@ -8,6 +8,8 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 
 ## [Unreleased]
 
+## [0.5.0-howard] - 2023-05-23
+
 ### Changed
 
 - Enforce to use at least django-marion 0.5.0
@@ -102,7 +104,8 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 
 - Draft realisation certificate issuer
 
-[unreleased]: https://github.com/openfun/marion/compare/v0.4.0-howard...master
+[unreleased]: https://github.com/openfun/marion/compare/v0.5.0-howard...master
+[0.5.0-howard]: https://github.com/openfun/marion/compare/v0.4.0-howard...v0.5.0-howard
 [0.4.0-howard]: https://github.com/openfun/marion/compare/v0.3.0-howard...v0.4.0-howard
 [0.3.0-howard]: https://github.com/openfun/marion/compare/v0.2.7-howard...v0.3.0-howard
 [0.2.7-howard]: https://github.com/openfun/marion/compare/v0.2.6-howard...v0.2.7-howard
