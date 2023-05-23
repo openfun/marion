@@ -8,6 +8,10 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 
 ## [Unreleased]
 
+### Changed
+
+- Enforce to use at least django-marion 0.5.0
+
 ## [0.4.0-howard] - 2022-12-21
 
 ### Changed
