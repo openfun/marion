@@ -8,6 +8,10 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- Add Pydantic 2.2.0 compatibility
+
 ## [0.5.0] - 2023-05-23
 
 ### Added

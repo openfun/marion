@@ -93,7 +93,7 @@ def test_document_request_viewset_post_context_query_pydantic_model_validation(
     }
     response = client.post(url, data, format="json")
     assert response.status_code == status.HTTP_400_BAD_REQUEST
-    assert "extra fields not permitted" in str(response.data.get("error"))
+    assert "Extra inputs are not permitted" in str(response.data.get("error"))
     assert models.DocumentRequest.objects.count() == 0
     assert count_documents(defaults.DOCUMENTS_ROOT) == 0
 
@@ -104,7 +104,7 @@ def test_document_request_viewset_post_context_query_pydantic_model_validation(
     }
     response = client.post(url, data, format="json")
     assert response.status_code == status.HTTP_400_BAD_REQUEST
-    assert "none is not an allowed value" in str(response.data.get("error"))
+    assert "Input should be a valid string" in str(response.data.get("error"))
     assert models.DocumentRequest.objects.count() == 0
     assert count_documents(defaults.DOCUMENTS_ROOT) == 0
 
@@ -115,9 +115,7 @@ def test_document_request_viewset_post_context_query_pydantic_model_validation(
     }
     response = client.post(url, data, format="json")
     assert response.status_code == status.HTTP_400_BAD_REQUEST
-    assert "ensure this value has at least 2 characters" in str(
-        response.data.get("error")
-    )
+    assert "String should have at least 2 characters" in str(response.data.get("error"))
     assert models.DocumentRequest.objects.count() == 0
     assert count_documents(defaults.DOCUMENTS_ROOT) == 0
 
@@ -128,7 +126,7 @@ def test_document_request_viewset_post_context_query_pydantic_model_validation(
     }
     response = client.post(url, data, format="json")
     assert response.status_code == status.HTTP_400_BAD_REQUEST
-    assert "ensure this value has at most 255 characters" in str(
+    assert "String should have at most 255 characters" in str(
         response.data.get("error")
     )
     assert models.DocumentRequest.objects.count() == 0
@@ -166,7 +164,7 @@ def test_document_request_viewset_post_context_pydantic_model_validation(
     monkeypatch.setattr(DummyDocument, "fetch_context", mock_fetch_context)
     response = client.post(url, data, format="json")
     assert response.status_code == status.HTTP_400_BAD_REQUEST
-    assert "extra fields not permitted" in response.data.get("error")
+    assert "Extra inputs are not permitted" in response.data.get("error")
     assert models.DocumentRequest.objects.count() == 0
     assert count_documents(defaults.DOCUMENTS_ROOT) == 0
 
@@ -178,7 +176,7 @@ def test_document_request_viewset_post_context_pydantic_model_validation(
     monkeypatch.setattr(DummyDocument, "fetch_context", mock_fetch_context)
     response = client.post(url, data, format="json")
     assert response.status_code == status.HTTP_400_BAD_REQUEST
-    assert "none is not an allowed value" in response.data.get("error")
+    assert "Input should be a valid string" in response.data.get("error")
     assert models.DocumentRequest.objects.count() == 0
     assert count_documents(defaults.DOCUMENTS_ROOT) == 0
 
@@ -190,7 +188,7 @@ def test_document_request_viewset_post_context_pydantic_model_validation(
     monkeypatch.setattr(DummyDocument, "fetch_context", mock_fetch_context)
     response = client.post(url, data, format="json")
     assert response.status_code == status.HTTP_400_BAD_REQUEST
-    assert "identifier\n  field required" in response.data.get("error")
+    assert "identifier\n  Field required" in response.data.get("error")
     assert models.DocumentRequest.objects.count() == 0
     assert count_documents(defaults.DOCUMENTS_ROOT) == 0
 
@@ -202,7 +200,7 @@ def test_document_request_viewset_post_context_pydantic_model_validation(
     monkeypatch.setattr(DummyDocument, "fetch_context", mock_fetch_context)
     response = client.post(url, data, format="json")
     assert response.status_code == status.HTTP_400_BAD_REQUEST
-    assert "ensure this value has at least 2 characters" in response.data.get("error")
+    assert "String should have at least 2 characters" in response.data.get("error")
     assert models.DocumentRequest.objects.count() == 0
     assert count_documents(defaults.DOCUMENTS_ROOT) == 0
 
@@ -217,7 +215,7 @@ def test_document_request_viewset_post_context_pydantic_model_validation(
     monkeypatch.setattr(DummyDocument, "fetch_context", mock_fetch_context)
     response = client.post(url, data, format="json")
     assert response.status_code == status.HTTP_400_BAD_REQUEST
-    assert "ensure this value has at most 255 characters" in response.data.get("error")
+    assert "String should have at most 255 characters" in response.data.get("error")
     assert models.DocumentRequest.objects.count() == 0
     assert count_documents(defaults.DOCUMENTS_ROOT) == 0
 

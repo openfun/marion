@@ -39,7 +39,7 @@ def test_certificate_fetch_context(monkeypatch, context_query):
     expected = {
         "identifier": str(identifier),
         "delivery_stamp": freezed_now.isoformat(),
-        **context_query.dict(),
+        **context_query.model_dump(),
     }
     context = test_certificate.fetch_context()
     assert context == expected
@@ -67,11 +67,11 @@ def test_certificate_default_creation_date(monkeypatch, context_query):
     expected = {
         "identifier": str(identifier),
         "delivery_stamp": freezed_now.isoformat(),
-        **context_query.dict(),
+        **context_query.model_dump(),
         "creation_date": freezed_now.isoformat(),
     }
 
-    assert context_query.dict()["creation_date"] is None
+    assert context_query.model_dump()["creation_date"] is None
     context = test_certificate.fetch_context()
     assert context == expected
 

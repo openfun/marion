@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import models as django_models
 
 import pytest
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 from marion import exceptions, factories, issuers, models
 
@@ -35,7 +35,7 @@ def test_pydantic_model_field_validation():
     instance = TestModelB(data={"fullname": "Richie"})
     instance.full_clean()
 
-    with pytest.raises(DjangoValidationError, match="none is not an allowed value"):
+    with pytest.raises(DjangoValidationError, match="Input should be a valid string"):
         instance = TestModelB(data={"fullname": None})
         instance.full_clean()
 
@@ -50,7 +50,7 @@ def test_pydantic_model_field_validation():
     instance = TestModelC(data={"fullname": "Richie"})
     instance.full_clean()
 
-    with pytest.raises(DjangoValidationError, match="none is not an allowed value"):
+    with pytest.raises(DjangoValidationError, match="Input should be a valid string"):
         instance = TestModelC(data={"fullname": None})
         instance.full_clean()
 
@@ -58,9 +58,7 @@ def test_pydantic_model_field_validation():
     # schema attribute should prevail
     class PydanticModelB(BaseModel):
         amount: int
-
-        class Config:
-            extra = "forbid"
+        model_config = ConfigDict(extra="forbid")
 
     class TestModelD(django_models.Model):
         data = models.PydanticModelField(pydantic_model=PydanticModelB)
@@ -74,7 +72,7 @@ def test_pydantic_model_field_validation():
 
     with pytest.raises(
         DjangoValidationError,
-        match="extra fields not permitted",
+        match="Extra inputs are not permitted",
     ):
         instance = TestModelD(data={"fullname": "Richie"})
         instance.full_clean()
@@ -138,7 +136,7 @@ def test_document_request_save(monkeypatch):
     )
     with pytest.raises(
         DjangoValidationError,
-        match="ensure this value has at least 2 characters",
+        match="String should have at least 2 characters",
     ):
         document_request.save()
 
@@ -154,7 +152,7 @@ def test_document_request_save(monkeypatch):
         )
         with pytest.raises(
             exceptions.DocumentIssuerContextValidationError,
-            match="identifier\n  field required",
+            match="identifier\n  Field required",
         ):
             document_request.save()
 

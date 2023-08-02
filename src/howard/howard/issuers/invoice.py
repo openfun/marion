@@ -1,10 +1,9 @@
 """"Invoice issuer"""
 
 import datetime
-import decimal
 from pathlib import Path
 
-from pydantic import BaseModel
+from pydantic import BaseModel, condecimal
 
 from marion.issuers.base import AbstractDocument
 
@@ -41,10 +40,10 @@ class Product(BaseModel):
 class Amount(BaseModel):
     """Amount pydantic model"""
 
-    total: decimal.Decimal
-    subtotal: decimal.Decimal
-    vat_amount: decimal.Decimal
-    vat: decimal.Decimal
+    total: condecimal(allow_inf_nan=False)
+    subtotal: condecimal(allow_inf_nan=False)
+    vat_amount: condecimal(allow_inf_nan=False)
+    vat: condecimal(allow_inf_nan=False)
     currency: str
 
 
@@ -96,7 +95,7 @@ class InvoiceDocument(AbstractDocument):
 
     def fetch_context(self) -> dict:
         """Invoice context"""
-        return self.context_query.dict()
+        return self.context_query.model_dump()
 
     def get_title(self) -> str:
         """Generate a PDF title that depends on the context"""

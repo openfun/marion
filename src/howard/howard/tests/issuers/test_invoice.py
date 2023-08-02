@@ -18,7 +18,21 @@ from hypothesis import strategies as st
 from pdfminer.high_level import extract_text as pdf_extract_text
 
 
-@given(st.builds(ContextQueryModel))
+@given(
+    st.builds(
+        ContextQueryModel,
+        order=st.builds(
+            Order,
+            amount=st.builds(
+                Amount,
+                total=st.decimals(allow_nan=False, allow_infinity=False),
+                subtotal=st.decimals(allow_nan=False, allow_infinity=False),
+                vat=st.decimals(allow_nan=False, allow_infinity=False),
+                vat_amount=st.decimals(allow_nan=False, allow_infinity=False),
+            ),
+        ),
+    )
+)
 def test_invoice_fetch_context(context_query):
     """Test Invoice fetch_context"""
 
@@ -26,11 +40,10 @@ def test_invoice_fetch_context(context_query):
         f"{timezone.now().strftime('%Y%m%d%H%M%S')}-"
         f"{str(uuid.uuid4()).split('-')[0]}"
     )
-    expected = context_query.dict()
+    expected = context_query.model_dump()
 
     test_invoice = InvoiceDocument(context_query=context_query)
     context = test_invoice.fetch_context()
-
     assert context == expected
 
 

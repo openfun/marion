@@ -5,7 +5,8 @@ from pathlib import Path
 from typing import Optional, Union
 from uuid import UUID
 
-from pydantic import BaseModel, constr
+from pydantic import BaseModel, StringConstraints
+from typing_extensions import Annotated
 
 from marion.issuers.base import AbstractDocument
 
@@ -17,8 +18,10 @@ class Organization(BaseModel):
 
     name: str
     representative: str
-    signature: Union[constr(regex=BASE_64_IMAGE_REGEXP), Path]
-    logo: Union[constr(regex=BASE_64_IMAGE_REGEXP), Path]
+    signature: Union[
+        Annotated[str, StringConstraints(pattern=BASE_64_IMAGE_REGEXP)], Path
+    ]
+    logo: Union[Annotated[str, StringConstraints(pattern=BASE_64_IMAGE_REGEXP)], Path]
 
 
 class Student(BaseModel):
@@ -67,7 +70,7 @@ class CertificateDocument(AbstractDocument):
     def fetch_context(self) -> dict:
         """Certificate context"""
 
-        context = self.context_query.dict()
+        context = self.context_query.model_dump()
 
         if context.get("creation_date") is None:
             context["creation_date"] = self.created
