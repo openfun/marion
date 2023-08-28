@@ -2,7 +2,8 @@
 
 from uuid import UUID
 
-from pydantic import BaseModel, constr
+from pydantic import BaseModel, ConfigDict, StringConstraints
+from typing_extensions import Annotated
 
 from .base import AbstractDocument
 
@@ -11,23 +12,15 @@ class ContextModel(BaseModel):
     """Context model definition"""
 
     identifier: UUID
-    fullname: constr(min_length=2, max_length=255)
-
-    class Config:
-        """Context model configuration"""
-
-        extra = "forbid"
+    fullname: Annotated[str, StringConstraints(min_length=2, max_length=255)]
+    model_config = ConfigDict(extra="forbid")
 
 
 class ContextQueryModel(BaseModel):
     """ContextQuery model definition"""
 
-    fullname: constr(min_length=2, max_length=255)
-
-    class Config:
-        """ContextQuery model configuration"""
-
-        extra = "forbid"
+    fullname: Annotated[str, StringConstraints(min_length=2, max_length=255)]
+    model_config = ConfigDict(extra="forbid")
 
 
 class DummyDocument(AbstractDocument):

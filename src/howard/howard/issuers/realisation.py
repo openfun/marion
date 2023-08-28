@@ -2,12 +2,13 @@
 
 import datetime
 from pathlib import Path
-from typing import Generic, TypeVar
+from typing import Any, Generic, Optional, TypeVar
 from uuid import UUID
 
 import arrow
 from dateutil import parser
-from pydantic import BaseModel, ValidationError
+from pydantic import BaseModel, GetCoreSchemaHandler, ValidationError
+from pydantic_core import CoreSchema, core_schema
 
 from marion.issuers.base import AbstractDocument
 
@@ -47,8 +48,13 @@ class ArrowDate(Generic[ArrowSupportedDateType]):
     """
 
     @classmethod
-    def __get_validators__(cls):
-        yield cls.validate
+    # pylint: disable=unused-argument,no-member
+    def __get_pydantic_core_schema__(
+        cls, source_type: Any, handler: GetCoreSchemaHandler
+    ) -> CoreSchema:
+        return core_schema.no_info_after_validator_function(
+            cls.validate, handler(ArrowSupportedDateType)
+        )
 
     @classmethod
     def validate(cls, value):
@@ -80,8 +86,8 @@ class Organization(BaseModel):
     """Organization model definition."""
 
     name: str
-    manager: Manager = None
-    location: str = None
+    manager: Optional[Manager] = None
+    location: Optional[str] = None
 
 
 class Student(BaseModel):
@@ -147,5 +153,5 @@ class RealisationCertificate(AbstractDocument):
             "identifier": self.identifier,
             "creation_date": parser.isoparse(self.created),
             "delivery_stamp": self.created,
-            **self.context_query.dict(),
+            **self.context_query.model_dump(),
         }

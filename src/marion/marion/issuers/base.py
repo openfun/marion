@@ -12,8 +12,7 @@ from django.utils.functional import cached_property
 from django.utils.text import re_camel_case
 from django.utils.translation import gettext_lazy as _
 
-from pydantic import BaseModel
-from pydantic.error_wrappers import ValidationError
+from pydantic import BaseModel, ValidationError
 from weasyprint import CSS, DEFAULT_OPTIONS, HTML
 from weasyprint.document import DocumentMetadata
 from weasyprint.text.fonts import FontConfiguration
@@ -153,7 +152,7 @@ class AbstractDocument(PDFFileMetadataMixin, ABC):
 
         try:
             if isinstance(context, str):
-                context = cls.context_model.parse_raw(context)
+                context = cls.context_model.model_validate_json(context)
             elif isinstance(context, dict):
                 context = cls.context_model(**context)
         except ValidationError as error:
@@ -173,7 +172,9 @@ class AbstractDocument(PDFFileMetadataMixin, ABC):
 
         try:
             if isinstance(context_query, str):
-                context_query = cls.context_query_model.parse_raw(context_query)
+                context_query = cls.context_query_model.model_validate_json(
+                    context_query
+                )
             if isinstance(context_query, dict):
                 context_query = cls.context_query_model(**context_query)
         except ValidationError as error:
@@ -321,7 +322,7 @@ class AbstractDocument(PDFFileMetadataMixin, ABC):
 
     def get_django_context(self) -> Context:
         """Get the Django Context instance from the context model instance."""
-        return Context(self.context.dict())
+        return Context(self.context.model_dump())
 
     @staticmethod
     def _clean_pdf_options(options: dict) -> dict:

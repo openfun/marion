@@ -75,7 +75,7 @@ def test_realisation_certificate_fetch_context(monkeypatch, context_query):
         "identifier": str(identifier),
         "creation_date": freezed_now,
         "delivery_stamp": freezed_now.isoformat(),
-        **context_query.dict(),
+        **context_query.model_dump(),
     }
     context = test_certificate.fetch_context()
 

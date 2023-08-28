@@ -9,7 +9,7 @@ from django.db import models
 from django.utils.module_loading import import_string
 from django.utils.translation import gettext_lazy as _
 
-from pydantic.error_wrappers import ValidationError as PydanticValidationError
+from pydantic import ValidationError as PydanticValidationError
 
 from .exceptions import DocumentIssuerContextQueryValidationError, InvalidDocumentIssuer
 from .fields import IssuerLazyChoiceField
@@ -182,8 +182,8 @@ class DocumentRequest(models.Model):
         # Pydantic knows how to JSON-serialize all fields, the standard JSON
         # encoder does not. So we convert pydantic model data to a
         # dumb-dict with simple types using this trick.
-        self.context = json.loads(document.context.json())
-        self.context_query = json.loads(document.context_query.json())
+        self.context = json.loads(document.context.model_dump_json())
+        self.context_query = json.loads(document.context_query.model_dump_json())
 
         super().save(*args, **kwargs)
 

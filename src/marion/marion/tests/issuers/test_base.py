@@ -282,7 +282,8 @@ def test_abstract_document_validate_context():
             pass
 
     with pytest.raises(
-        DocumentIssuerContextValidationError, match="value is not a valid integer"
+        DocumentIssuerContextValidationError,
+        match="unable to parse string as an integer",
     ):
         TestDocument.validate_context(
             {"fullname": "Richie Cunningham", "friends": "None"}
@@ -324,7 +325,7 @@ def test_abstract_document_validate_context_query():
 
     with pytest.raises(
         DocumentIssuerContextQueryValidationError,
-        match="value is not a valid integer",
+        match="unable to parse string as an integer",
     ):
         TestDocument.validate_context_query(
             {"fullname": "Richie Cunningham", "friends": "None"}
@@ -364,7 +365,7 @@ def test_abstract_document_set_context():
     context = {"fullname": "Richie Cunningham", "friends": "None"}
     with pytest.raises(
         DocumentIssuerContextValidationError,
-        match="value is not a valid integer",
+        match="unable to parse string as an integer",
     ):
         test_document.set_context(context)
 
@@ -417,7 +418,7 @@ def test_abstract_document_create():
             return Template("body {color: red}")
 
         def fetch_context(self):
-            return {"fullname": "Richie Cunningham", **self.context_query.dict()}
+            return {"fullname": "Richie Cunningham", **self.context_query.model_dump()}
 
     test_document = TestDocument(context_query={"user_id": "rcunningham"})
     test_document_path = test_document.create()
@@ -456,7 +457,7 @@ def test_abstract_document_create_without_persist():
             return Template("body {color: red}")
 
         def fetch_context(self):
-            return {"fullname": "Richie Cunningham", **self.context_query.dict()}
+            return {"fullname": "Richie Cunningham", **self.context_query.model_dump()}
 
     test_document = TestDocument(context_query={"user_id": "rcunningham"})
     test_document_file = test_document.create(persist=False)
