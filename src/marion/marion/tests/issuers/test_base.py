@@ -35,7 +35,7 @@ def test_abstract_document_interface_with_missing_abstract_methods():
         TypeError,
         match=(
             "Can't instantiate abstract class BadTestDocument with "
-            "abstract methods fetch_context"
+            "abstract method fetch_context"
         ),
     ):
         BadTestDocument()
