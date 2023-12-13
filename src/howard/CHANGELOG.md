@@ -6,7 +6,13 @@ The format is based on [Keep a
 Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.6.0-howard]
+## [0.7.0-howard] - 2023-12-13
+
+### Changed
+
+- Upgrade `django-marion` dependency to 0.7.0
+
+## [0.6.0-howard] - 2023-10-02
 
 ### Changed
 
@@ -108,7 +114,8 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 
 - Draft realisation certificate issuer
 
-[unreleased]: https://github.com/openfun/marion/compare/v0.6.0-howard...master
+[unreleased]: https://github.com/openfun/marion/compare/v0.7.0-howard...master
+[0.7.0-howard]: https://github.com/openfun/marion/compare/v0.6.0-howard...v0.7.0-howard
 [0.6.0-howard]: https://github.com/openfun/marion/compare/v0.5.0-howard...v0.6.0-howard
 [0.5.0-howard]: https://github.com/openfun/marion/compare/v0.4.0-howard...v0.5.0-howard
 [0.4.0-howard]: https://github.com/openfun/marion/compare/v0.3.0-howard...v0.4.0-howard
