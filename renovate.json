@@ -5,19 +5,10 @@
     "commitMessagePrefix": "⬆️(project)",
     "commitMessageAction": "upgrade",
     "commitBodyTable": true,
-    "packageRules": [
-        {
-            "enabled": false,
-            "groupName": "ignored python dependencies",
-            "matchManagers": [
-                "setup-cfg"
-            ],
-            "matchPackageNames": [
-                "arrow",
-                "djangorestframework",
-                "pydantic",
-                "Weasyprint"
-            ]
-        }
+    "ignoreDeps": [
+        "arrow",
+        "djangorestframework",
+        "pydantic",
+        "Weasyprint"
     ]
 }
