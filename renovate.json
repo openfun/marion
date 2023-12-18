@@ -9,6 +9,7 @@
         "arrow",
         "djangorestframework",
         "pydantic",
-        "Weasyprint"
+        "Weasyprint",
+        "Django"
     ]
 }
