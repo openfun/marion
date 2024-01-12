@@ -8,6 +8,10 @@ Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- `Weasyprint` 60.2+ is now needed
+
 ## [0.7.0] - 2023-12-13
 
 ### Changed
